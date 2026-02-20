@@ -24,7 +24,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session - production strict
+    // If Supabase not configured (preview), skip auth
+    if (!supabase) {
+      setIsLoading(false);
+      return;
+    }
+
+    // Get initial session
     getSession().then((session) => {
       setSession(session);
       setUser(session?.user ?? null);
