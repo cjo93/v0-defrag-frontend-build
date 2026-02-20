@@ -10,22 +10,35 @@
 ## Security Hardening - Complete ✅
 
 ### Authentication Enforcement
-- ✅ **Auth bypass removed** - Supabase configuration now required (throws error if missing)
-- ✅ All `if (!supabase) return null` patterns eliminated
+- ✅ **Environment-aware auth** - Production requires Supabase, preview gracefully disables
+- ✅ Single Supabase client initialization point (`lib/supabase.ts`)
 - ✅ Production requires `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - ✅ No localStorage-based auth bypass exists
 - ✅ Protected routes use `useAuth()` hook properly
+- ✅ Preview mode shows warning, not error, when Supabase missing
+
+### AI Security Layer (`lib/ai-security.ts`)
+- ✅ **Signal sanitization** - Raw network data never sent to AI
+- ✅ **Structured output validation** - 5-key JSON schema enforced
+- ✅ **Disclosure filtering** - Blocks algorithm/scoring/framework reveals
+- ✅ Safe fallback responses if violations detected
 
 ### Client-Side Security
 - ✅ localStorage only used for UI preferences (intro seen, add-to-home dismissed)
 - ✅ No client-side subscription status bypass
 - ✅ All gated features check auth context
 
+### Debugging Tools Added
+- ✅ **Build marker** - Shows Git SHA in preview (bottom-right corner)
+- ✅ **Auth warnings** - Console logs when Supabase disabled in preview
+- ✅ Single source of truth for Supabase client
+
 ### Remaining Backend Tasks (After Cutover)
 - ⚠️ Stripe webhook server-side validation
 - ⚠️ Subscription status enforcement from database
-- ⚠️ Crisis AI endpoint rate limiting
+- ⚠️ Crisis AI endpoint rate limiting (5 req/min)
 - ⚠️ Supabase RLS policies verification
+- ⚠️ Integrate `secureAIResponse()` in chat API endpoint
 
 ---
 
