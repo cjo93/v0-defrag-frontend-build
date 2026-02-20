@@ -49,7 +49,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="font-sans antialiased">
+      <body className="bg-[#000000] text-[#FFFFFF] font-sans antialiased">
         <AuthProvider>
           {children}
           <AddToHomePrompt />

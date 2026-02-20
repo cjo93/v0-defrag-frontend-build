@@ -33,36 +33,32 @@ export default function Home() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="flex min-h-screen flex-col">
       <Navigation isAuthenticated={false} />
       
-      <main className="flex flex-1 flex-col items-center justify-center px-6 py-16 safe-top safe-bottom">
-        <div className="flex max-w-2xl flex-col items-center gap-8 text-center">
+      <main className="flex flex-1 flex-col justify-center px-8 py-16 safe-top safe-bottom">
+        <div className="mx-auto flex w-full max-w-3xl flex-col items-start text-left">
           {/* Headline */}
-          <h1 className="text-balance text-5xl font-bold leading-tight tracking-tight md:text-6xl">
+          <h1 className="mt-24 max-w-[18ch] text-[42px] font-[300] leading-[1.05] tracking-tight text-white">
             The user manual for you, and your people.
           </h1>
           
-          {/* Rotating subhead */}
-          <RotatingText />
+          {/* Subhead - static, subtle */}
+          <p className="mt-6 text-base text-white/50">
+            For your parent. Your partner. Your legacy.
+          </p>
           
-          {/* CTAs */}
-          <div className="flex flex-col items-center gap-4 sm:flex-row">
-            <Link href="/connect">
-              <CTAButton size="lg" className="min-w-[140px]">
-                Begin
-              </CTAButton>
-            </Link>
-            <Link href="/connect">
-              <Button 
-                variant="ghost" 
-                size="lg"
-                className="min-w-[140px] text-foreground hover:text-foreground/70"
-              >
-                Sign in
-              </Button>
-            </Link>
-          </div>
+          {/* CTA - proper surface button */}
+          <Link href="/connect">
+            <button className="mt-10 rounded-xl border border-white/15 bg-white/[0.04] px-6 py-4 text-sm font-medium tracking-wide text-white transition hover:border-white/30 hover:bg-white/[0.06]">
+              Begin
+            </button>
+          </Link>
+          
+          {/* Sign in - subtle link */}
+          <Link href="/connect" className="mt-4 text-sm text-white/40 transition hover:text-white/60">
+            Sign in
+          </Link>
         </div>
       </main>
       
