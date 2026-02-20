@@ -70,6 +70,12 @@
 }
 
 @layer base {
+  /* Force pure black everywhere */
+  html, body {
+    background: #000;
+    color: #fff;
+  }
+  
   * {
     @apply border-border outline-ring/50;
   }
@@ -79,30 +85,18 @@
 }
 
 @layer utilities {
-  /* Iridescent rainbow shimmer for CTAs */
-  .iridescent {
-    background: linear-gradient(
-      90deg,
-      #ff0080,
-      #ff8c00,
-      #40e0d0,
-      #9370db,
-      #ff0080
-    );
-    background-size: 200% 100%;
-    animation: shimmer 3s linear infinite;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+  /* Subtle border glow accent (restrained, premium) */
+  .defrag-accent-ring {
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.12),
+      0 0 24px rgba(120, 255, 220, 0.10);
+    transition: box-shadow 0.2s ease;
   }
   
-  @keyframes shimmer {
-    0% {
-      background-position: 0% 50%;
-    }
-    100% {
-      background-position: 200% 50%;
-    }
+  .defrag-accent-ring:hover {
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.22),
+      0 0 32px rgba(120, 255, 220, 0.16);
   }
   
   /* iOS safe areas */

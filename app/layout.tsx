@@ -48,8 +48,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className="bg-[#000000] text-[#FFFFFF] font-sans antialiased">
+    <html lang="en" className="bg-[#000000] text-[#FFFFFF]">
+      <body className="min-h-[100dvh] bg-[#000000] text-[#FFFFFF] font-sans antialiased">
         <AuthProvider>
           {children}
           <AddToHomePrompt />
