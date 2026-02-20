@@ -93,16 +93,16 @@ export default function ConnectClient() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex items-center">
-      <div className="w-full max-w-[560px] mx-auto px-6 md:px-8">
+    <div className="min-h-screen bg-black text-white flex items-start pt-32">
+      <div className="w-full max-w-[520px] mx-auto px-6 md:px-8">
         {/* Email Step */}
         {step === 'email' && (
           <div>
             <div className="text-left">
-              <h1 className="font-display text-[42px] md:text-[52px] leading-[1.15] tracking-[-0.02em] font-normal mb-7">
+              <h1 className="font-display text-[38px] md:text-[46px] leading-[1.18] tracking-[-0.015em] font-normal mb-7">
                 Sign in
               </h1>
-              <p className="text-[15px] text-white/55 leading-[1.7] max-w-[420px]">
+              <p className="text-[15px] text-white/45 leading-[1.7] max-w-[420px]">
                 We'll send a secure link. No password.
               </p>
             </div>
@@ -119,7 +119,7 @@ export default function ConnectClient() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full bg-transparent border-b border-white/20 py-4 text-[18px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-colors placeholder:text-white/25"
+                  className="w-full bg-transparent border-b border-white/20 py-5 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-colors placeholder:text-white/25"
                 />
               </div>
 
@@ -130,7 +130,7 @@ export default function ConnectClient() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="mt-16 text-[14px] tracking-[0.25em] uppercase text-white/80 hover:text-white transition-colors disabled:opacity-40"
+                className="mt-16 text-[14px] tracking-[0.18em] uppercase text-white/80 hover:text-white transition-colors disabled:opacity-40"
               >
                 {isLoading ? 'Sending...' : 'Begin'}
               </button>
@@ -142,20 +142,20 @@ export default function ConnectClient() {
         {step === 'verify' && (
           <div>
             <div className="text-left">
-              <h1 className="font-display text-[42px] md:text-[52px] leading-[1.15] tracking-[-0.02em] font-normal mb-7">
+              <h1 className="font-display text-[38px] md:text-[46px] leading-[1.18] tracking-[-0.015em] font-normal mb-7">
                 Check your email
               </h1>
-              <p className="text-[15px] text-white/55 leading-[1.7] max-w-[420px]">
+              <p className="text-[15px] text-white/45 leading-[1.7] max-w-[420px]">
                 We sent a magic link to <span className="text-white">{email}</span>
               </p>
-              <p className="mt-4 text-[15px] text-white/55 leading-[1.7]">
+              <p className="mt-4 text-[15px] text-white/45 leading-[1.7]">
                 Click the link to continue.
               </p>
             </div>
 
             <button
               onClick={() => setStep('email')}
-              className="mt-20 text-[14px] tracking-[0.25em] uppercase text-white/80 hover:text-white transition-colors"
+              className="mt-20 text-[14px] tracking-[0.18em] uppercase text-white/80 hover:text-white transition-colors"
             >
               Try a different email
             </button>
@@ -166,10 +166,10 @@ export default function ConnectClient() {
         {step === 'context' && (
           <div>
             <div className="text-left">
-              <h1 className="font-display text-[42px] md:text-[52px] leading-[1.15] tracking-[-0.02em] font-normal mb-7">
+              <h1 className="font-display text-[38px] md:text-[46px] leading-[1.18] tracking-[-0.015em] font-normal mb-7">
                 Step 1 of 2
               </h1>
-              <p className="text-[15px] text-white/55 leading-[1.7] max-w-[420px]">
+              <p className="text-[15px] text-white/45 leading-[1.7] max-w-[420px]">
                 Set your location for accurate timing
               </p>
             </div>
@@ -186,7 +186,7 @@ export default function ConnectClient() {
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   required
-                  className="w-full bg-transparent border-b border-white/20 py-4 text-[18px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-colors placeholder:text-white/25"
+                  className="w-full bg-transparent border-b border-white/20 py-5 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-colors placeholder:text-white/25"
                 />
               </div>
 
@@ -201,7 +201,7 @@ export default function ConnectClient() {
                   value={timezone}
                   onChange={(e) => setTimezone(e.target.value)}
                   required
-                  className="w-full bg-transparent border-b border-white/20 py-4 text-[18px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-colors placeholder:text-white/25"
+                  className="w-full bg-transparent border-b border-white/20 py-5 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-colors placeholder:text-white/25"
                 />
               </div>
 
@@ -212,7 +212,7 @@ export default function ConnectClient() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="mt-16 text-[14px] tracking-[0.25em] uppercase text-white/80 hover:text-white transition-colors disabled:opacity-40"
+                className="mt-16 text-[14px] tracking-[0.18em] uppercase text-white/80 hover:text-white transition-colors disabled:opacity-40"
               >
                 {isLoading ? 'Saving...' : 'Continue'}
               </button>
@@ -224,10 +224,10 @@ export default function ConnectClient() {
         {step === 'baseline' && (
           <div>
             <div className="text-left">
-              <h1 className="font-display text-[42px] md:text-[52px] leading-[1.15] tracking-[-0.02em] font-normal mb-7">
+              <h1 className="font-display text-[38px] md:text-[46px] leading-[1.18] tracking-[-0.015em] font-normal mb-7">
                 Step 2 of 2
               </h1>
-              <p className="text-[15px] text-white/55 leading-[1.7] max-w-[420px]">
+              <p className="text-[15px] text-white/45 leading-[1.7] max-w-[420px]">
                 Set your baseline data
               </p>
             </div>
@@ -243,7 +243,7 @@ export default function ConnectClient() {
                   value={dob}
                   onChange={(e) => setDob(e.target.value)}
                   required
-                  className="w-full bg-transparent border-b border-white/20 py-4 text-[18px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-colors placeholder:text-white/25"
+                  className="w-full bg-transparent border-b border-white/20 py-5 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-colors placeholder:text-white/25"
                 />
               </div>
 
@@ -256,7 +256,7 @@ export default function ConnectClient() {
                   type="time"
                   value={birthTime}
                   onChange={(e) => setBirthTime(e.target.value)}
-                  className="w-full bg-transparent border-b border-white/20 py-4 text-[18px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-colors placeholder:text-white/25"
+                  className="w-full bg-transparent border-b border-white/20 py-5 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-colors placeholder:text-white/25"
                 />
               </div>
 
@@ -271,7 +271,7 @@ export default function ConnectClient() {
                   value={birthCity}
                   onChange={(e) => setBirthCity(e.target.value)}
                   required
-                  className="w-full bg-transparent border-b border-white/20 py-4 text-[18px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-colors placeholder:text-white/25"
+                  className="w-full bg-transparent border-b border-white/20 py-5 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-colors placeholder:text-white/25"
                 />
               </div>
 
@@ -282,7 +282,7 @@ export default function ConnectClient() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="mt-16 text-[14px] tracking-[0.25em] uppercase text-white/80 hover:text-white transition-colors disabled:opacity-40"
+                className="mt-16 text-[14px] tracking-[0.18em] uppercase text-white/80 hover:text-white transition-colors disabled:opacity-40"
               >
                 {isLoading ? 'Saving...' : 'Complete setup'}
               </button>
