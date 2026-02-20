@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     ],
     apple: '/apple-icon.png',
   },
-}
+};
 
 import { AuthProvider } from '@/lib/auth-context';
 import { AddToHomePrompt } from '@/components/add-to-home';
