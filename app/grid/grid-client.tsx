@@ -156,7 +156,7 @@ export default function GridClient() {
         {/* Connection list */}
         {connections.length === 0 && !isAddingPerson ? (
           <div>
-            <Body muted>No connections yet.</Body>
+            <Body>No connections yet.</Body>
             <Spacer size="m" />
             <TextActionButton onClick={() => setIsAddingPerson(true)}>
               Add your first person
@@ -164,28 +164,29 @@ export default function GridClient() {
           </div>
         ) : (
           <div className="space-y-0">
-            {connections.map((connection) => (
-              <div
-                key={connection.id}
-                onClick={() => router.push(`/readout/${connection.id}`)}
-                className="group flex cursor-pointer items-center gap-4 border-b border-white/10 py-6"
-              >
-                {/* Tether line */}
-                <div className="h-px w-10 bg-white/10" />
+            {connections.map((connection, index) => (
+              <div key={connection.id}>
+                {index > 0 && <div className="h-px w-full bg-white/8" />}
+                <div
+                  onClick={() => router.push(`/readout/${connection.id}`)}
+                  className="group flex cursor-pointer items-center gap-4 py-6"
+                >
+                  {/* Tether line (thin) */}
+                  <div className="h-px w-8 bg-white/15" />
 
-                {/* Node dot */}
-                <div className="h-1.5 w-1.5 rounded-full bg-white/60" />
+                  {/* Node dot (subtle) */}
+                  <div className="h-1 w-1 rounded-full bg-white/50" />
 
-                {/* Connection info */}
-                <div className="flex-1">
-                  <p className="text-[15px] text-white">{connection.name}</p>
-                  <p className="text-[12px] text-white/35 uppercase tracking-[0.35em] mt-1">
-                    {connection.relationship_type}
-                  </p>
+                  {/* Connection info */}
+                  <div className="flex-1">
+                    <p className="text-[15px] text-white">{connection.name}</p>
+                    <p className="text-[10px] text-white/35 uppercase tracking-[0.35em] mt-1">
+                      {connection.relationship_type}
+                    </p>
+                  </div>
+
+                  {/* No state glow - removed */}
                 </div>
-
-                {/* State glow */}
-                <div className="h-1 w-1 rounded-full bg-white/40" />
               </div>
             ))}
           </div>

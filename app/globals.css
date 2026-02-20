@@ -42,9 +42,16 @@
 }
 
 @theme inline {
+  /* Typography */
   --font-display: 'Playfair Display', 'Playfair Display Fallback', serif;
   --font-sans: 'Geist', 'Geist Fallback';
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  
+  /* Spatial Authority System - Only 4 tokens allowed */
+  --space-s: 1.5rem;  /* 24px - minor separation */
+  --space-m: 3rem;    /* 48px - between fields */
+  --space-l: 5rem;    /* 80px - between sections */
+  --space-xl: 8rem;   /* 128px - between major blocks */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -75,12 +82,15 @@
   html {
     background: #000 !important;
     color: #fff !important;
+    overscroll-behavior: none;
   }
   
   body {
     background: #000 !important;
     color: #fff !important;
     min-height: 100dvh !important;
+    overscroll-behavior: none;
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", var(--font-sans);
   }
   
   * {

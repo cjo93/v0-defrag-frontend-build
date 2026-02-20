@@ -10,7 +10,7 @@ export function MicroLabel({ children }: { children: ReactNode }) {
 
 export function H1({ children }: { children: ReactNode }) {
   return (
-    <h1 className="font-display text-[34px] md:text-[40px] leading-[1.2] tracking-[-0.015em] text-white">
+    <h1 className="font-display text-[38px] md:text-[46px] leading-[1.18] tracking-[-0.01em] font-medium text-white">
       {children}
     </h1>
   );
@@ -18,7 +18,7 @@ export function H1({ children }: { children: ReactNode }) {
 
 export function H2({ children }: { children: ReactNode }) {
   return (
-    <h2 className="font-display text-[24px] leading-[1.3] text-white">
+    <h2 className="font-display text-[24px] md:text-[32px] leading-[1.3] tracking-[-0.01em] font-medium text-white">
       {children}
     </h2>
   );
@@ -26,7 +26,15 @@ export function H2({ children }: { children: ReactNode }) {
 
 export function Body({ children }: { children: ReactNode }) {
   return (
-    <p className="text-[15px] leading-[1.75] text-white/45">
+    <p className="text-[16px] leading-[1.75] text-white/45">
+      {children}
+    </p>
+  );
+}
+
+export function BodyContent({ children }: { children: ReactNode }) {
+  return (
+    <p className="text-[16px] leading-[1.75] text-white/60">
       {children}
     </p>
   );

@@ -144,42 +144,50 @@ export default function ChatPage() {
                       </div>
                     </div>
                   ) : (
-                    <div className="space-y-6">
+                    <div>
                       {typeof message.content === 'object' && (
                         <>
-                          {/* Headline */}
+                          {/* Headline - increased contrast */}
                           <div>
-                            <h2 className="font-display text-[24px] leading-[1.3] tracking-[-0.01em] font-normal text-white">
+                            <h2 className="font-display text-[24px] leading-[1.3] tracking-[-0.01em] font-normal text-white/85">
                               {message.content.headline}
                             </h2>
                           </div>
                           
+                          <Spacer size="l" />
+                          
                           {/* What's happening */}
                           <div>
                             <MicroLabel>What's happening</MicroLabel>
-                            <Spacer size="xs" />
+                            <Spacer size="s" />
                             <Body>{message.content.happening}</Body>
                           </div>
+                          
+                          <Spacer size="l" />
                           
                           {/* Do this now */}
                           <div>
                             <MicroLabel>Do this now</MicroLabel>
-                            <Spacer size="xs" />
+                            <Spacer size="s" />
                             <Body>{message.content.doThis}</Body>
                           </div>
+                          
+                          <Spacer size="l" />
                           
                           {/* Avoid */}
                           <div>
                             <MicroLabel>Avoid</MicroLabel>
-                            <Spacer size="xs" />
+                            <Spacer size="s" />
                             <Body>{message.content.avoid}</Body>
                           </div>
+                          
+                          <Spacer size="l" />
                           
                           {/* Say this */}
                           <div>
                             <MicroLabel>Say this</MicroLabel>
-                            <Spacer size="xs" />
-                            <Body muted>"{message.content.sayThis}"</Body>
+                            <Spacer size="s" />
+                            <Body>"{message.content.sayThis}"</Body>
                           </div>
                         </>
                       )}
@@ -188,10 +196,8 @@ export default function ChatPage() {
                 </div>
               ))}
               {isLoading && (
-                <div className="flex gap-1.5">
-                  <div className="h-1 w-1 rounded-full bg-white/40 animate-pulse" />
-                  <div className="h-1 w-1 rounded-full bg-white/40 animate-pulse [animation-delay:150ms]" />
-                  <div className="h-1 w-1 rounded-full bg-white/40 animate-pulse [animation-delay:300ms]" />
+                <div>
+                  <Body>...</Body>
                 </div>
               )}
               <div ref={messagesEndRef} />

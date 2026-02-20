@@ -125,16 +125,16 @@ export default function SelfReadoutClient() {
         
         <Spacer size="xl" />
 
-        {/* Readout sections */}
-        <div className="space-y-20">
-          {readout?.insights?.map((insight, index) => (
-            <div key={index}>
-              <H2>{insight.title}</H2>
-              <Spacer size="m" />
-              <Body>{insight.content}</Body>
-            </div>
-          ))}
-        </div>
+        {/* Readout sections - with dividers between */}
+        {readout?.insights?.map((insight, index) => (
+          <div key={index}>
+            {index > 0 && <div className="mb-20 h-px w-full bg-white/8" />}
+            <H2>{insight.title}</H2>
+            <Spacer size="m" />
+            <Body>{insight.content}</Body>
+            <Spacer size="xl" />
+          </div>
+        ))}
 
         {/* Upgrade CTA - silent reference */}
         <Spacer size="xl" />

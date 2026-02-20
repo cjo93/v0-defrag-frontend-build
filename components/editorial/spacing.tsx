@@ -1,9 +1,9 @@
 export function Spacer({ size }: { size: "s" | "m" | "l" | "xl" }) {
   const map = {
-    s: "mt-10",
-    m: "mt-16",
-    l: "mt-20",
-    xl: "mt-24",
+    s: "mt-6",   // 1.5rem / 24px - minor separation
+    m: "mt-12",  // 3rem / 48px - between fields
+    l: "mt-20",  // 5rem / 80px - between sections
+    xl: "mt-32", // 8rem / 128px - between major blocks
   } as const;
 
   return <div className={map[size]} aria-hidden="true" />;
