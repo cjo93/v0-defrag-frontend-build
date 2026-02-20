@@ -24,14 +24,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check if Supabase is configured
-    if (!supabase) {
-      console.log('[v0] Supabase not configured, skipping auth initialization');
-      setIsLoading(false);
-      return;
-    }
-
-    // Get initial session
+    // Get initial session - production strict
     getSession().then((session) => {
       setSession(session);
       setUser(session?.user ?? null);
