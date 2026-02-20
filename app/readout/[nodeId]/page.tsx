@@ -2,12 +2,21 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { Navigation } from '@/components/navigation';
-import { BuildStamp } from '@/components/build-stamp';
-import { CTAButton } from '@/components/cta-button';
 import { useAuth } from '@/lib/auth-context';
 import { getConnectionReadout, createCheckoutSession } from '@/lib/api';
 import type { Readout } from '@/lib/types';
+import { 
+  AppShell, 
+  EditorialRail, 
+  MicroLabel, 
+  H1, 
+  H2,
+  Body, 
+  Spacer,
+  LoadingScreen,
+  LockedScreen 
+} from '@/components/editorial';
+import { BuildStamp } from '@/components/build-stamp';
 
 export default function ConnectionReadoutPage() {
   const router = useRouter();
@@ -35,9 +44,6 @@ export default function ConnectionReadoutPage() {
     
     try {
       // TODO: Replace with actual API call when backend is ready
-      // const data = await getConnectionReadout(nodeId);
-      
-      // For now, return locked state (requires OS)
       const data: Readout = {
         locked: true,
         required: 'os',
@@ -65,132 +71,67 @@ export default function ConnectionReadoutPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-screen flex-col bg-background">
-        <Navigation isAuthenticated={true} onSignOut={signOut} />
-        <main className="flex flex-1 items-center justify-center safe-top safe-bottom">
-          <p className="text-muted-foreground">Loading...</p>
-        </main>
-        <BuildStamp />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (!readout) {
     return (
-      <div className="flex min-h-screen flex-col bg-background">
-        <Navigation isAuthenticated={true} onSignOut={signOut} />
-        <main className="flex flex-1 items-center justify-center px-6 safe-top safe-bottom">
-          <div className="flex max-w-md flex-col gap-4 text-center">
-            <h1 className="text-2xl font-bold">Error</h1>
-            <p className="text-muted-foreground">{error || 'Failed to load readout'}</p>
-            <CTAButton onClick={loadReadout}>Retry</CTAButton>
-          </div>
-        </main>
+      <AppShell>
+        <EditorialRail width="app">
+          <H1>Error</H1>
+          <Spacer size="m" />
+          <Body muted>{error || 'Failed to load readout'}</Body>
+        </EditorialRail>
         <BuildStamp />
-      </div>
+      </AppShell>
     );
   }
 
   // Locked state (requires OS)
   if (readout.locked && readout.required === 'os') {
     return (
-      <div className="flex min-h-screen flex-col bg-background">
-        <Navigation isAuthenticated={true} onSignOut={signOut} />
-        
-        <main className="flex flex-1 flex-col items-center justify-center px-6 safe-top safe-bottom">
-          <div className="flex max-w-md flex-col gap-6 text-center">
-            <div className="flex flex-col gap-2">
-              <h1 className="text-3xl font-bold">Upgrade Required</h1>
-              <p className="text-sm text-muted-foreground">
-                Connection readouts require DEFRAG OS
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-4 rounded-lg border border-border bg-muted/20 p-6">
-              <div className="flex flex-col gap-2">
-                <h2 className="text-xl font-semibold">DEFRAG OS</h2>
-                <p className="text-sm text-muted-foreground">
-                  Full access to Grid, Crisis Mode, and connection analysis
-                </p>
-              </div>
-              
-              <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-bold">$33</span>
-                <span className="text-muted-foreground">/month</span>
-              </div>
-
-              <ul className="flex flex-col gap-2 text-left text-sm">
-                <li className="flex items-start gap-2">
-                  <span className="text-foreground">•</span>
-                  <span>Relational Grid for your network</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-foreground">•</span>
-                  <span>Connection readouts for your people</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-foreground">•</span>
-                  <span>Crisis Mode AI support</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-foreground">•</span>
-                  <span>Network tension mapping</span>
-                </li>
-              </ul>
-
-              {error && (
-                <p className="text-sm text-destructive">{error}</p>
-              )}
-
-              <CTAButton 
-                onClick={handleUpgrade} 
-                disabled={isCheckingOut}
-                className="w-full"
-              >
-                {isCheckingOut ? 'Redirecting...' : 'Upgrade to DEFRAG OS'}
-              </CTAButton>
-            </div>
-          </div>
-        </main>
-        
-        <BuildStamp />
-      </div>
+      <LockedScreen
+        title="Connection readout locked"
+        description="Requires DEFRAG OS to view connection analysis."
+        productName="DEFRAG OS"
+        price="$33"
+        priceInterval="month"
+        features={[
+          'Relational Grid for your network',
+          'Connection readouts',
+          'Crisis Mode AI support',
+          'Network tension mapping'
+        ]}
+        onUnlock={handleUpgrade}
+        isProcessing={isCheckingOut}
+        error={error}
+      />
     );
   }
 
   // Unlocked state (with OS access)
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <Navigation isAuthenticated={true} onSignOut={signOut} />
-      
-      <main className="flex flex-1 flex-col px-6 py-16 safe-top safe-bottom">
-        <div className="mx-auto w-full max-w-2xl">
-          <div className="mb-8 flex flex-col gap-2">
-            <h1 className="text-3xl font-bold">{readout.personName || 'Connection'}</h1>
-            <p className="text-sm text-muted-foreground">
-              Connection Analysis
-            </p>
-          </div>
+    <AppShell>
+      <EditorialRail width="app">
+        <MicroLabel>Connection</MicroLabel>
+        <Spacer size="s" />
+        <H1>{readout.personName || 'Connection'}</H1>
+        
+        <Spacer size="xl" />
 
-          {/* Insights */}
-          <div className="flex flex-col gap-6">
-            {readout.insights?.map((insight, index) => (
-              <div 
-                key={index}
-                className="flex flex-col gap-3 border-l-2 border-border pl-4"
-              >
-                <h2 className="text-lg font-semibold">{insight.title}</h2>
-                <p className="text-sm leading-relaxed text-foreground/90">
-                  {insight.content}
-                </p>
-              </div>
-            ))}
-          </div>
+        {/* Insights - vertical block layout */}
+        <div className="space-y-20">
+          {readout.insights?.map((insight, index) => (
+            <div key={index}>
+              <H2>{insight.title}</H2>
+              <Spacer size="m" />
+              <Body>{insight.content}</Body>
+            </div>
+          ))}
         </div>
-      </main>
+      </EditorialRail>
       
       <BuildStamp />
-    </div>
+    </AppShell>
   );
 }

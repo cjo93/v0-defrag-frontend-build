@@ -2,15 +2,20 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Navigation } from '@/components/navigation';
-import { BuildStamp } from '@/components/build-stamp';
-import { CTAButton } from '@/components/cta-button';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { useAuth } from '@/lib/auth-context';
 import { sendChatMessage, createCheckoutSession } from '@/lib/api';
 import type { ChatResponse } from '@/lib/types';
-import { Send } from 'lucide-react';
+import { 
+  AppShell,
+  MicroLabel, 
+  H1,
+  Body, 
+  Spacer,
+  LineInput,
+  TextActionButton,
+  LockedScreen 
+} from '@/components/editorial';
+import { BuildStamp } from '@/components/build-stamp';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -40,19 +45,12 @@ export default function ChatPage() {
   }, [user]);
 
   useEffect(() => {
-    // Scroll to bottom when messages change
-    scrollToBottom();
-  }, [messages]);
-
-  const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  }, [messages]);
 
   const checkOSStatus = async () => {
     try {
-      // TODO: Replace with actual subscription check
-      // For now, simulate OS status
-      const hasOS = false;
+      const hasOS = false; // TODO: Replace with actual subscription check
       setIsOSActive(hasOS);
     } catch (err: any) {
       setError(err.message || 'Failed to check subscription status');
@@ -79,16 +77,12 @@ export default function ChatPage() {
     const userMessage = input.trim();
     setInput('');
     
-    // Add user message
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     
     setIsLoading(true);
     
     try {
       // TODO: Replace with actual API call
-      // const response = await sendChatMessage(userMessage);
-      
-      // Mock response
       const response: ChatResponse = {
         headline: 'Pause Required',
         happening: 'High tension detected in recent pattern.',
@@ -107,165 +101,128 @@ export default function ChatPage() {
 
   if (!isOSActive) {
     return (
-      <div className="flex min-h-screen flex-col bg-background">
-        <Navigation isAuthenticated={true} onSignOut={signOut} />
-        
-        <main className="flex flex-1 flex-col items-center justify-center px-6 safe-top safe-bottom">
-          <div className="flex max-w-md flex-col gap-6 text-center">
-            <div className="flex flex-col gap-2">
-              <h1 className="text-3xl font-bold">Upgrade Required</h1>
-              <p className="text-sm text-muted-foreground">
-                Crisis Mode requires DEFRAG OS
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-4 rounded-lg border border-border bg-muted/20 p-6">
-              <div className="flex flex-col gap-2">
-                <h2 className="text-xl font-semibold">DEFRAG OS</h2>
-                <p className="text-sm text-muted-foreground">
-                  Full access to Grid, Crisis Mode, and connection analysis
-                </p>
-              </div>
-              
-              <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-bold">$33</span>
-                <span className="text-muted-foreground">/month</span>
-              </div>
-
-              {error && (
-                <p className="text-sm text-destructive">{error}</p>
-              )}
-
-              <CTAButton 
-                onClick={handleUpgrade} 
-                disabled={isCheckingOut}
-                className="w-full"
-              >
-                {isCheckingOut ? 'Redirecting...' : 'Upgrade to DEFRAG OS'}
-              </CTAButton>
-            </div>
-          </div>
-        </main>
-        
-        <BuildStamp />
-      </div>
+      <LockedScreen
+        title="Crisis Mode locked"
+        description="Requires DEFRAG OS for calm authority support."
+        productName="DEFRAG OS"
+        price="$33"
+        priceInterval="month"
+        features={[
+          'Relational Grid for your network',
+          'Connection readouts',
+          'Crisis Mode AI support',
+          'Network tension mapping'
+        ]}
+        onUnlock={handleUpgrade}
+        isProcessing={isCheckingOut}
+        error={error}
+      />
     );
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <Navigation isAuthenticated={true} onSignOut={signOut} />
-      
-      <main className="flex flex-1 flex-col safe-top safe-bottom">
-        {/* Messages area */}
-        <div className="flex-1 overflow-y-auto px-6 py-8">
-          <div className="mx-auto w-full max-w-2xl">
-            {messages.length === 0 ? (
-              <div className="flex flex-col items-center gap-4 py-16 text-center">
-                <h1 className="text-2xl font-bold">Crisis Mode</h1>
-                <p className="text-sm text-muted-foreground">
-                  Calm authority. One degree calmer than you.
-                </p>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-6">
-                {messages.map((message, index) => (
-                  <div key={index} className="flex flex-col gap-3">
-                    {message.role === 'user' ? (
-                      <div className="ml-auto max-w-[80%] rounded-lg bg-muted px-4 py-3">
-                        <p className="text-sm">{message.content as string}</p>
+    <div className="min-h-screen bg-black text-white flex flex-col">
+      {/* Messages area */}
+      <div className="flex-1 overflow-y-auto px-6 pt-24 pb-32 safe-top">
+        <div className="mx-auto w-full max-w-[760px]">
+          {messages.length === 0 ? (
+            <>
+              <MicroLabel>Crisis Mode</MicroLabel>
+              <Spacer size="s" />
+              <H1>Calm authority.</H1>
+              <Spacer size="m" />
+              <Body muted>One degree calmer than you.</Body>
+            </>
+          ) : (
+            <div className="space-y-12">
+              {messages.map((message, index) => (
+                <div key={index}>
+                  {message.role === 'user' ? (
+                    <div className="flex justify-end">
+                      <div className="max-w-[85%]">
+                        <Body>{message.content as string}</Body>
                       </div>
-                    ) : (
-                      <div className="flex flex-col gap-4 border-l-2 border-border pl-4">
-                        {typeof message.content === 'object' && (
-                          <>
-                            {/* 1. Headline */}
-                            <h2 className="text-xl font-bold">
+                    </div>
+                  ) : (
+                    <div className="space-y-6">
+                      {typeof message.content === 'object' && (
+                        <>
+                          {/* Headline */}
+                          <div>
+                            <h2 className="font-display text-[24px] leading-[1.3] tracking-[-0.01em] font-normal text-white">
                               {message.content.headline}
                             </h2>
-                            
-                            {/* 2. What's happening */}
-                            <div className="flex flex-col gap-1">
-                              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                                What's happening
-                              </p>
-                              <p className="text-sm">
-                                {message.content.happening}
-                              </p>
-                            </div>
-                            
-                            {/* 3. Do this now */}
-                            <div className="flex flex-col gap-1">
-                              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                                Do this now
-                              </p>
-                              <p className="text-sm leading-relaxed">
-                                {message.content.doThis}
-                              </p>
-                            </div>
-                            
-                            {/* 4. Avoid */}
-                            <div className="flex flex-col gap-1">
-                              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                                Avoid
-                              </p>
-                              <p className="text-sm">
-                                {message.content.avoid}
-                              </p>
-                            </div>
-                            
-                            {/* 5. Say this */}
-                            <div className="flex flex-col gap-1">
-                              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                                Say this
-                              </p>
-                              <p className="text-sm italic">
-                                {message.content.sayThis}
-                              </p>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                ))}
-                {isLoading && (
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <div className="h-1 w-1 animate-pulse rounded-full bg-foreground" />
-                    <div className="h-1 w-1 animate-pulse rounded-full bg-foreground delay-75" />
-                    <div className="h-1 w-1 animate-pulse rounded-full bg-foreground delay-150" />
-                  </div>
-                )}
-                <div ref={messagesEndRef} />
-              </div>
-            )}
-          </div>
+                          </div>
+                          
+                          {/* What's happening */}
+                          <div>
+                            <MicroLabel>What's happening</MicroLabel>
+                            <Spacer size="xs" />
+                            <Body>{message.content.happening}</Body>
+                          </div>
+                          
+                          {/* Do this now */}
+                          <div>
+                            <MicroLabel>Do this now</MicroLabel>
+                            <Spacer size="xs" />
+                            <Body>{message.content.doThis}</Body>
+                          </div>
+                          
+                          {/* Avoid */}
+                          <div>
+                            <MicroLabel>Avoid</MicroLabel>
+                            <Spacer size="xs" />
+                            <Body>{message.content.avoid}</Body>
+                          </div>
+                          
+                          {/* Say this */}
+                          <div>
+                            <MicroLabel>Say this</MicroLabel>
+                            <Spacer size="xs" />
+                            <Body muted>"{message.content.sayThis}"</Body>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+              {isLoading && (
+                <div className="flex gap-1.5">
+                  <div className="h-1 w-1 rounded-full bg-white/40 animate-pulse" />
+                  <div className="h-1 w-1 rounded-full bg-white/40 animate-pulse [animation-delay:150ms]" />
+                  <div className="h-1 w-1 rounded-full bg-white/40 animate-pulse [animation-delay:300ms]" />
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+          )}
         </div>
+      </div>
 
-        {/* Input area - pinned to bottom with iOS keyboard handling */}
-        <div className="border-t border-border bg-background px-6 py-4 safe-bottom">
-          <div className="mx-auto w-full max-w-2xl">
-            <form onSubmit={handleSend} className="flex gap-2">
-              <Input
+      {/* Input area - pinned to bottom */}
+      <div className="border-t border-white/10 bg-black px-6 py-6 safe-bottom">
+        <div className="mx-auto w-full max-w-[760px]">
+          <form onSubmit={handleSend} className="flex items-end gap-4">
+            <div className="flex-1">
+              <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type your message..."
                 disabled={isLoading}
-                className="flex-1 bg-muted"
+                className="w-full bg-transparent border-b border-white/20 py-4 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-none placeholder:text-white/25"
               />
-              <Button 
-                type="submit" 
-                size="icon"
-                disabled={isLoading || !input.trim()}
-                variant="ghost"
-              >
-                <Send className="h-5 w-5" />
-                <span className="sr-only">Send</span>
-              </Button>
-            </form>
-          </div>
+            </div>
+            <button 
+              type="submit" 
+              disabled={isLoading || !input.trim()}
+              className="text-[14px] tracking-[0.18em] uppercase text-white/80 hover:text-white disabled:opacity-40 pb-4"
+            >
+              Send
+            </button>
+          </form>
         </div>
-      </main>
+      </div>
       
       <BuildStamp />
     </div>
