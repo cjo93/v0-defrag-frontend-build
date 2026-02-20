@@ -2,12 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Navigation } from '@/components/navigation';
 import { BuildStamp } from '@/components/build-stamp';
-import { CTAButton } from '@/components/cta-button';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { saveUserContext, saveBaseline } from '@/lib/api';
 import { sendMagicLink } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
@@ -119,7 +114,7 @@ export default function ConnectClient() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full bg-transparent border-b border-white/20 py-5 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-colors placeholder:text-white/25"
+                  className="w-full bg-transparent border-b border-white/20 py-5 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-none placeholder:text-white/25"
                 />
               </div>
 
@@ -130,7 +125,7 @@ export default function ConnectClient() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="mt-16 text-[14px] tracking-[0.18em] uppercase text-white/80 hover:text-white transition-colors disabled:opacity-40"
+                className="mt-16 text-[14px] tracking-[0.18em] uppercase text-white/80 hover:text-white disabled:opacity-40"
               >
                 {isLoading ? 'Sending...' : 'Begin'}
               </button>
@@ -155,7 +150,7 @@ export default function ConnectClient() {
 
             <button
               onClick={() => setStep('email')}
-              className="mt-20 text-[14px] tracking-[0.18em] uppercase text-white/80 hover:text-white transition-colors"
+              className="mt-20 text-[14px] tracking-[0.18em] uppercase text-white/80 hover:text-white"
             >
               Try a different email
             </button>
@@ -186,7 +181,7 @@ export default function ConnectClient() {
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   required
-                  className="w-full bg-transparent border-b border-white/20 py-5 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-colors placeholder:text-white/25"
+                  className="w-full bg-transparent border-b border-white/20 py-5 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-none placeholder:text-white/25"
                 />
               </div>
 
@@ -201,7 +196,7 @@ export default function ConnectClient() {
                   value={timezone}
                   onChange={(e) => setTimezone(e.target.value)}
                   required
-                  className="w-full bg-transparent border-b border-white/20 py-5 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-colors placeholder:text-white/25"
+                  className="w-full bg-transparent border-b border-white/20 py-5 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-none placeholder:text-white/25"
                 />
               </div>
 
@@ -212,7 +207,7 @@ export default function ConnectClient() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="mt-16 text-[14px] tracking-[0.18em] uppercase text-white/80 hover:text-white transition-colors disabled:opacity-40"
+                className="mt-16 text-[14px] tracking-[0.18em] uppercase text-white/80 hover:text-white disabled:opacity-40"
               >
                 {isLoading ? 'Saving...' : 'Continue'}
               </button>
@@ -243,7 +238,7 @@ export default function ConnectClient() {
                   value={dob}
                   onChange={(e) => setDob(e.target.value)}
                   required
-                  className="w-full bg-transparent border-b border-white/20 py-5 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-colors placeholder:text-white/25"
+                  className="w-full bg-transparent border-b border-white/20 py-5 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-none placeholder:text-white/25"
                 />
               </div>
 
@@ -256,7 +251,7 @@ export default function ConnectClient() {
                   type="time"
                   value={birthTime}
                   onChange={(e) => setBirthTime(e.target.value)}
-                  className="w-full bg-transparent border-b border-white/20 py-5 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-colors placeholder:text-white/25"
+                  className="w-full bg-transparent border-b border-white/20 py-5 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-none placeholder:text-white/25"
                 />
               </div>
 
@@ -271,7 +266,7 @@ export default function ConnectClient() {
                   value={birthCity}
                   onChange={(e) => setBirthCity(e.target.value)}
                   required
-                  className="w-full bg-transparent border-b border-white/20 py-5 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-colors placeholder:text-white/25"
+                  className="w-full bg-transparent border-b border-white/20 py-5 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-none placeholder:text-white/25"
                 />
               </div>
 
@@ -282,7 +277,7 @@ export default function ConnectClient() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="mt-16 text-[14px] tracking-[0.18em] uppercase text-white/80 hover:text-white transition-colors disabled:opacity-40"
+                className="mt-16 text-[14px] tracking-[0.18em] uppercase text-white/80 hover:text-white disabled:opacity-40"
               >
                 {isLoading ? 'Saving...' : 'Complete setup'}
               </button>

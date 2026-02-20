@@ -87,11 +87,8 @@ export default function SelfReadoutClient() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen flex-col bg-background">
-        <Navigation isAuthenticated={true} onSignOut={signOut} />
-        <main className="flex flex-1 items-center justify-center safe-top safe-bottom">
-          <p className="text-muted-foreground">Loading...</p>
-        </main>
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <p className="text-[14px] text-white/40">Loading...</p>
         <BuildStamp />
       </div>
     );
@@ -100,64 +97,52 @@ export default function SelfReadoutClient() {
   // Locked state
   if (readout?.locked) {
     return (
-      <div className="flex min-h-screen flex-col bg-background">
-        <Navigation isAuthenticated={true} onSignOut={signOut} />
-        
-        <main className="flex flex-1 flex-col items-center justify-center px-6 safe-top safe-bottom">
-          <div className="flex max-w-md flex-col gap-6 text-center">
-            <div className="flex flex-col gap-2">
-              <h1 className="text-3xl font-bold">Your Manual</h1>
-              <p className="text-sm text-muted-foreground">
-                Unlock your complete baseline readout
+      <div className="min-h-screen bg-black text-white flex items-start pt-32">
+        <div className="w-full max-w-[520px] mx-auto px-6 md:px-8">
+          <div>
+            <h1 className="font-display text-[38px] md:text-[46px] leading-[1.18] tracking-[-0.015em] font-normal mb-7">
+              Your Manual
+            </h1>
+            <p className="text-[15px] text-white/45 leading-[1.7] max-w-[420px] mb-20">
+              Unlock your complete baseline readout
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            <div className="mb-12">
+              <h2 className="font-display text-[24px] leading-[1.3] tracking-[-0.01em] font-normal mb-2">
+                Blueprint
+              </h2>
+              <p className="text-[15px] text-white/45">
+                Your complete baseline analysis
               </p>
             </div>
-
-            <div className="flex flex-col gap-4 rounded-lg border border-border bg-muted/20 p-6">
-              <div className="flex flex-col gap-2">
-                <h2 className="text-xl font-semibold">Blueprint</h2>
-                <p className="text-sm text-muted-foreground">
-                  Your complete baseline analysis
-                </p>
-              </div>
-              
-              <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-bold">$11</span>
-                <span className="text-muted-foreground">one-time</span>
-              </div>
-
-              <ul className="flex flex-col gap-2 text-left text-sm">
-                <li className="flex items-start gap-2">
-                  <span className="text-foreground">•</span>
-                  <span>Energy Style analysis</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-foreground">•</span>
-                  <span>Friction patterns</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-foreground">•</span>
-                  <span>Family Echoes</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-foreground">•</span>
-                  <span>Daily Weather forecast</span>
-                </li>
-              </ul>
-
-              {error && (
-                <p className="text-sm text-destructive">{error}</p>
-              )}
-
-              <CTAButton 
-                onClick={handleUnlock} 
-                disabled={isCheckingOut}
-                className="w-full"
-              >
-                {isCheckingOut ? 'Redirecting...' : 'Unlock Blueprint'}
-              </CTAButton>
+            
+            <div className="flex items-baseline gap-2 mb-10">
+              <span className="font-display text-[42px] leading-none">$11</span>
+              <span className="text-[13px] text-white/40">one-time</span>
             </div>
+
+            <ul className="space-y-3 text-[14px] text-white/60 mb-16">
+              <li>Energy Style analysis</li>
+              <li>Friction patterns</li>
+              <li>Family Echoes</li>
+              <li>Daily Weather forecast</li>
+            </ul>
+
+            {error && (
+              <p className="text-[12px] text-white/40 mb-4">{error}</p>
+            )}
+
+            <button
+              onClick={handleUnlock}
+              disabled={isCheckingOut}
+              className="text-[14px] tracking-[0.18em] uppercase text-white/80 hover:text-white disabled:opacity-40"
+            >
+              {isCheckingOut ? 'Redirecting...' : 'Unlock Blueprint'}
+            </button>
           </div>
-        </main>
+        </div>
         
         <BuildStamp />
       </div>
@@ -166,43 +151,43 @@ export default function SelfReadoutClient() {
 
   // Unlocked readout
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <Navigation isAuthenticated={true} onSignOut={signOut} />
-      
-      <main className="flex flex-1 flex-col px-6 py-16 safe-top safe-bottom">
-        <div className="mx-auto w-full max-w-2xl">
-          {/* Header */}
-          <div className="mb-12">
-            <h1 className="text-3xl font-bold">Your Manual</h1>
-          </div>
+    <div className="min-h-screen bg-black text-white flex items-start pt-24">
+      <div className="w-full max-w-[640px] mx-auto px-6 md:px-8 pb-32">
+        {/* Header */}
+        <div className="mb-20">
+          <h1 className="font-display text-[38px] md:text-[46px] leading-[1.18] tracking-[-0.015em] font-normal">
+            Your Manual
+          </h1>
+        </div>
 
-          {/* Readout sections */}
-          <div className="flex flex-col gap-12">
-            {readout?.insights?.map((insight, index) => (
-              <div key={index} className="flex flex-col gap-4">
-                <h2 className="text-xl font-semibold">{insight.title}</h2>
-                <p className="leading-relaxed text-foreground/90">
-                  {insight.content}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          {/* Upgrade CTA */}
-          <div className="mt-16 flex flex-col gap-4 rounded-lg border border-border bg-muted/20 p-6">
-            <div className="flex flex-col gap-2">
-              <h2 className="text-xl font-semibold">Upgrade to DEFRAG OS</h2>
-              <p className="text-sm text-muted-foreground">
-                Add your people and access Crisis Mode
+        {/* Readout sections */}
+        <div className="space-y-20">
+          {readout?.insights?.map((insight, index) => (
+            <div key={index}>
+              <h2 className="font-display text-[24px] leading-[1.3] tracking-[-0.01em] font-normal mb-6 text-white">
+                {insight.title}
+              </h2>
+              <p className="text-[15px] leading-[1.7] text-white/60">
+                {insight.content}
               </p>
             </div>
-            
-            <CTAButton onClick={handleUpgradeOS} disabled={isCheckingOut} className="w-full">
-              {isCheckingOut ? 'Redirecting...' : 'Upgrade for $33/month'}
-            </CTAButton>
-          </div>
+          ))}
         </div>
-      </main>
+
+        {/* Upgrade CTA - silent reference */}
+        <div className="mt-32 pt-12 border-t border-white/10">
+          <p className="text-[15px] leading-[1.7] text-white/45 mb-6">
+            Add your people and access Crisis Mode
+          </p>
+          <button
+            onClick={handleUpgradeOS}
+            disabled={isCheckingOut}
+            className="text-[14px] tracking-[0.18em] uppercase text-white/80 hover:text-white disabled:opacity-40"
+          >
+            {isCheckingOut ? 'Redirecting...' : 'Upgrade to OS'}
+          </button>
+        </div>
+      </div>
       
       <BuildStamp />
     </div>
