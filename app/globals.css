@@ -42,6 +42,7 @@
 }
 
 @theme inline {
+  --font-display: 'Playfair Display', 'Playfair Display Fallback', serif;
   --font-sans: 'Geist', 'Geist Fallback';
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --color-background: var(--background);
@@ -70,21 +71,46 @@
 }
 
 @layer base {
-  /* Force pure black everywhere */
-  html, body {
-    background: #000;
-    color: #fff;
+  /* Force pure black everywhere with !important */
+  html {
+    background: #000 !important;
+    color: #fff !important;
+  }
+  
+  body {
+    background: #000 !important;
+    color: #fff !important;
+    min-height: 100dvh !important;
   }
   
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
 }
 
 @layer utilities {
+  /* Editorial typography system */
+  .font-display {
+    font-family: var(--font-display);
+  }
+  
+  .micro-label {
+    font-size: 10px;
+    letter-spacing: 0.36em;
+    text-transform: uppercase;
+    opacity: 0.4;
+  }
+  
+  .hairline {
+    border-top: 1px solid rgba(255, 255, 255, 0.10);
+  }
+  
+  .editorial-rail {
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
   /* Subtle border glow accent (restrained, premium) */
   .defrag-accent-ring {
     box-shadow:

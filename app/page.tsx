@@ -36,27 +36,27 @@ export default function Home() {
     <div className="flex min-h-screen flex-col">
       <Navigation isAuthenticated={false} />
       
-      <main className="flex flex-1 flex-col justify-center px-8 py-16 safe-top safe-bottom">
-        <div className="mx-auto flex w-full max-w-3xl flex-col items-start text-left">
-          {/* Headline */}
-          <h1 className="mt-24 max-w-[18ch] text-[42px] font-[300] leading-[1.05] tracking-tight text-white">
+      <main className="flex flex-1 flex-col justify-center px-6 py-16 safe-top safe-bottom md:px-10">
+        <div className="editorial-rail">
+          {/* Headline - Playfair display */}
+          <h1 className="font-display text-[48px] font-[400] leading-[1.05] tracking-tight text-white md:text-[72px]">
             The user manual for you, and your people.
           </h1>
           
-          {/* Subhead - static, subtle */}
-          <p className="mt-6 text-base text-white/50">
-            For your parent. Your partner. Your legacy.
+          {/* Subhead - static, minimal */}
+          <p className="mt-6 text-[15px] leading-relaxed text-white/40 md:text-[17px]">
+            Your parent. Your partner. Your legacy.
           </p>
           
-          {/* CTA - proper surface button */}
-          <Link href="/connect">
-            <button className="mt-10 rounded-xl border border-white/15 bg-white/[0.04] px-6 py-4 text-sm font-medium tracking-wide text-white transition hover:border-white/30 hover:bg-white/[0.06]">
+          {/* CTA */}
+          <Link href="/connect" className="mt-12 inline-block">
+            <button className="defrag-accent-ring rounded-lg border border-white/10 bg-white/[0.02] px-7 py-4 text-sm font-medium tracking-wide text-white transition-all duration-200">
               Begin
             </button>
           </Link>
           
           {/* Sign in - subtle link */}
-          <Link href="/connect" className="mt-4 text-sm text-white/40 transition hover:text-white/60">
+          <Link href="/connect" className="mt-5 block text-sm text-white/30 transition-colors duration-200 hover:text-white/50">
             Sign in
           </Link>
         </div>

@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Geist, Geist_Mono, Playfair_Display } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 
+const _playfair = Playfair_Display({ subsets: ["latin"], variable: '--font-display' });
 const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
