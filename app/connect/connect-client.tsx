@@ -97,8 +97,8 @@ export default function ConnectClient() {
       <div className="w-full max-w-[560px] mx-auto px-6 md:px-8">
         {/* Email Step */}
         {step === 'email' && (
-          <div className="space-y-12">
-            <div>
+          <div>
+            <div className="text-left">
               <h1 className="font-display text-[42px] md:text-[52px] leading-[1.15] tracking-[-0.02em] font-normal mb-7">
                 Sign in
               </h1>
@@ -107,9 +107,9 @@ export default function ConnectClient() {
               </p>
             </div>
 
-            <form onSubmit={handleSendMagicLink} className="space-y-8">
+            <form onSubmit={handleSendMagicLink} className="mt-20">
               <div>
-                <label htmlFor="email" className="micro-label block mb-2">
+                <label htmlFor="email" className="block text-[10px] tracking-[0.35em] text-white/35 uppercase mb-3">
                   EMAIL
                 </label>
                 <input
@@ -119,18 +119,18 @@ export default function ConnectClient() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full bg-transparent border-b border-white/18 pb-3.5 text-base tracking-[0.02em] transition-colors duration-180 focus:border-white/45 focus:outline-none placeholder:text-white/25"
+                  className="w-full bg-transparent border-b border-white/20 py-4 text-[18px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-colors placeholder:text-white/25"
                 />
               </div>
 
               {error && (
-                <p className="text-sm text-red-400">{error}</p>
+                <p className="text-[12px] text-white/40 mt-3">{error}</p>
               )}
 
               <button
                 type="submit"
                 disabled={isLoading}
-                className="h-12 px-7 border border-white/30 bg-transparent text-sm tracking-wide transition-colors duration-180 hover:border-white/60 disabled:opacity-40"
+                className="mt-16 text-[14px] tracking-[0.25em] uppercase text-white/80 hover:text-white transition-colors disabled:opacity-40"
               >
                 {isLoading ? 'Sending...' : 'Begin'}
               </button>
@@ -140,8 +140,8 @@ export default function ConnectClient() {
 
         {/* Verify Step */}
         {step === 'verify' && (
-          <div className="space-y-12">
-            <div>
+          <div>
+            <div className="text-left">
               <h1 className="font-display text-[42px] md:text-[52px] leading-[1.15] tracking-[-0.02em] font-normal mb-7">
                 Check your email
               </h1>
@@ -155,7 +155,7 @@ export default function ConnectClient() {
 
             <button
               onClick={() => setStep('email')}
-              className="text-sm text-white/40 transition-colors duration-180 hover:text-white/60"
+              className="mt-20 text-[14px] tracking-[0.25em] uppercase text-white/80 hover:text-white transition-colors"
             >
               Try a different email
             </button>
@@ -164,8 +164,8 @@ export default function ConnectClient() {
 
         {/* Context Step (Step 1 of onboarding) */}
         {step === 'context' && (
-          <div className="space-y-12">
-            <div>
+          <div>
+            <div className="text-left">
               <h1 className="font-display text-[42px] md:text-[52px] leading-[1.15] tracking-[-0.02em] font-normal mb-7">
                 Step 1 of 2
               </h1>
@@ -174,9 +174,9 @@ export default function ConnectClient() {
               </p>
             </div>
 
-            <form onSubmit={handleSaveContext} className="space-y-8">
+            <form onSubmit={handleSaveContext} className="mt-20">
               <div>
-                <label htmlFor="city" className="micro-label block mb-2">
+                <label htmlFor="city" className="block text-[10px] tracking-[0.35em] text-white/35 uppercase mb-3">
                   CITY
                 </label>
                 <input
@@ -186,12 +186,12 @@ export default function ConnectClient() {
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   required
-                  className="w-full bg-transparent border-b border-white/18 pb-3.5 text-base tracking-[0.02em] transition-colors duration-180 focus:border-white/45 focus:outline-none placeholder:text-white/25"
+                  className="w-full bg-transparent border-b border-white/20 py-4 text-[18px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-colors placeholder:text-white/25"
                 />
               </div>
 
-              <div>
-                <label htmlFor="timezone" className="micro-label block mb-2">
+              <div className="mt-14">
+                <label htmlFor="timezone" className="block text-[10px] tracking-[0.35em] text-white/35 uppercase mb-3">
                   TIMEZONE
                 </label>
                 <input
@@ -201,18 +201,18 @@ export default function ConnectClient() {
                   value={timezone}
                   onChange={(e) => setTimezone(e.target.value)}
                   required
-                  className="w-full bg-transparent border-b border-white/18 pb-3.5 text-base tracking-[0.02em] transition-colors duration-180 focus:border-white/45 focus:outline-none placeholder:text-white/25"
+                  className="w-full bg-transparent border-b border-white/20 py-4 text-[18px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-colors placeholder:text-white/25"
                 />
               </div>
 
               {error && (
-                <p className="text-sm text-red-400">{error}</p>
+                <p className="text-[12px] text-white/40 mt-3">{error}</p>
               )}
 
               <button
                 type="submit"
                 disabled={isLoading}
-                className="h-12 px-7 border border-white/30 bg-transparent text-sm tracking-wide transition-colors duration-180 hover:border-white/60 disabled:opacity-40"
+                className="mt-16 text-[14px] tracking-[0.25em] uppercase text-white/80 hover:text-white transition-colors disabled:opacity-40"
               >
                 {isLoading ? 'Saving...' : 'Continue'}
               </button>
@@ -222,8 +222,8 @@ export default function ConnectClient() {
 
         {/* Baseline Step (Step 2 of onboarding) */}
         {step === 'baseline' && (
-          <div className="space-y-12">
-            <div>
+          <div>
+            <div className="text-left">
               <h1 className="font-display text-[42px] md:text-[52px] leading-[1.15] tracking-[-0.02em] font-normal mb-7">
                 Step 2 of 2
               </h1>
@@ -232,9 +232,9 @@ export default function ConnectClient() {
               </p>
             </div>
 
-            <form onSubmit={handleSaveBaseline} className="space-y-8">
+            <form onSubmit={handleSaveBaseline} className="mt-20">
               <div>
-                <label htmlFor="dob" className="micro-label block mb-2">
+                <label htmlFor="dob" className="block text-[10px] tracking-[0.35em] text-white/35 uppercase mb-3">
                   DATE OF BIRTH
                 </label>
                 <input
@@ -243,12 +243,12 @@ export default function ConnectClient() {
                   value={dob}
                   onChange={(e) => setDob(e.target.value)}
                   required
-                  className="w-full bg-transparent border-b border-white/18 pb-3.5 text-base tracking-[0.02em] transition-colors duration-180 focus:border-white/45 focus:outline-none placeholder:text-white/25"
+                  className="w-full bg-transparent border-b border-white/20 py-4 text-[18px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-colors placeholder:text-white/25"
                 />
               </div>
 
-              <div>
-                <label htmlFor="birthTime" className="micro-label block mb-2">
+              <div className="mt-14">
+                <label htmlFor="birthTime" className="block text-[10px] tracking-[0.35em] text-white/35 uppercase mb-3">
                   BIRTH TIME (OPTIONAL)
                 </label>
                 <input
@@ -256,12 +256,12 @@ export default function ConnectClient() {
                   type="time"
                   value={birthTime}
                   onChange={(e) => setBirthTime(e.target.value)}
-                  className="w-full bg-transparent border-b border-white/18 pb-3.5 text-base tracking-[0.02em] transition-colors duration-180 focus:border-white/45 focus:outline-none placeholder:text-white/25"
+                  className="w-full bg-transparent border-b border-white/20 py-4 text-[18px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-colors placeholder:text-white/25"
                 />
               </div>
 
-              <div>
-                <label htmlFor="birthCity" className="micro-label block mb-2">
+              <div className="mt-14">
+                <label htmlFor="birthCity" className="block text-[10px] tracking-[0.35em] text-white/35 uppercase mb-3">
                   BIRTH CITY
                 </label>
                 <input
@@ -271,18 +271,18 @@ export default function ConnectClient() {
                   value={birthCity}
                   onChange={(e) => setBirthCity(e.target.value)}
                   required
-                  className="w-full bg-transparent border-b border-white/18 pb-3.5 text-base tracking-[0.02em] transition-colors duration-180 focus:border-white/45 focus:outline-none placeholder:text-white/25"
+                  className="w-full bg-transparent border-b border-white/20 py-4 text-[18px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-colors placeholder:text-white/25"
                 />
               </div>
 
               {error && (
-                <p className="text-sm text-red-400">{error}</p>
+                <p className="text-[12px] text-white/40 mt-3">{error}</p>
               )}
 
               <button
                 type="submit"
                 disabled={isLoading}
-                className="h-12 px-7 border border-white/30 bg-transparent text-sm tracking-wide transition-colors duration-180 hover:border-white/60 disabled:opacity-40"
+                className="mt-16 text-[14px] tracking-[0.25em] uppercase text-white/80 hover:text-white transition-colors disabled:opacity-40"
               >
                 {isLoading ? 'Saving...' : 'Complete setup'}
               </button>
