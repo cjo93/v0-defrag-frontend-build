@@ -6,6 +6,17 @@ import { BuildStamp } from '@/components/build-stamp';
 import { saveUserContext, saveBaseline } from '@/lib/api';
 import { sendMagicLink } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
+import {
+  AppShell,
+  EditorialRail,
+  H1,
+  Body,
+  MicroLabel,
+  Spacer,
+  LineInput,
+  TextActionButton,
+  Hint,
+} from '@/components/editorial';
 
 type Step = 'email' | 'verify' | 'context' | 'baseline';
 
@@ -78,7 +89,6 @@ export default function ConnectClient() {
 
     try {
       await saveBaseline(dob, birthTime || null, birthCity);
-      // Redirect to self readout
       window.location.href = '/readout/self';
     } catch (err) {
       setError('Failed to save your baseline. Please try again.');
@@ -88,205 +98,175 @@ export default function ConnectClient() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex items-start pt-32">
-      <div className="w-full max-w-[520px] mx-auto px-6 md:px-8">
+    <AppShell>
+      <EditorialRail variant="intake">
         {/* Email Step */}
         {step === 'email' && (
-          <div>
-            <div className="text-left">
-              <h1 className="font-display text-[38px] md:text-[46px] leading-[1.18] tracking-[-0.015em] font-normal mb-7">
-                Sign in
-              </h1>
-              <p className="text-[15px] text-white/45 leading-[1.7] max-w-[420px]">
-                We'll send a secure link. No password.
-              </p>
-            </div>
+          <>
+            <H1>Sign in</H1>
+            <Spacer size="m" />
+            <Body>We'll send a secure link. No password.</Body>
+            <Spacer size="l" />
 
-            <form onSubmit={handleSendMagicLink} className="mt-20">
-              <div>
-                <label htmlFor="email" className="block text-[10px] tracking-[0.35em] text-white/35 uppercase mb-3">
-                  EMAIL
-                </label>
-                <input
+            <form onSubmit={handleSendMagicLink}>
+              <MicroLabel>EMAIL</MicroLabel>
+              <div className="mt-3">
+                <LineInput
                   id="email"
                   type="email"
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full bg-transparent border-b border-white/20 py-5 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-none placeholder:text-white/25"
                 />
               </div>
 
               {error && (
-                <p className="text-[12px] text-white/40 mt-3">{error}</p>
+                <>
+                  <Spacer size="s" />
+                  <Hint>{error}</Hint>
+                </>
               )}
 
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="mt-16 text-[14px] tracking-[0.18em] uppercase text-white/80 hover:text-white disabled:opacity-40"
-              >
+              <Spacer size="l" />
+              <TextActionButton type="submit" disabled={isLoading}>
                 {isLoading ? 'Sending...' : 'Begin'}
-              </button>
+              </TextActionButton>
             </form>
-          </div>
+          </>
         )}
 
         {/* Verify Step */}
         {step === 'verify' && (
-          <div>
-            <div className="text-left">
-              <h1 className="font-display text-[38px] md:text-[46px] leading-[1.18] tracking-[-0.015em] font-normal mb-7">
-                Check your email
-              </h1>
-              <p className="text-[15px] text-white/45 leading-[1.7] max-w-[420px]">
-                We sent a magic link to <span className="text-white">{email}</span>
-              </p>
-              <p className="mt-4 text-[15px] text-white/45 leading-[1.7]">
-                Click the link to continue.
-              </p>
+          <>
+            <H1>Check your email</H1>
+            <Spacer size="m" />
+            <Body>
+              We sent a magic link to <span className="text-white">{email}</span>
+            </Body>
+            <div className="mt-4">
+              <Body>Click the link to continue.</Body>
             </div>
 
-            <button
-              onClick={() => setStep('email')}
-              className="mt-20 text-[14px] tracking-[0.18em] uppercase text-white/80 hover:text-white"
-            >
+            <Spacer size="l" />
+            <TextActionButton onClick={() => setStep('email')}>
               Try a different email
-            </button>
-          </div>
+            </TextActionButton>
+          </>
         )}
 
         {/* Context Step (Step 1 of onboarding) */}
         {step === 'context' && (
-          <div>
-            <div className="text-left">
-              <h1 className="font-display text-[38px] md:text-[46px] leading-[1.18] tracking-[-0.015em] font-normal mb-7">
-                Step 1 of 2
-              </h1>
-              <p className="text-[15px] text-white/45 leading-[1.7] max-w-[420px]">
-                Set your location for accurate timing
-              </p>
-            </div>
+          <>
+            <H1>Step 1 of 2</H1>
+            <Spacer size="m" />
+            <Body>Set your location for accurate timing</Body>
+            <Spacer size="l" />
 
-            <form onSubmit={handleSaveContext} className="mt-20">
-              <div>
-                <label htmlFor="city" className="block text-[10px] tracking-[0.35em] text-white/35 uppercase mb-3">
-                  CITY
-                </label>
-                <input
+            <form onSubmit={handleSaveContext}>
+              <MicroLabel>CITY</MicroLabel>
+              <div className="mt-3">
+                <LineInput
                   id="city"
                   type="text"
                   placeholder="San Francisco"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   required
-                  className="w-full bg-transparent border-b border-white/20 py-5 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-none placeholder:text-white/25"
                 />
               </div>
 
-              <div className="mt-14">
-                <label htmlFor="timezone" className="block text-[10px] tracking-[0.35em] text-white/35 uppercase mb-3">
-                  TIMEZONE
-                </label>
-                <input
+              <Spacer size="m" />
+
+              <MicroLabel>TIMEZONE</MicroLabel>
+              <div className="mt-3">
+                <LineInput
                   id="timezone"
                   type="text"
                   placeholder="America/Los_Angeles"
                   value={timezone}
                   onChange={(e) => setTimezone(e.target.value)}
                   required
-                  className="w-full bg-transparent border-b border-white/20 py-5 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-none placeholder:text-white/25"
                 />
               </div>
 
               {error && (
-                <p className="text-[12px] text-white/40 mt-3">{error}</p>
+                <>
+                  <Spacer size="s" />
+                  <Hint>{error}</Hint>
+                </>
               )}
 
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="mt-16 text-[14px] tracking-[0.18em] uppercase text-white/80 hover:text-white disabled:opacity-40"
-              >
+              <Spacer size="l" />
+              <TextActionButton type="submit" disabled={isLoading}>
                 {isLoading ? 'Saving...' : 'Continue'}
-              </button>
+              </TextActionButton>
             </form>
-          </div>
+          </>
         )}
 
         {/* Baseline Step (Step 2 of onboarding) */}
         {step === 'baseline' && (
-          <div>
-            <div className="text-left">
-              <h1 className="font-display text-[38px] md:text-[46px] leading-[1.18] tracking-[-0.015em] font-normal mb-7">
-                Step 2 of 2
-              </h1>
-              <p className="text-[15px] text-white/45 leading-[1.7] max-w-[420px]">
-                Set your baseline data
-              </p>
-            </div>
+          <>
+            <H1>Step 2 of 2</H1>
+            <Spacer size="m" />
+            <Body>Set your baseline data</Body>
+            <Spacer size="l" />
 
-            <form onSubmit={handleSaveBaseline} className="mt-20">
-              <div>
-                <label htmlFor="dob" className="block text-[10px] tracking-[0.35em] text-white/35 uppercase mb-3">
-                  DATE OF BIRTH
-                </label>
-                <input
+            <form onSubmit={handleSaveBaseline}>
+              <MicroLabel>DATE OF BIRTH</MicroLabel>
+              <div className="mt-3">
+                <LineInput
                   id="dob"
                   type="date"
                   value={dob}
                   onChange={(e) => setDob(e.target.value)}
                   required
-                  className="w-full bg-transparent border-b border-white/20 py-5 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-none placeholder:text-white/25"
                 />
               </div>
 
-              <div className="mt-14">
-                <label htmlFor="birthTime" className="block text-[10px] tracking-[0.35em] text-white/35 uppercase mb-3">
-                  BIRTH TIME (OPTIONAL)
-                </label>
-                <input
+              <Spacer size="m" />
+
+              <MicroLabel>BIRTH TIME (OPTIONAL)</MicroLabel>
+              <div className="mt-3">
+                <LineInput
                   id="birthTime"
                   type="time"
                   value={birthTime}
                   onChange={(e) => setBirthTime(e.target.value)}
-                  className="w-full bg-transparent border-b border-white/20 py-5 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-none placeholder:text-white/25"
                 />
               </div>
 
-              <div className="mt-14">
-                <label htmlFor="birthCity" className="block text-[10px] tracking-[0.35em] text-white/35 uppercase mb-3">
-                  BIRTH CITY
-                </label>
-                <input
+              <Spacer size="m" />
+
+              <MicroLabel>BIRTH CITY</MicroLabel>
+              <div className="mt-3">
+                <LineInput
                   id="birthCity"
                   type="text"
                   placeholder="Los Angeles"
                   value={birthCity}
                   onChange={(e) => setBirthCity(e.target.value)}
                   required
-                  className="w-full bg-transparent border-b border-white/20 py-5 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-none placeholder:text-white/25"
                 />
               </div>
 
               {error && (
-                <p className="text-[12px] text-white/40 mt-3">{error}</p>
+                <>
+                  <Spacer size="s" />
+                  <Hint>{error}</Hint>
+                </>
               )}
 
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="mt-16 text-[14px] tracking-[0.18em] uppercase text-white/80 hover:text-white disabled:opacity-40"
-              >
+              <Spacer size="l" />
+              <TextActionButton type="submit" disabled={isLoading}>
                 {isLoading ? 'Saving...' : 'Complete setup'}
-              </button>
+              </TextActionButton>
             </form>
-          </div>
+          </>
         )}
-      </div>
-      
+      </EditorialRail>
       <BuildStamp />
-    </div>
+    </AppShell>
   );
 }
