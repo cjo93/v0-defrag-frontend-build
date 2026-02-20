@@ -7,19 +7,28 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.app',
+  title: 'DEFRAG',
+  description: 'The user manual for you, and your people.',
+  applicationName: 'DEFRAG',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'DEFRAG',
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  manifest: '/manifest.json',
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    viewportFit: 'cover',
+  },
+  themeColor: '#000000',
   icons: {
     icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
       {
         url: '/icon.svg',
         type: 'image/svg+xml',
@@ -29,6 +38,9 @@ export const metadata: Metadata = {
   },
 }
 
+import { AuthProvider } from '@/lib/auth-context';
+import { AddToHomePrompt } from '@/components/add-to-home';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -37,7 +49,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="font-sans antialiased">
-        {children}
+        <AuthProvider>
+          {children}
+          <AddToHomePrompt />
+        </AuthProvider>
         <Analytics />
       </body>
     </html>
