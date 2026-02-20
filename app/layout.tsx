@@ -48,6 +48,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const isProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
+  const buildSha = process.env.VERCEL_GIT_COMMIT_SHA || 'LOCAL';
+
   return (
     <html lang="en" className="bg-[#000000] text-[#FFFFFF]">
       <body className="min-h-[100dvh] bg-[#000000] text-[#FFFFFF] font-sans antialiased">
@@ -56,6 +59,23 @@ export default function RootLayout({
           <AddToHomePrompt />
         </AuthProvider>
         <Analytics />
+        
+        {!isProduction && (
+          <div
+            style={{
+              position: 'fixed',
+              right: 16,
+              bottom: 12,
+              fontSize: 10,
+              opacity: 0.35,
+              fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+              color: '#fff',
+              pointerEvents: 'none',
+            }}
+          >
+            BUILD: {buildSha.slice(0, 7)}
+          </div>
+        )}
       </body>
     </html>
   )
