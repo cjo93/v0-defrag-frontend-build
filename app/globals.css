@@ -83,6 +83,8 @@
     background: #000 !important;
     color: #fff !important;
     overscroll-behavior: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   
   body {
@@ -91,10 +93,25 @@
     min-height: 100dvh !important;
     overscroll-behavior: none;
     font-family: -apple-system, BlinkMacSystemFont, "Inter", var(--font-sans);
+    padding-bottom: env(safe-area-inset-bottom);
   }
   
   * {
     @apply border-border outline-ring/50;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Prevent iOS input zoom */
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+  
+  /* Desktop cursor refinement - statement not clicky */
+  button,
+  a {
+    cursor: default;
   }
 }
 

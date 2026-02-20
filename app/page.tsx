@@ -2,12 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Navigation } from '@/components/navigation';
 import { BuildStamp } from '@/components/build-stamp';
-import { CTAButton } from '@/components/cta-button';
-import { Button } from '@/components/ui/button';
 import { IntroAnimation } from '@/components/intro-animation';
-import { RotatingText } from '@/components/rotating-text';
 
 export default function Home() {
   const [showIntro, setShowIntro] = useState(true);
