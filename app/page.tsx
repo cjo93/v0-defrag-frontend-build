@@ -1,16 +1,15 @@
-export default function Home() {
+import Hero from './components/Hero'
+
+export default function LandingPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center font-sans">
-      <main className="flex w-full max-w-3xl flex-col items-center gap-8 px-6 py-16 text-center sm:items-start sm:text-left">
-        <div className="flex flex-col gap-4">
-          <h1 className="text-4xl font-bold tracking-tight">
-            defrag.app
-          </h1>
-          <p className="max-w-md text-lg text-muted-foreground">
-            To get started, send a prompt or modify this page directly.
-          </p>
-        </div>
-      </main>
-    </div>
-  );
+    <main
+      style={{
+        background: 'var(--bg-black)',
+        minHeight: '100vh',
+        color: 'var(--text-primary)',
+      }}
+    >
+      <Hero />
+    </main>
+  )
 }
