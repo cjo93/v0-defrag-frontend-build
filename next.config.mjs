@@ -6,6 +6,14 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${process.env.NEXT_PUBLIC_API_BASE_URL}/:path*`, // Proxy to Backend
+      },
+    ]
+  },
 }
 
 export default nextConfig

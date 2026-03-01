@@ -1,8 +1,36 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { api } from '@/lib/api';
+import { useToast } from '@/hooks/use-toast';
 
 export default function LandingPage() {
   const [isLoaded, setIsLoaded] = useState(false);
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({ email: '', name: '', company: '', useCase: '' });
+
+    const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.email) return;
+
+    setIsLoading(true);
+    try {
+      await api.requestEarlyAccess(formData);
+      toast({
+        title: "Request Received",
+        description: "You're on the list. We'll be in touch.",
+      });
+      setFormData({ email: '', name: '', company: '', useCase: '' });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     // Trigger the crystallization effect after initial render
@@ -208,17 +236,17 @@ export default function LandingPage() {
           <h2 className="text-3xl font-serif mb-4">Request Access</h2>
           <p className="font-sans text-white/60 mb-10 text-sm">No spam. One launch note + limited alpha invites.</p>
 
-          <form className="space-y-4 text-left" onSubmit={(e) => e.preventDefault()}>
-            <input type="email" placeholder="Email Address *" required className="w-full bg-transparent border border-white/12 px-4 py-3 font-sans text-sm text-white placeholder-white/40 focus:outline-none focus:border-white/40" />
-            <input type="text" placeholder="Name" className="w-full bg-transparent border border-white/12 px-4 py-3 font-sans text-sm text-white placeholder-white/40 focus:outline-none focus:border-white/40" />
+          <form className="space-y-4 text-left" onSubmit={handleSubmit}>
+            <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} disabled={isLoading} placeholder="Email Address *" required className="w-full bg-transparent border border-white/12 px-4 py-3 font-sans text-sm text-white placeholder-white/40 focus:outline-none focus:border-white/40 disabled:opacity-50 transition-opacity" />
+            <input type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} disabled={isLoading} placeholder="Name" className="w-full bg-transparent border border-white/12 px-4 py-3 font-sans text-sm text-white placeholder-white/40 focus:outline-none focus:border-white/40 disabled:opacity-50 transition-opacity" />
             <div className="grid grid-cols-2 gap-4">
-               <input type="text" placeholder="Company (optional)" className="w-full bg-transparent border border-white/12 px-4 py-3 font-sans text-sm text-white placeholder-white/40 focus:outline-none focus:border-white/40" />
-               <input type="text" placeholder="Use case (optional)" className="w-full bg-transparent border border-white/12 px-4 py-3 font-sans text-sm text-white placeholder-white/40 focus:outline-none focus:border-white/40" />
+               <input type="text" value={formData.company} onChange={(e) => setFormData({...formData, company: e.target.value})} disabled={isLoading} placeholder="Company (optional)" className="w-full bg-transparent border border-white/12 px-4 py-3 font-sans text-sm text-white placeholder-white/40 focus:outline-none focus:border-white/40 disabled:opacity-50 transition-opacity" />
+               <input type="text" value={formData.useCase} onChange={(e) => setFormData({...formData, useCase: e.target.value})} disabled={isLoading} placeholder="Use case (optional)" className="w-full bg-transparent border border-white/12 px-4 py-3 font-sans text-sm text-white placeholder-white/40 focus:outline-none focus:border-white/40 disabled:opacity-50 transition-opacity" />
             </div>
 
             <div className="pt-4 flex flex-col sm:flex-row gap-4">
-              <button type="submit" className="flex-1 bg-white text-black font-sans text-sm font-medium py-4 hover:bg-white/90 transition-colors">
-                Request Early Access
+              <button type="submit" disabled={isLoading} className="flex-1 bg-white text-black font-sans text-sm font-medium py-4 hover:bg-white/90 transition-colors disabled:opacity-50 flex items-center justify-center">
+                {isLoading ? "Submitting..." : "Request Early Access"}
               </button>
               <a href="mailto:info@defrag.app" className="flex-1 bg-transparent border border-white/12 text-white font-sans text-sm font-medium py-4 hover:bg-white/5 transition-colors text-center flex items-center justify-center">
                 Email info@defrag.app
