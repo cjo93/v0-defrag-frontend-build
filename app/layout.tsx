@@ -1,32 +1,36 @@
-import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
-import './globals.css'
+import type { Metadata, Viewport } from 'next';
+import { Geist, Geist_Mono, Playfair_Display } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
+import './globals.css';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+const _playfair = Playfair_Display({ subsets: ["latin"], variable: '--font-display' });
+const _geist = Geist({ subsets: ["latin"] });
+const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+  themeColor: '#000000',
+};
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.app',
+  title: 'DEFRAG',
+  description: 'The user manual for you, and your people.',
+  applicationName: 'DEFRAG',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'DEFRAG',
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  manifest: '/manifest.json',
   icons: {
     icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
       {
         url: '/icon.svg',
         type: 'image/svg+xml',
@@ -34,20 +38,44 @@ export const metadata: Metadata = {
     ],
     apple: '/apple-icon.png',
   },
-}
+};
+
+import { AuthProvider } from '@/lib/auth-context';
+import { AddToHomePrompt } from '@/components/add-to-home';
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const isProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
+  const buildSha = process.env.VERCEL_GIT_COMMIT_SHA || 'LOCAL';
+
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
-      >
-        {children}
+    <html lang="en" className="bg-[#000000] text-[#FFFFFF]">
+      <body className="min-h-[100dvh] bg-[#000000] text-[#FFFFFF] font-sans antialiased">
+        <AuthProvider>
+          {children}
+          <AddToHomePrompt />
+        </AuthProvider>
         <Analytics />
+        
+        {!isProduction && (
+          <div
+            style={{
+              position: 'fixed',
+              right: 16,
+              bottom: 12,
+              fontSize: 10,
+              opacity: 0.35,
+              fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+              color: '#fff',
+              pointerEvents: 'none',
+            }}
+          >
+            BUILD: {buildSha.slice(0, 7)}
+          </div>
+        )}
       </body>
     </html>
   )
