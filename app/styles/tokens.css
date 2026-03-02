@@ -1,12 +1,12 @@
 :root {
   --bg-black: #000000;
-  --panel-black: #0b0b0b;
+  --panel-black: #050505;
   --text-primary: #ffffff;
-  --text-secondary: rgba(255,255,255,0.82);
+  --text-secondary: #888888;
   --text-muted: rgba(255,255,255,0.75);
-  --line-low: rgba(255,255,255,0.10);
-  --line-mid: rgba(255,255,255,0.15);
-  --accent-risk: #a33a3a;
+  --line-low: rgba(255,255,255,0.12);
+  --line-mid: rgba(255,255,255,0.25);
+  --accent-risk: #ffffff;
   --grid-opacity-hero: 0.04;
   --grid-opacity-diagnostic: 0.06;
   --spacing-xxl: 140px;
@@ -25,5 +25,12 @@ body {
   background-color: var(--bg-black);
   color: var(--text-primary);
   margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button, input, select, textarea {
+  border-radius: 0px !important;
+  font-family: inherit;
 }

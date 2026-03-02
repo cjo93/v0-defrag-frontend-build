@@ -1,11 +1,10 @@
 import type { Metadata, Viewport } from 'next';
-import { Geist, Geist_Mono, Playfair_Display } from 'next/font/google';
+import { Geist, Geist_Mono } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 
-const _playfair = Playfair_Display({ subsets: ["latin"], variable: '--font-display' });
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
+const geist = Geist({ subsets: ["latin"], variable: '--font-sans' });
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: '--font-mono' });
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -52,8 +51,8 @@ export default function RootLayout({
   const buildSha = process.env.VERCEL_GIT_COMMIT_SHA || 'LOCAL';
 
   return (
-    <html lang="en" className="bg-[#000000] text-[#FFFFFF]">
-      <body className="min-h-[100dvh] bg-[#000000] text-[#FFFFFF] font-sans antialiased">
+    <html lang="en" className={`${geist.variable} ${geistMono.variable} bg-black text-white`}>
+      <body className="min-h-[100dvh] bg-black text-white font-sans antialiased">
         <AuthProvider>
           {children}
           <AddToHomePrompt />
@@ -68,9 +67,10 @@ export default function RootLayout({
               bottom: 12,
               fontSize: 10,
               opacity: 0.35,
-              fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+              fontFamily: 'var(--font-mono)',
               color: '#fff',
               pointerEvents: 'none',
+              zIndex: 9999
             }}
           >
             BUILD: {buildSha.slice(0, 7)}
