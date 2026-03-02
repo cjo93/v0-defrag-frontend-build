@@ -7,5 +7,4 @@
 - Network:       http://192.168.0.2:3000
 
 ✓ Starting...
-✓ Ready in 334ms
-[Auth] Supabase not configured - auth features disabled in preview
+✓ Ready in 398ms
