@@ -1,21 +1,58 @@
 'use client';
-import { useEffect, useState } from 'react';
 
-export default function LandingPage() {
-  const [isLoaded, setIsLoaded] = useState(false);
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { BuildStamp } from '@/components/build-stamp';
+import { IntroAnimation } from '@/components/intro-animation';
+
+export default function Home() {
+  const [showIntro, setShowIntro] = useState(true);
+  const [hasSeenIntro, setHasSeenIntro] = useState(false);
 
   useEffect(() => {
-    // Trigger the crystallization effect after initial render
-    const timer = setTimeout(() => setIsLoaded(true), 50);
-    return () => clearTimeout(timer);
+    // Check if user has seen intro before
+    const seen = localStorage.getItem('defrag-intro-seen');
+    if (seen) {
+      setShowIntro(false);
+      setHasSeenIntro(true);
+    }
   }, []);
 
+  const handleIntroComplete = () => {
+    localStorage.setItem('defrag-intro-seen', 'true');
+    setShowIntro(false);
+    setHasSeenIntro(true);
+  };
+
+  if (showIntro && !hasSeenIntro) {
+    return <IntroAnimation onComplete={handleIntroComplete} />;
+  }
+
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-white selection:text-black">
-      {/* 1. NAV (minimal) */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 border-b border-white/12 bg-black/80 backdrop-blur-md">
-        <div className="text-sm tracking-widest uppercase font-sans">
-          DEFRAG
+    <div className="min-h-screen bg-black text-white flex flex-col">
+      <main className="flex flex-1 flex-col justify-center px-6 py-16 safe-top safe-bottom md:px-10">
+        <div className="max-w-[640px] mx-auto">
+          {/* Headline - locked typography */}
+          <h1 className="font-display text-[38px] md:text-[56px] leading-[1.18] tracking-[-0.01em] font-medium text-white">
+            The user manual for you, and your people.
+          </h1>
+          
+          {/* Subhead - static, restrained */}
+          <p className="mt-8 text-[16px] leading-[1.75] text-white/45 max-w-[480px]">
+            Your parent. Your partner. Your legacy.
+          </p>
+          
+          {/* CTA - statement not button */}
+          <Link href="/connect" className="mt-16 inline-block">
+            <span className="text-[14px] tracking-[0.18em] uppercase text-white/80 hover:text-white">
+              Begin
+            </span>
+          </Link>
+          
+          {/* Sign in - subtle reference */}
+          <Link href="/connect" className="mt-6 block text-[14px] text-white/30 hover:text-white/50">
+            Sign in
+          </Link>
         </div>
         <div className="flex items-center gap-6 text-sm font-sans">
           <a href="#early-access" className="text-white/80 hover:text-white transition-colors">Early Access</a>
@@ -228,38 +265,8 @@ export default function LandingPage() {
         </section>
 
       </main>
-
-      {/* 8. FOOTER */}
-      <footer className="px-6 py-8 border-t border-white/12 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-sans text-white/50">
-        <div>© DEFRAG</div>
-        <div className="flex gap-6">
-          <a href="#" className="hover:text-white transition-colors">Privacy</a>
-          <a href="#" className="hover:text-white transition-colors">Terms</a>
-          <a href="mailto:info@defrag.app" className="hover:text-white transition-colors">Contact</a>
-        </div>
-      </footer>
-
-      {/* WIRING PLAN (Dev notes) */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="hidden">
-          {`
-            WIRING PLAN:
-            - API base: https://api.defrag.app
-            - Auth: Bearer token
-            - Required env vars:
-              - NEXT_PUBLIC_API_BASE_URL
-              - NEXT_PUBLIC_API_VERSION (e.g. v1)
-              - NEXT_PUBLIC_SUPPORT_EMAIL = info@defrag.app
-            - Proxy pattern: Next.js route handler or Vercel rewrite for /api/* -> api.defrag.app
-            - CORS: allow origin https://defrag.app and https://www.defrag.app
-            - Initial endpoints:
-              - POST /v1/blueprint -> blueprint object
-              - GET /v1/blueprint/:id
-              - POST /v1/interaction -> interaction map
-              - GET /v1/timing/:id?date=YYYY-MM-DD
-          `}
-        </div>
-      )}
+      
+      <BuildStamp />
     </div>
   );
 }
