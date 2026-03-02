@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+
 export default function FinalCTA() {
   const scrollToBuild = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -104,6 +106,30 @@ export default function FinalCTA() {
         >
           DEFRAG © {new Date().getFullYear()}
         </span>
+        <div style={{ display: 'flex', gap: '24px' }}>
+          <Link
+            href="/contact"
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: 10,
+              letterSpacing: '0.1em',
+              color: 'var(--text-secondary)',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              transition: 'color 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              const el = e.currentTarget as HTMLAnchorElement;
+              el.style.color = '#ffffff';
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget as HTMLAnchorElement;
+              el.style.color = 'var(--text-secondary)';
+            }}
+          >
+            Contact
+          </Link>
+        </div>
       </footer>
     </section>
   )
