@@ -1,0 +1,17 @@
+.blur-reveal {
+  filter: blur(8px);
+  opacity: 0;
+  animation: crystallize 1.1s ease-out forwards;
+}
+
+@keyframes crystallize {
+  to {
+    filter: blur(0);
+    opacity: 1;
+  }
+}
+
+.delay-0 { animation-delay: 0ms; }
+.delay-120 { animation-delay: 120ms; }
+.delay-320 { animation-delay: 320ms; }
+.delay-450 { animation-delay: 450ms; }
