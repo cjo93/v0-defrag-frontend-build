@@ -1,10 +1,11 @@
 import Hero from './components/landing/Hero'
-import TrustStrip from './components/landing/TrustStrip'
-import ValueProp from './components/landing/ValueProp'
-import BuildModule from './components/landing/BuildModule'
-import ManualPreview from './components/landing/ManualPreview'
-import RelationalPreview from './components/landing/RelationalPreview'
-import TimingPreview from './components/landing/TimingPreview'
+import QuietTruth from './components/landing/QuietTruth'
+import WhatWeBelieve from './components/landing/WhatWeBelieve'
+import WhatDefragDoes from './components/landing/WhatDefragDoes'
+import InsideDashboard from './components/landing/InsideDashboard'
+import TimingMatters from './components/landing/TimingMatters'
+import WhatChanges from './components/landing/WhatChanges'
+import PrivateByDesign from './components/landing/PrivateByDesign'
 import FinalCTA from './components/landing/FinalCTA'
 
 export default function LandingPage() {
@@ -18,12 +19,13 @@ export default function LandingPage() {
       }}
     >
       <Hero />
-      <TrustStrip />
-      <ValueProp />
-      <BuildModule />
-      <ManualPreview />
-      <RelationalPreview />
-      <TimingPreview />
+      <QuietTruth />
+      <WhatWeBelieve />
+      <WhatDefragDoes />
+      <InsideDashboard />
+      <TimingMatters />
+      <WhatChanges />
+      <PrivateByDesign />
       <FinalCTA />
     </main>
   )
