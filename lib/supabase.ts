@@ -6,11 +6,9 @@ const isProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
 
 const isConfigured = !!supabaseUrl && !!supabaseAnonKey;
 
-// Production: strict enforcement. Preview/dev: optional with warning
+// Soft warning to prevent crashing the Vercel static analyzer during build.
 if (!isConfigured && isProduction) {
-  throw new Error(
-    'Missing Supabase configuration in production. NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY must be set.'
-  );
+  console.warn('Missing Supabase configuration in production build step. Next.js will ignore this until runtime.');
 }
 
 if (!isConfigured) {
