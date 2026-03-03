@@ -3,6 +3,11 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 
+import { Header } from '@/app/components/layout/Header';
+import { Footer } from '@/app/components/layout/Footer';
+import { AuthProvider } from '@/lib/auth-context';
+import { AddToHomePrompt } from '@/components/add-to-home';
+
 const geist = Geist({ subsets: ["latin"], variable: '--font-sans' });
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: '--font-mono' });
 
@@ -39,9 +44,6 @@ export const metadata: Metadata = {
   },
 };
 
-import { AuthProvider } from '@/lib/auth-context';
-import { AddToHomePrompt } from '@/components/add-to-home';
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -51,10 +53,12 @@ export default function RootLayout({
   const buildSha = process.env.VERCEL_GIT_COMMIT_SHA || 'LOCAL';
 
   return (
-    <html lang="en" className={`${geist.variable} ${geistMono.variable} bg-black text-white`}>
-      <body className="min-h-[100dvh] bg-black text-white font-sans antialiased">
+    <html lang="en" className={`${geist.variable} ${geistMono.variable} bg-background text-textPrimary`}>
+      <body className="bg-background text-textPrimary antialiased min-h-screen flex flex-col font-sans">
         <AuthProvider>
-          {children}
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
           <AddToHomePrompt />
         </AuthProvider>
         <Analytics />
