@@ -2,41 +2,72 @@ import { z } from "zod";
 
 // Layer 2: Constrained generation - strict JSON schema for SOVEREIGN Phase
 // Expanding beyond DEFRAG one-line scripts to full guidance model
-export const SovereignGuidanceSchema = z.object({
-  headline: z.string().min(2).max(80).describe("A short, clear headline for the response. Non-diagnostic, simple language."),
-  risk_level: z.enum(["low", "medium", "high"]).describe("Overall risk level of the situation."),
-  timing_recommendation: z.enum(["Push Day", "Neutral Day", "Protect Day"]).describe("Recommended timing approach based on system signals."),
-  explanation: z.object({
-    whats_happening: z.string().min(10).max(500).describe("Clear description of what is currently occurring."),
-    why: z.string().min(10).max(500).describe("Analytical explanation of why this may be happening, avoiding psychological labels.")
+export const DefragCrisisResponseSchema = z.object({
+  headline: z.string().describe("One sentence. Clear. No metaphor. No abstraction."),
+  signal: z.object({
+    level: z.enum(["low", "medium", "high_sensitivity"]).describe("Signal level"),
+    label: z.string().describe("Signal label")
   }),
-  suggested_response: z.string().min(10).max(1000).describe("Suggested course of action or verbal response in 2-5 simple sentences. No fluff, direct approach."),
-  data_tooltips: z.object({
-    conflict_history_count: z.number().int().min(0).describe("Number of relevant previous conflicts detected."),
-    stability_level: z.enum(["Low", "Moderate", "Strong"]).describe("Current assessed stability level."),
-    pattern_frequency: z.string().describe("Description of how often this pattern occurs (e.g., 'Weekly', 'Rare')."),
-    volatility_score: z.number().int().min(0).max(100).describe("Computed volatility score at this moment.")
+  confidence: z.object({
+    overall: z.number().int().min(0).max(100),
+    data_confidence: z.number().int().min(0).max(100),
+    pattern_confidence: z.number().int().min(0).max(100)
   }),
-  confidence_score: z.number().min(0).max(100).describe("Overall confidence in this assessment based on available data."),
+  whats_happening: z.array(z.string()).describe("2-4 bullet statements. Describe dynamic, describe protection response, avoid blame."),
+  do_this_now: z.string().describe("One immediate adjustment. Concrete. Behavioral."),
+  one_line_to_say: z.string().max(100).describe("Lower defensiveness, reduce intensity, avoid accusation, avoid absolutes. Maximum 20 words."),
+  repeat_pattern: z.object({
+    detected: z.boolean(),
+    message: z.string()
+  }),
+  timing: z.object({
+    recommendation: z.string(),
+    delay_suggested: z.boolean()
+  }),
+  decision_guard: z.object({
+    triggered: z.boolean(),
+    reason: z.string()
+  }),
+  safety: z.object({
+    level: z.enum(["none", "elevated", "high"]),
+    guidance: z.array(z.string())
+  })
 }).strict();
 
-export type SovereignGuidanceResponse = z.infer<typeof SovereignGuidanceSchema>;
+export type DefragCrisisResponse = z.infer<typeof DefragCrisisResponseSchema>;
 
 // Safe fallback if validation fails (anti-drift safety net)
-export const SAFE_FALLBACK_RESPONSE: SovereignGuidanceResponse = {
+export const SAFE_FALLBACK_RESPONSE: DefragCrisisResponse = {
   headline: "Pause required. System resetting.",
-  risk_level: "medium",
-  timing_recommendation: "Protect Day",
-  explanation: {
-    whats_happening: "The situation needs careful attention and assessment.",
-    why: "Insufficient clear data to provide a high-confidence analysis."
+  signal: {
+    level: "medium",
+    label: "Unknown"
   },
-  suggested_response: "Pause and assess the situation calmly. Identify one concrete action you can take in the next few minutes. Focus on clear, direct communication.",
-  data_tooltips: {
-    conflict_history_count: 0,
-    stability_level: "Moderate",
-    pattern_frequency: "Unknown",
-    volatility_score: 50
+  confidence: {
+    overall: 100,
+    data_confidence: 0,
+    pattern_confidence: 0
   },
-  confidence_score: 100
+  whats_happening: [
+    "The situation needs careful attention and assessment.",
+    "Insufficient clear data to provide a high-confidence analysis."
+  ],
+  do_this_now: "Pause and assess the situation calmly. Identify one concrete action you can take in the next few minutes. Focus on clear, direct communication.",
+  one_line_to_say: "I need a moment to process this before we continue.",
+  repeat_pattern: {
+    detected: false,
+    message: ""
+  },
+  timing: {
+    recommendation: "Protect Day",
+    delay_suggested: true
+  },
+  decision_guard: {
+    triggered: false,
+    reason: ""
+  },
+  safety: {
+    level: "none",
+    guidance: []
+  }
 };

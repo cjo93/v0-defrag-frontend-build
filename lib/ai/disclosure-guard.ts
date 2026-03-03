@@ -1,3 +1,5 @@
+import { DefragCrisisResponse } from './response-schema';
+
 // Layer 3: Disclosure filter - blocks leakage even if model tries
 
 const LEAK_PATTERNS: RegExp[] = [
@@ -54,21 +56,30 @@ export function guardDisclosure(text: string): { ok: boolean; reason?: string } 
 }
 
 // Apply to all string fields in Sovereign guidance response
-export function guardResponse(response: {
-  headline: string;
-  explanation: {
-    whats_happening: string;
-    why: string;
-  };
-  suggested_response: string;
-}): { ok: boolean; field?: string; reason?: string } {
+export function guardResponse(response: DefragCrisisResponse): { ok: boolean; field?: string; reason?: string } {
   
   const fields = [
     { name: 'headline', value: response.headline },
-    { name: 'whats_happening', value: response.explanation?.whats_happening },
-    { name: 'why', value: response.explanation?.why },
-    { name: 'suggested_response', value: response.suggested_response },
+    { name: 'do_this_now', value: response.do_this_now },
+    { name: 'one_line_to_say', value: response.one_line_to_say },
+    { name: 'repeat_pattern.message', value: response.repeat_pattern?.message },
+    { name: 'timing.recommendation', value: response.timing?.recommendation },
+    { name: 'decision_guard.reason', value: response.decision_guard?.reason }
   ].filter(f => f.value != null);
+
+  // Add all whats_happening items
+  if (Array.isArray(response.whats_happening)) {
+      response.whats_happening.forEach((item, index) => {
+          fields.push({ name: `whats_happening[${index}]`, value: item });
+      });
+  }
+
+  // Add all safety guidance items
+  if (response.safety && Array.isArray(response.safety.guidance)) {
+      response.safety.guidance.forEach((item, index) => {
+          fields.push({ name: `safety.guidance[${index}]`, value: item });
+      });
+  }
   
   for (const field of fields) {
     const result = guardDisclosure(field.value as string);
