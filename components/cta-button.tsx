@@ -1,9 +1,10 @@
 'use client';
 
-import { Button, ButtonProps } from '@/components/ui/button';
+import * as React from 'react';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-interface CTAButtonProps extends ButtonProps {
+export interface CTAButtonProps extends React.ComponentProps<'button'> {
   iridescent?: boolean;
 }
 

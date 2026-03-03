@@ -28,20 +28,14 @@ export function sanitizeNetworkSignal(
 
 // Control 2: Structured Output Validation
 // Enforce exact JSON schema and reject anything else
-export interface ValidatedChatResponse {
-  headline: string;
-  happening: string;
-  doThis: string;
-  avoid: string;
-  sayThis: string;
-}
 
-const REQUIRED_KEYS = ['headline', 'happening', 'doThis', 'avoid', 'sayThis'];
+
+const REQUIRED_KEYS = ['headline', 'signal', 'confidence', 'whats_happening', 'do_this_now', 'one_line_to_say'];
 
 export function validateStructuredResponse(
   rawResponse: any,
   attempt: number = 1
-): ValidatedChatResponse | null {
+): ChatResponse | null {
   // Check if response has all required keys
   const hasAllKeys = REQUIRED_KEYS.every(key => 
     rawResponse && typeof rawResponse[key] === 'string' && rawResponse[key].length > 0
@@ -53,11 +47,12 @@ export function validateStructuredResponse(
   }
 
   return {
-    headline: rawResponse.headline,
-    happening: rawResponse.happening,
-    doThis: rawResponse.doThis,
-    avoid: rawResponse.avoid,
-    sayThis: rawResponse.sayThis,
+    headline: String(rawResponse.headline || rawResponse.title),
+    whats_happening: Array.isArray(rawResponse.whats_happening) ? rawResponse.whats_happening : [String(rawResponse.whats_happening || rawResponse.happening)],
+    do_this_now: String(rawResponse.do_this_now || rawResponse.doThis),
+    signal: ['low', 'medium', 'high'].includes(rawResponse.signal) ? rawResponse.signal : 'medium',
+    confidence: rawResponse.confidence || { overall: 50, data_confidence: 50, pattern_confidence: 50 },
+    one_line_to_say: String(rawResponse.one_line_to_say || rawResponse.sayThis)
   };
 }
 
@@ -73,9 +68,9 @@ const FORBIDDEN_PATTERNS = [
   /\b\d+%\b/, // Percentages
 ];
 
-export function filterDisclosure(response: ValidatedChatResponse): {
+export function filterDisclosure(response: ChatResponse): {
   safe: boolean;
-  filtered?: ValidatedChatResponse;
+  filtered?: ChatResponse;
   reason?: string;
 } {
   // Check all fields for forbidden patterns
@@ -90,10 +85,11 @@ export function filterDisclosure(response: ValidatedChatResponse): {
         safe: false,
         filtered: {
           headline: 'Signal received',
-          happening: 'Your network is showing some tension right now. This is temporary.',
-          doThis: 'Take a step back. Give yourself space before responding.',
-          avoid: 'Don\'t make big decisions in the next few hours.',
-          sayThis: 'I need a moment to think about this.',
+          signal: 'medium',
+          confidence: { overall: 50, data_confidence: 50, pattern_confidence: 50 },
+          whats_happening: ['Your network is showing some tension right now. This is temporary.'],
+          do_this_now: 'Take a step back. Give yourself space before responding.',
+          one_line_to_say: 'I need a moment to think about this.',
         },
         reason: 'Disclosure filter triggered',
       };
@@ -117,14 +113,12 @@ export function secureAIResponse(
     }
     // Return safe fallback after max attempts
     return {
-      conversationId: 'fallback',
-      response: {
-        headline: 'System check',
-        happening: 'The system needs a moment to recalibrate.',
-        doThis: 'Take a pause. Nothing urgent is required right now.',
-        avoid: 'Don\'t force a decision.',
-        sayThis: 'I\'m taking time to process this.',
-      },
+      headline: 'System check',
+      signal: 'medium',
+      confidence: { overall: 100, data_confidence: 100, pattern_confidence: 100 },
+      whats_happening: ['The system needs a moment to recalibrate.'],
+      do_this_now: 'Take a pause. Nothing urgent is required right now.',
+      one_line_to_say: 'I\'m taking time to process this.',
     };
   }
 
@@ -132,15 +126,11 @@ export function secureAIResponse(
   const filterResult = filterDisclosure(validated);
   if (!filterResult.safe) {
     console.error('[AI Security] Disclosure blocked:', filterResult.reason);
-    return {
-      conversationId: 'filtered',
-      response: filterResult.filtered!,
-    };
+    return filterResult.filtered!;
+
   }
 
   // All checks passed
-  return {
-    conversationId: 'valid',
-    response: validated,
-  };
+  return validated;
+
 }
