@@ -53,23 +53,21 @@ export function guardDisclosure(text: string): { ok: boolean; reason?: string } 
   return { ok: true };
 }
 
-// Apply to all string fields in response
+// Apply to all string fields in Sovereign guidance response
 export function guardResponse(response: {
   headline: string;
-  whats_happening: string[];
-  do_this_now: string;
-  one_line_to_say: string;
-  repeat_pattern?: string | null;
-  safety?: string | null;
+  explanation: {
+    whats_happening: string;
+    why: string;
+  };
+  suggested_response: string;
 }): { ok: boolean; field?: string; reason?: string } {
   
   const fields = [
     { name: 'headline', value: response.headline },
-    ...response.whats_happening.map((val, idx) => ({ name: `whats_happening[${idx}]`, value: val })),
-    { name: 'do_this_now', value: response.do_this_now },
-    { name: 'one_line_to_say', value: response.one_line_to_say },
-    { name: 'repeat_pattern', value: response.repeat_pattern },
-    { name: 'safety', value: response.safety },
+    { name: 'whats_happening', value: response.explanation?.whats_happening },
+    { name: 'why', value: response.explanation?.why },
+    { name: 'suggested_response', value: response.suggested_response },
   ].filter(f => f.value != null);
   
   for (const field of fields) {
