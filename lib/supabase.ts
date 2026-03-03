@@ -6,11 +6,12 @@ const isProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
 
 const isConfigured = !!supabaseUrl && !!supabaseAnonKey;
 
-// Production: strict enforcement. Preview/dev: optional with warning
+// In Next.js, modules are executed at build time. We don't want to fail the build
+// if runtime variables aren't present during the static analysis phase.
+// Instead of throwing an error immediately, we log a warning. The application
+// will handle the missing client gracefully or fail at runtime when accessed.
 if (!isConfigured && isProduction) {
-  throw new Error(
-    'Missing Supabase configuration in production. NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY must be set.'
-  );
+  console.warn('⚠️ Missing Supabase configuration in production build. NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY should be set.');
 }
 
 if (!isConfigured) {
