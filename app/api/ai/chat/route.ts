@@ -37,6 +37,7 @@ export async function POST(req: NextRequest) {
     
     // 2. Rate limit
     if (!checkRateLimit(user.id)) {
+      console.warn(`[DEFRAG_API] rate limit exceeded for user ${user.id}`);
       logSecurityEvent({
         user_id: user.id,
         endpoint: '/api/ai/chat',

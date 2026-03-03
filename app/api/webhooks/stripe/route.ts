@@ -45,7 +45,7 @@ export async function POST(req: Request) {
       if (error) {
         console.error('Failed to unlock session:', error)
       } else {
-        console.log(`Session ${sessionId} unlocked via Stripe webhook.`)
+        console.log(`[DEFRAG_API] Session ${sessionId} unlocked via Stripe webhook.`)
         // Kick off computation engine via background task or pub/sub here later.
       }
     }
