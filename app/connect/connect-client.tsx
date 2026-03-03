@@ -105,7 +105,7 @@ export default function ConnectClient() {
           <>
             <H1>Sign in</H1>
             <Spacer size="m" />
-            <Body>We'll send a secure link. No password.</Body>
+            <Body>We&apos;ll send a secure link. No password.</Body>
             <Spacer size="l" />
 
             <form onSubmit={handleSendMagicLink}>

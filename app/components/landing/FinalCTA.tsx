@@ -3,15 +3,10 @@
 import Link from 'next/link'
 
 export default function FinalCTA() {
-  const scrollToBuild = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    document.getElementById('build-module')?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   return (
     <section
       style={{
-        padding: '140px 48px',
+        padding: '140px 24px',
         maxWidth: 1440,
         margin: '0 auto',
         display: 'flex',
@@ -34,13 +29,12 @@ export default function FinalCTA() {
           fontWeight: 500,
         }}
       >
-        Open your Manual. Stop guessing.
+        See the pattern.<br />Change the outcome.
       </h2>
 
       <div style={{ marginTop: 48, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24 }}>
-        <a
-          href="#build-module"
-          onClick={scrollToBuild}
+        <Link
+          href="/auth/login"
           style={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -67,23 +61,10 @@ export default function FinalCTA() {
             el.style.transform = 'translate(0, 0)'
           }}
         >
-          Open My Manual
-        </a>
-
-        <p
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: 11,
-            letterSpacing: '0.04em',
-            color: 'var(--text-secondary)',
-            textTransform: 'uppercase',
-          }}
-        >
-          Secure processing. Plain-English output. Delete anytime.
-        </p>
+          Enter DEFRAG
+        </Link>
       </div>
 
-      {/* Footer minimal */}
       <footer
         style={{
           marginTop: 140,
@@ -93,6 +74,8 @@ export default function FinalCTA() {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: 24
         }}
       >
         <span
@@ -107,6 +90,28 @@ export default function FinalCTA() {
           DEFRAG © {new Date().getFullYear()}
         </span>
         <div style={{ display: 'flex', gap: '24px' }}>
+          <Link
+            href="/principles"
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: 10,
+              letterSpacing: '0.1em',
+              color: 'var(--text-secondary)',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              transition: 'color 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              const el = e.currentTarget as HTMLAnchorElement;
+              el.style.color = '#ffffff';
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget as HTMLAnchorElement;
+              el.style.color = 'var(--text-secondary)';
+            }}
+          >
+            Principles
+          </Link>
           <Link
             href="/contact"
             style={{

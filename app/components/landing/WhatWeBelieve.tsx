@@ -1,23 +1,17 @@
-export default function ValueProp() {
-  const points = [
-    'Your default stress response',
-    'What you protect under pressure',
-    'How your conflict loops form (and how to break them)',
-    'Where to interrupt early',
-    'How pressure moves through groups and families',
-  ]
+'use client'
 
+export default function WhatWeBelieve() {
   return (
     <section
-      id="how-it-works"
       style={{
-        padding: '140px 48px',
+        padding: '140px 24px',
         maxWidth: 1440,
         margin: '0 auto',
         display: 'flex',
         flexDirection: 'column',
         gap: 64,
         background: 'var(--bg-black)',
+        borderTop: '1px solid var(--line-mid)',
       }}
     >
       <div style={{ maxWidth: '640px' }}>
@@ -29,20 +23,22 @@ export default function ValueProp() {
             letterSpacing: '-0.02em',
             margin: '0 0 24px',
             fontWeight: 500,
+            color: 'var(--text-primary)'
           }}
         >
-          Stop guessing. Start interrupting.
+          What We Believe
         </h2>
         <p
           style={{
             fontFamily: 'var(--font-sans)',
             fontSize: 'clamp(18px, 2vw, 24px)',
             lineHeight: 1.4,
-            color: 'var(--text-secondary)',
+            color: 'var(--text-primary)',
             margin: '0 0 48px',
+            fontWeight: 500,
           }}
         >
-          DEFRAG maps:
+          Human difference is not dysfunction.
         </p>
 
         <ul
@@ -53,9 +49,15 @@ export default function ValueProp() {
             display: 'flex',
             flexDirection: 'column',
             gap: 24,
+            marginBottom: 48,
           }}
         >
-          {points.map((point, i) => (
+          {[
+            'Some people process emotion outwardly.',
+            'Some process inwardly.',
+            'Some move quickly.',
+            'Some need time.',
+          ].map((point, i) => (
             <li
               key={i}
               style={{
@@ -64,7 +66,7 @@ export default function ValueProp() {
                 gap: 24,
                 fontFamily: 'var(--font-sans)',
                 fontSize: 18,
-                color: 'var(--text-primary)',
+                color: 'var(--text-secondary)',
                 lineHeight: 1.4,
               }}
             >
@@ -73,7 +75,7 @@ export default function ValueProp() {
                   marginTop: 6,
                   width: 8,
                   height: 8,
-                  background: '#ffffff',
+                  border: '1px solid #ffffff',
                   flexShrink: 0,
                 }}
               />
@@ -84,27 +86,22 @@ export default function ValueProp() {
 
         <p
           style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: 12,
-            letterSpacing: '0.04em',
+            fontFamily: 'var(--font-sans)',
+            fontSize: 'clamp(18px, 2vw, 24px)',
+            lineHeight: 1.4,
             color: 'var(--text-secondary)',
-            marginTop: 64,
-            textTransform: 'uppercase',
-            borderTop: '1px solid var(--line-low)',
-            paddingTop: 24,
+            margin: '0',
           }}
         >
-          Clear insight first. Depth when you want it.
+          When we misread each other, tension grows.
+          <br /><br />
+          When structure is visible, tension decreases.
+          <br /><br />
+          <span style={{ color: 'var(--text-primary)' }}>Relational awareness should not require crisis to develop.</span>
+          <br /><br />
+          <strong style={{ color: 'var(--text-primary)', fontWeight: 500 }}>It should be basic competence.</strong>
         </p>
       </div>
-
-      <style>{`
-        @media (max-width: 860px) {
-          section[id="how-it-works"] {
-            padding: 80px 24px !important;
-          }
-        }
-      `}</style>
     </section>
   )
 }

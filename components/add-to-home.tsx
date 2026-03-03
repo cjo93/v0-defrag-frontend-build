@@ -52,7 +52,7 @@ export function AddToHomePrompt() {
             Add DEFRAG to your Home Screen for fastest access.
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            Tap the share button, then "Add to Home Screen"
+            Tap the share button, then &quot;Add to Home Screen&quot;
           </p>
         </div>
         <Button
