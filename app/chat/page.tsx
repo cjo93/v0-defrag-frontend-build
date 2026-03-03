@@ -197,9 +197,9 @@ export default function ChatPage() {
                               </div>
                           </div>
                           
-                          {/* What's happening */}
+                          {/* WhatWhat&apos;s happeningapos;s happening */}
                           <div className="mb-6">
-                            <MicroLabel>What's happening</MicroLabel>
+                            <MicroLabel>WhatWhat&apos;s happeningapos;s happening</MicroLabel>
                             <Spacer size="s" />
                             <ul className="list-disc pl-4 space-y-1">
                                 {message.content.whats_happening.map((point, i) => (
@@ -220,7 +220,7 @@ export default function ChatPage() {
                             <MicroLabel>One line to say</MicroLabel>
                             <Spacer size="s" />
                             <div className="border-l-2 border-white/40 pl-4 py-1 my-2">
-                                <Body>"{message.content.one_line_to_say}"</Body>
+                                <Body>&quot;{message.content.one_line_to_say}&quot;</Body>
                             </div>
                           </div>
 
