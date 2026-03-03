@@ -40,6 +40,11 @@ export function Navigation({ isAuthenticated = false, onSignOut }: NavigationPro
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
+                            <DropdownMenuItem asChild>
+                <Link href="/principles" className="cursor-pointer">
+                  Principles
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/readout/self" className="cursor-pointer">
                   Manual

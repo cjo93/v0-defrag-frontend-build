@@ -108,6 +108,73 @@ export default function FinalCTA() {
         </span>
         <div style={{ display: 'flex', gap: '24px' }}>
           <Link
+            href="#"
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: 10,
+              letterSpacing: '0.1em',
+              color: 'var(--text-secondary)',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              transition: 'color 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              const el = e.currentTarget as HTMLAnchorElement;
+              el.style.color = '#ffffff';
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget as HTMLAnchorElement;
+              el.style.color = 'var(--text-secondary)';
+            }}
+          >
+            Why DEFRAG
+          </Link>
+          <Link
+            href="/principles"
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: 10,
+              letterSpacing: '0.1em',
+              color: 'var(--text-secondary)',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              transition: 'color 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              const el = e.currentTarget as HTMLAnchorElement;
+              el.style.color = '#ffffff';
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget as HTMLAnchorElement;
+              el.style.color = 'var(--text-secondary)';
+            }}
+          >
+            Principles
+          </Link>
+          <Link
+            href="#"
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: 10,
+              letterSpacing: '0.1em',
+              color: 'var(--text-secondary)',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              transition: 'color 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              const el = e.currentTarget as HTMLAnchorElement;
+              el.style.color = '#ffffff';
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget as HTMLAnchorElement;
+              el.style.color = 'var(--text-secondary)';
+            }}
+          >
+            About
+          </Link>
+
+          <Link
             href="/contact"
             style={{
               fontFamily: 'var(--font-mono)',
