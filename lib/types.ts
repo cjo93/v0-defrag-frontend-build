@@ -69,11 +69,18 @@ export interface Readout {
 }
 
 export interface ChatResponse {
-  headline: string; // 2-5 words
-  happening: string; // max 15 words
-  doThis: string; // 90-second plan
-  avoid: string; // one behavior
-  sayThis: string; // one sentence in quotes
+  headline: string;
+  signal: 'low' | 'medium' | 'high';
+  confidence: {
+    overall: number;
+    data_confidence: number;
+    pattern_confidence: number;
+  };
+  whats_happening: string[];
+  do_this_now: string;
+  one_line_to_say: string;
+  repeat_pattern?: string | null;
+  safety?: string | null;
 }
 
 export interface NetworkBundle {
