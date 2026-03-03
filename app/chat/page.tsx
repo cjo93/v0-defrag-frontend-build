@@ -82,13 +82,22 @@ export default function ChatPage() {
     setIsLoading(true);
     
     try {
-      // TODO: Replace with actual API call
+      // Mocking API call to use the updated schema for now
       const response: ChatResponse = {
-        headline: 'Pause Required',
-        happening: 'High tension detected in recent pattern.',
-        doThis: 'Step away from screen. Take 3 slow breaths. Count to 10. Return when calmer.',
-        avoid: 'Making decisions while escalated',
-        sayThis: '"I need a moment before continuing this."',
+        headline: 'System Overload',
+        signal: 'high',
+        confidence: {
+            overall: 85,
+            data_confidence: 90,
+            pattern_confidence: 80
+        },
+        whats_happening: [
+            'Escalation pattern detected.',
+            'Communication breakdown likely.'
+        ],
+        do_this_now: 'Step away from the screen. Take 3 slow breaths. Count to 10. Return when calmer.',
+        one_line_to_say: 'I need a moment before continuing this.',
+        repeat_pattern: 'Tendency to push for resolution when overwhelmed.'
       };
       
       setMessages(prev => [...prev, { role: 'assistant', content: response }]);
@@ -99,18 +108,38 @@ export default function ChatPage() {
     }
   };
 
+  // Helper function to render signal color in grayscale
+
+  const getSignalLabel = (signal: 'low' | 'medium' | 'high') => {
+      switch(signal) {
+          case 'low': return 'stable';
+          case 'medium': return 'moderate';
+          case 'high': return 'elevated';
+          default: return 'stable';
+      }
+  };
+
+  const getSignalColor = (signal: 'low' | 'medium' | 'high') => {
+      switch(signal) {
+          case 'low': return 'text-white/40';
+          case 'medium': return 'text-white/70';
+          case 'high': return 'text-white';
+          default: return 'text-white/40';
+      }
+  };
+
   if (!isOSActive) {
     return (
       <LockedScreen
-        title="Crisis Mode locked"
-        description="Requires DEFRAG OS for calm authority support."
+        title="Console locked"
+        description="Requires DEFRAG OS for active intelligence support."
         productName="DEFRAG OS"
         price="$33"
         priceInterval="month"
         features={[
           'Relational Grid for your network',
           'Connection readouts',
-          'Crisis Mode AI support',
+          'Active intelligence console',
           'Network tension mapping'
         ]}
         onUnlock={handleUpgrade}
@@ -121,74 +150,99 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
+    <div className="min-h-screen bg-black text-white flex flex-col font-sans">
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto px-6 pt-24 pb-32 safe-top">
         <div className="mx-auto w-full max-w-[760px]">
           {messages.length === 0 ? (
             <>
-              <MicroLabel>Crisis Mode</MicroLabel>
+              <MicroLabel>Intelligence Console</MicroLabel>
               <Spacer size="s" />
-              <H1>Calm authority.</H1>
+              <H1>Controlled response.</H1>
               <Spacer size="m" />
-              <Body muted>One degree calmer than you.</Body>
+              <Body muted>System ready for input.</Body>
             </>
           ) : (
             <div className="space-y-12">
               {messages.map((message, index) => (
                 <div key={index}>
                   {message.role === 'user' ? (
-                    <div className="flex justify-end">
-                      <div className="max-w-[85%]">
+                    <div className="flex justify-end mb-4">
+                      <div className="max-w-[85%] border-b border-white/20 pb-2">
                         <Body>{message.content as string}</Body>
                       </div>
                     </div>
                   ) : (
-                    <div>
+                    <div className="border border-white/20 p-6 rounded-none bg-black">
                       {typeof message.content === 'object' && (
                         <>
-                          {/* Headline - increased contrast */}
-                          <div>
-                            <h2 className="font-display text-[24px] leading-[1.3] tracking-[-0.01em] font-normal text-white/85">
-                              {message.content.headline}
-                            </h2>
+                          {/* Header / Signal */}
+                          <div className="flex justify-between items-start border-b border-white/10 pb-4 mb-4">
+                              <h2 className="font-sans text-[24px] leading-[1.3] tracking-[-0.01em] font-medium text-white">
+                                {message.content.headline}
+                              </h2>
+                              <div className="flex items-center gap-4">
+                                  <div className="flex flex-col items-end">
+                                      <MicroLabel>Signal</MicroLabel>
+                                      <span className={`font-mono text-[12px] uppercase ${getSignalColor(message.content.signal)}`}>
+                                          {getSignalLabel(message.content.signal)}
+                                      </span>
+                                  </div>
+                                  <div className="flex flex-col items-end">
+                                      <MicroLabel>Confidence</MicroLabel>
+                                      <span className="font-mono text-[12px] text-white/70">
+                                          {message.content.confidence.overall}%
+                                      </span>
+                                  </div>
+                              </div>
                           </div>
-                          
-                          <Spacer size="l" />
                           
                           {/* What's happening */}
-                          <div>
+                          <div className="mb-6">
                             <MicroLabel>What's happening</MicroLabel>
                             <Spacer size="s" />
-                            <Body>{message.content.happening}</Body>
+                            <ul className="list-disc pl-4 space-y-1">
+                                {message.content.whats_happening.map((point, i) => (
+                                    <li key={i}><Body>{point}</Body></li>
+                                ))}
+                            </ul>
                           </div>
-                          
-                          <Spacer size="l" />
                           
                           {/* Do this now */}
-                          <div>
+                          <div className="mb-6">
                             <MicroLabel>Do this now</MicroLabel>
                             <Spacer size="s" />
-                            <Body>{message.content.doThis}</Body>
+                            <Body>{message.content.do_this_now}</Body>
                           </div>
-                          
-                          <Spacer size="l" />
-                          
-                          {/* Avoid */}
-                          <div>
-                            <MicroLabel>Avoid</MicroLabel>
-                            <Spacer size="s" />
-                            <Body>{message.content.avoid}</Body>
-                          </div>
-                          
-                          <Spacer size="l" />
                           
                           {/* Say this */}
-                          <div>
-                            <MicroLabel>Say this</MicroLabel>
+                          <div className="mb-6">
+                            <MicroLabel>One line to say</MicroLabel>
                             <Spacer size="s" />
-                            <Body>"{message.content.sayThis}"</Body>
+                            <div className="border-l-2 border-white/40 pl-4 py-1 my-2">
+                                <Body>"{message.content.one_line_to_say}"</Body>
+                            </div>
                           </div>
+
+                          {/* Optional sections */}
+                          {(message.content.repeat_pattern || message.content.safety) && (
+                              <div className="border-t border-white/10 pt-4 mt-4 grid grid-cols-1 gap-4">
+                                  {message.content.repeat_pattern && (
+                                      <div>
+                                          <MicroLabel>Pattern Recognition</MicroLabel>
+                                          <Spacer size="s" />
+                                          <Body muted>{message.content.repeat_pattern}</Body>
+                                      </div>
+                                  )}
+                                  {message.content.safety && (
+                                      <div>
+                                          <MicroLabel>System Note</MicroLabel>
+                                          <Spacer size="s" />
+                                          <Body muted>{message.content.safety}</Body>
+                                      </div>
+                                  )}
+                              </div>
+                          )}
                         </>
                       )}
                     </div>
@@ -196,8 +250,8 @@ export default function ChatPage() {
                 </div>
               ))}
               {isLoading && (
-                <div>
-                  <Body>...</Body>
+                <div className="border border-white/10 p-6 flex justify-center">
+                  <span className="font-mono text-[12px] text-white/50 uppercase tracking-widest">Processing...</span>
                 </div>
               )}
               <div ref={messagesEndRef} />
@@ -207,24 +261,24 @@ export default function ChatPage() {
       </div>
 
       {/* Input area - pinned to bottom */}
-      <div className="border-t border-white/10 bg-black px-6 py-6 safe-bottom">
+      <div className="border-t border-white/20 bg-black px-6 py-6 safe-bottom">
         <div className="mx-auto w-full max-w-[760px]">
           <form onSubmit={handleSend} className="flex items-end gap-4">
             <div className="flex-1">
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Type your message..."
+                placeholder="Enter situation parameters..."
                 disabled={isLoading}
-                className="w-full bg-transparent border-b border-white/20 py-4 text-[16px] tracking-[0.02em] focus:border-white/60 focus:outline-none transition-none placeholder:text-white/25"
+                className="w-full bg-transparent border-b border-white/20 py-4 text-[16px] tracking-[0.02em] font-sans focus:border-white focus:outline-none transition-none placeholder:text-white/25"
               />
             </div>
             <button 
               type="submit" 
               disabled={isLoading || !input.trim()}
-              className="text-[14px] tracking-[0.18em] uppercase text-white/80 hover:text-white disabled:opacity-40 pb-4"
+              className="font-mono text-[14px] tracking-[0.1em] uppercase text-white/70 hover:text-white disabled:opacity-40 pb-4 border-b border-transparent hover:border-white transition-colors duration-200"
             >
-              Send
+              Execute
             </button>
           </form>
         </div>
