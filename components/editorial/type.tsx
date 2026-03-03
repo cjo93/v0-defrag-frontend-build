@@ -24,7 +24,14 @@ export function H2({ children }: { children: ReactNode }) {
   );
 }
 
-export function Body({ children }: { children: ReactNode }) {
+export function Body({ children, muted }: { children: ReactNode; muted?: boolean }) {
+  if (muted) {
+    return (
+      <p className="text-[16px] leading-[1.75] text-white/30">
+        {children}
+      </p>
+    );
+  }
   return (
     <p className="text-[16px] leading-[1.75] text-white/45">
       {children}

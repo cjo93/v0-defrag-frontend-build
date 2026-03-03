@@ -1,19 +1,10 @@
-import { H1, Body, MicroLabel } from "./type";
-import { Spacer } from "./spacing";
-import { PrimaryActionButton } from "./controls";
+import re
 
-export function LoadingScreen({ label = "Loading" }: { label?: string }) {
-  return (
-    <div className="min-h-screen bg-black text-white flex items-center">
-      <div className="w-full max-w-[520px] mx-auto px-6 md:px-8">
-        <MicroLabel>{label}</MicroLabel>
-        <div className="mt-6 h-px w-10 bg-white/10" />
-      </div>
-    </div>
-  );
-}
+with open('components/editorial/states.tsx', 'r') as f:
+    content = f.read()
 
-export function LockedScreen({
+# Replace LockedScreen with the proper props
+replacement = """export function LockedScreen({
   title,
   description,
   productName,
@@ -60,4 +51,9 @@ export function LockedScreen({
       </div>
     </div>
   );
-}
+}"""
+
+content = re.sub(r"export function LockedScreen\(\{.*\}\) \{\s*return \(\s*<div.*?</div>\s*\);\s*\}", replacement, content, flags=re.DOTALL)
+
+with open('components/editorial/states.tsx', 'w') as f:
+    f.write(content)

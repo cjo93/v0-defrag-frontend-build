@@ -30,13 +30,20 @@ export function sanitizeNetworkSignal(
 // Enforce exact JSON schema and reject anything else
 export interface ValidatedChatResponse {
   headline: string;
-  happening: string;
-  doThis: string;
-  avoid: string;
-  sayThis: string;
+  signal: 'low' | 'medium' | 'high';
+  confidence: {
+    overall: number;
+    data_confidence: number;
+    pattern_confidence: number;
+  };
+  whats_happening: string[];
+  do_this_now: string;
+  one_line_to_say: string;
+  repeat_pattern?: string | null;
+  safety?: string | null;
 }
 
-const REQUIRED_KEYS = ['headline', 'happening', 'doThis', 'avoid', 'sayThis'];
+const REQUIRED_KEYS = ['headline', 'signal', 'confidence', 'whats_happening', 'do_this_now', 'one_line_to_say'];
 
 export function validateStructuredResponse(
   rawResponse: any,
@@ -44,7 +51,7 @@ export function validateStructuredResponse(
 ): ValidatedChatResponse | null {
   // Check if response has all required keys
   const hasAllKeys = REQUIRED_KEYS.every(key => 
-    rawResponse && typeof rawResponse[key] === 'string' && rawResponse[key].length > 0
+    rawResponse && rawResponse[key] !== undefined
   );
 
   if (!hasAllKeys) {
@@ -54,11 +61,14 @@ export function validateStructuredResponse(
 
   return {
     headline: rawResponse.headline,
-    happening: rawResponse.happening,
-    doThis: rawResponse.doThis,
-    avoid: rawResponse.avoid,
-    sayThis: rawResponse.sayThis,
-  };
+    signal: rawResponse.signal,
+    confidence: rawResponse.confidence,
+    whats_happening: rawResponse.whats_happening,
+    do_this_now: rawResponse.do_this_now,
+    one_line_to_say: rawResponse.one_line_to_say,
+    repeat_pattern: rawResponse.repeat_pattern,
+    safety: rawResponse.safety,
+  };;
 }
 
 // Control 3: Disclosure Filter
@@ -90,10 +100,11 @@ export function filterDisclosure(response: ValidatedChatResponse): {
         safe: false,
         filtered: {
           headline: 'Signal received',
-          happening: 'Your network is showing some tension right now. This is temporary.',
-          doThis: 'Take a step back. Give yourself space before responding.',
-          avoid: 'Don\'t make big decisions in the next few hours.',
-          sayThis: 'I need a moment to think about this.',
+          signal: 'medium',
+          confidence: { overall: 50, data_confidence: 50, pattern_confidence: 50 },
+          whats_happening: ['Your network is showing some tension right now. This is temporary.'],
+          do_this_now: 'Take a step back. Give yourself space before responding.',
+          one_line_to_say: 'I need a moment to reflect on this.',
         },
         reason: 'Disclosure filter triggered',
       };
@@ -117,14 +128,12 @@ export function secureAIResponse(
     }
     // Return safe fallback after max attempts
     return {
-      conversationId: 'fallback',
-      response: {
-        headline: 'System check',
-        happening: 'The system needs a moment to recalibrate.',
-        doThis: 'Take a pause. Nothing urgent is required right now.',
-        avoid: 'Don\'t force a decision.',
-        sayThis: 'I\'m taking time to process this.',
-      },
+      headline: 'System check',
+      signal: 'medium',
+      confidence: { overall: 50, data_confidence: 50, pattern_confidence: 50 },
+      whats_happening: ['The system needs a moment to recalibrate.'],
+      do_this_now: 'Take a pause. Nothing urgent is required right now.',
+      one_line_to_say: 'I\'m taking time to reflect on this.'
     };
   }
 
@@ -132,15 +141,9 @@ export function secureAIResponse(
   const filterResult = filterDisclosure(validated);
   if (!filterResult.safe) {
     console.error('[AI Security] Disclosure blocked:', filterResult.reason);
-    return {
-      conversationId: 'filtered',
-      response: filterResult.filtered!,
-    };
+    return filterResult.filtered!;
   }
 
   // All checks passed
-  return {
-    conversationId: 'valid',
-    response: validated,
-  };
+  return validated;
 }

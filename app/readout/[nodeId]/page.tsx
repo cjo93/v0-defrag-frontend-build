@@ -77,7 +77,7 @@ export default function ConnectionReadoutPage() {
   if (!readout) {
     return (
       <AppShell>
-        <EditorialRail width="app">
+        <EditorialRail variant="app">
           <H1>Error</H1>
           <Spacer size="m" />
           <Body muted>{error || 'Failed to load readout'}</Body>
@@ -112,7 +112,7 @@ export default function ConnectionReadoutPage() {
   // Unlocked state (with OS access)
   return (
     <AppShell>
-      <EditorialRail width="app">
+      <EditorialRail variant="app">
         <MicroLabel>Connection</MicroLabel>
         <Spacer size="s" />
         <H1>{readout.personName || 'Connection'}</H1>

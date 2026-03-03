@@ -146,7 +146,7 @@ export default function GridClient() {
   // Active OS Grid
   return (
     <AppShell>
-      <EditorialRail width="app">
+      <EditorialRail variant="app">
         <MicroLabel>Grid</MicroLabel>
         <Spacer size="s" />
         <H1>Your people.</H1>
@@ -213,7 +213,7 @@ export default function GridClient() {
               <form onSubmit={handleAddConnection}>
                 <div>
                   <MicroLabel>Name</MicroLabel>
-                  <Spacer size="xs" />
+                  <Spacer size="s" />
                   <LineInput
                     value={newConnection.name}
                     onChange={(e) => setNewConnection({ ...newConnection, name: e.target.value })}
@@ -226,7 +226,7 @@ export default function GridClient() {
 
                 <div>
                   <MicroLabel>Relationship</MicroLabel>
-                  <Spacer size="xs" />
+                  <Spacer size="s" />
                   <LineInput
                     value={newConnection.relationship_type}
                     onChange={(e) => setNewConnection({ ...newConnection, relationship_type: e.target.value })}
@@ -239,7 +239,7 @@ export default function GridClient() {
 
                 <div>
                   <MicroLabel>Date of Birth</MicroLabel>
-                  <Spacer size="xs" />
+                  <Spacer size="s" />
                   <LineInput
                     type="date"
                     value={newConnection.dob}
@@ -252,7 +252,7 @@ export default function GridClient() {
 
                 <div>
                   <MicroLabel>Birth Time (optional)</MicroLabel>
-                  <Spacer size="xs" />
+                  <Spacer size="s" />
                   <LineInput
                     type="time"
                     value={newConnection.birth_time}
@@ -264,7 +264,7 @@ export default function GridClient() {
 
                 <div>
                   <MicroLabel>Birth City (optional)</MicroLabel>
-                  <Spacer size="xs" />
+                  <Spacer size="s" />
                   <LineInput
                     value={newConnection.birth_city}
                     onChange={(e) => setNewConnection({ ...newConnection, birth_city: e.target.value })}

@@ -118,7 +118,7 @@ export default function SelfReadoutClient() {
   // Unlocked readout
   return (
     <AppShell>
-      <EditorialRail width="app">
+      <EditorialRail variant="app">
         <MicroLabel>Manual</MicroLabel>
         <Spacer size="s" />
         <H1>Your Manual</H1>
