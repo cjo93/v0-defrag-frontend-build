@@ -3,46 +3,33 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { sendChatMessage, createCheckoutSession } from '@/lib/api';
+import { createCheckoutSession } from '@/lib/api';
 import type { ChatResponse } from '@/lib/types';
-import { 
-  AppShell,
-  MicroLabel, 
-  H1,
-  Body, 
-  Spacer,
-  LineInput,
-  TextActionButton,
-  LockedScreen 
-} from '@/components/editorial';
+import { H1, Body, MicroLabel, Spacer, LockedScreen } from '@/components/editorial';
 import { BuildStamp } from '@/components/build-stamp';
 
-interface Message {
-  role: 'user' | 'assistant';
-  content: string | ChatResponse;
-}
-
 export default function ChatPage() {
+  const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
-  const { user, signOut } = useAuth();
-  
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<{role: 'user' | 'assistant', content: string | ChatResponse}[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isOSActive, setIsOSActive] = useState(false);
+  const [isOSActive, setIsOSActive] = useState<boolean | null>(null);
+  const [error, setError] = useState<string>('');
   const [isCheckingOut, setIsCheckingOut] = useState(false);
-  const [error, setError] = useState('');
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (authLoading) return;
+
     if (!user) {
       router.push('/');
       return;
     }
 
     checkOSStatus();
-  }, [user]);
+  }, [user, authLoading, router]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -85,19 +72,17 @@ export default function ChatPage() {
       // Mocking API call to use the updated schema for now
       const response: ChatResponse = {
         headline: 'System Overload',
-        signal: 'high',
-        confidence: {
-            overall: 85,
-            data_confidence: 90,
-            pattern_confidence: 80
-        },
-        whats_happening: [
-            'Escalation pattern detected.',
-            'Communication breakdown likely.'
-        ],
-        do_this_now: 'Step away from the screen. Take 3 slow breaths. Count to 10. Return when calmer.',
-        one_line_to_say: 'I need a moment before continuing this.',
-        repeat_pattern: 'Tendency to push for resolution when overwhelmed.'
+        signal_level: 'high',
+        confidence_score: 85,
+        stability_state: 'low',
+        timing_state: 'protect',
+        pattern_detected: true,
+        pattern_summary: 'Tendency to push for resolution when overwhelmed.',
+        risk_level: 'high',
+        explanation: 'Escalation pattern detected. Communication breakdown likely.',
+        suggested_response: 'Step away from the screen. Take 3 slow breaths. Count to 10. Return when calmer. Say: "I need a moment before continuing this."',
+        data_tooltips: [],
+        safety_level: 'none'
       };
       
       setMessages(prev => [...prev, { role: 'assistant', content: response }]);
@@ -184,14 +169,14 @@ export default function ChatPage() {
                               <div className="flex items-center gap-4">
                                   <div className="flex flex-col items-end">
                                       <MicroLabel>Signal</MicroLabel>
-                                      <span className={`font-mono text-[12px] uppercase ${getSignalColor(message.content.signal)}`}>
-                                          {getSignalLabel(message.content.signal)}
+                                      <span className={`font-mono text-[12px] uppercase ${getSignalColor(message.content.signal_level)}`}>
+                                          {getSignalLabel(message.content.signal_level)}
                                       </span>
                                   </div>
                                   <div className="flex flex-col items-end">
                                       <MicroLabel>Confidence</MicroLabel>
                                       <span className="font-mono text-[12px] text-white/70">
-                                          {message.content.confidence.overall}%
+                                          {message.content.confidence_score}%
                                       </span>
                                   </div>
                               </div>
@@ -199,46 +184,33 @@ export default function ChatPage() {
                           
                           {/* What's happening */}
                           <div className="mb-6">
-                            <MicroLabel>What's happening</MicroLabel>
+                            <MicroLabel>Analysis</MicroLabel>
                             <Spacer size="s" />
-                            <ul className="list-disc pl-4 space-y-1">
-                                {message.content.whats_happening.map((point, i) => (
-                                    <li key={i}><Body>{point}</Body></li>
-                                ))}
-                            </ul>
+                            <Body>{message.content.explanation}</Body>
                           </div>
                           
                           {/* Do this now */}
                           <div className="mb-6">
-                            <MicroLabel>Do this now</MicroLabel>
+                            <MicroLabel>Suggested Action</MicroLabel>
                             <Spacer size="s" />
-                            <Body>{message.content.do_this_now}</Body>
-                          </div>
-                          
-                          {/* Say this */}
-                          <div className="mb-6">
-                            <MicroLabel>One line to say</MicroLabel>
-                            <Spacer size="s" />
-                            <div className="border-l-2 border-white/40 pl-4 py-1 my-2">
-                                <Body>"{message.content.one_line_to_say}"</Body>
-                            </div>
+                            <Body>{message.content.suggested_response}</Body>
                           </div>
 
                           {/* Optional sections */}
-                          {(message.content.repeat_pattern || message.content.safety) && (
+                          {(message.content.pattern_detected || message.content.safety_level !== 'none') && (
                               <div className="border-t border-white/10 pt-4 mt-4 grid grid-cols-1 gap-4">
-                                  {message.content.repeat_pattern && (
+                                  {message.content.pattern_detected && (
                                       <div>
                                           <MicroLabel>Pattern Recognition</MicroLabel>
                                           <Spacer size="s" />
-                                          <Body muted>{message.content.repeat_pattern}</Body>
+                                          <Body muted>{message.content.pattern_summary}</Body>
                                       </div>
                                   )}
-                                  {message.content.safety && (
+                                  {message.content.safety_level !== 'none' && (
                                       <div>
                                           <MicroLabel>System Note</MicroLabel>
                                           <Spacer size="s" />
-                                          <Body muted>{message.content.safety}</Body>
+                                          <Body muted>Safety Risk: {message.content.safety_level}</Body>
                                       </div>
                                   )}
                               </div>

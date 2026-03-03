@@ -1,5 +1,7 @@
 // Core type definitions for DEFRAG
 
+import { DefragCrisisResponse } from '@/lib/ai/response-schema';
+
 export type SubscriptionStatus = 'none' | 'blueprint_unlocked' | 'os_active';
 
 export interface Profile {
@@ -68,20 +70,7 @@ export interface Readout {
   insights?: ReadoutInsight[];
 }
 
-export interface ChatResponse {
-  headline: string;
-  signal: 'low' | 'medium' | 'high';
-  confidence: {
-    overall: number;
-    data_confidence: number;
-    pattern_confidence: number;
-  };
-  whats_happening: string[];
-  do_this_now: string;
-  one_line_to_say: string;
-  repeat_pattern?: string | null;
-  safety?: string | null;
-}
+export type ChatResponse = DefragCrisisResponse;
 
 export interface NetworkBundle {
   profile: Profile;
