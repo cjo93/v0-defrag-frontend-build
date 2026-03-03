@@ -80,7 +80,7 @@ export default function ConnectionReadoutPage() {
         <EditorialRail variant="app">
           <H1>Error</H1>
           <Spacer size="m" />
-          <Body>{error || 'Failed to load readout'}</Body>
+          <Body muted>{error || 'Failed to load readout'}</Body>
         </EditorialRail>
         <BuildStamp />
       </AppShell>
@@ -90,15 +90,22 @@ export default function ConnectionReadoutPage() {
   // Locked state (requires OS)
   if (readout.locked && readout.required === 'os') {
     return (
-      <>
-        <LockedScreen
-          title="Connection readout locked"
-          body="Requires DEFRAG OS to view connection analysis."
-          ctaLabel={isCheckingOut ? "Initializing..." : "Upgrade to DEFRAG OS"}
-          onCta={handleUpgrade}
-        />
-        {error && <div className="text-red-500 text-sm mt-4 text-center">{error}</div>}
-      </>
+      <LockedScreen
+        title="Connection readout locked"
+        description="Requires DEFRAG OS to view connection analysis."
+        productName="DEFRAG OS"
+        price="$33"
+        priceInterval="month"
+        features={[
+          'Relational Grid for your network',
+          'Connection readouts',
+          'Crisis Mode AI support',
+          'Network tension mapping'
+        ]}
+        onUnlock={handleUpgrade}
+        isProcessing={isCheckingOut}
+        error={error}
+      />
     );
   }
 

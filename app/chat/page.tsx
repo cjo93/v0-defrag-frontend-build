@@ -130,15 +130,22 @@ export default function ChatPage() {
 
   if (!isOSActive) {
     return (
-      <>
-        <LockedScreen
-          title="Console locked"
-          body="Requires DEFRAG OS for active intelligence support."
-          ctaLabel={isCheckingOut ? "Initializing..." : "Upgrade to DEFRAG OS"}
-          onCta={handleUpgrade}
-        />
-        {error && <div className="text-red-500 text-sm mt-4 text-center">{error}</div>}
-      </>
+      <LockedScreen
+        title="Console locked"
+        description="Requires DEFRAG OS for active intelligence support."
+        productName="DEFRAG OS"
+        price="$33"
+        priceInterval="month"
+        features={[
+          'Relational Grid for your network',
+          'Connection readouts',
+          'Active intelligence console',
+          'Network tension mapping'
+        ]}
+        onUnlock={handleUpgrade}
+        isProcessing={isCheckingOut}
+        error={error}
+      />
     );
   }
 
@@ -224,14 +231,14 @@ export default function ChatPage() {
                                       <div>
                                           <MicroLabel>Pattern Recognition</MicroLabel>
                                           <Spacer size="s" />
-                                          <Body>{message.content.repeat_pattern}</Body>
+                                          <Body muted>{message.content.repeat_pattern}</Body>
                                       </div>
                                   )}
                                   {message.content.safety && (
                                       <div>
                                           <MicroLabel>Note</MicroLabel>
                                           <Spacer size="s" />
-                                          <Body>{message.content.safety}</Body>
+                                          <Body muted>{message.content.safety}</Body>
                                       </div>
                                   )}
                               </div>

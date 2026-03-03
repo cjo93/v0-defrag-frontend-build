@@ -96,15 +96,22 @@ export default function SelfReadoutClient() {
   // Locked state
   if (readout?.locked) {
     return (
-      <>
-        <LockedScreen
-          title="Manual locked"
-          body="Your baseline is set. Unlock to view it."
-          ctaLabel={isCheckingOut ? "Initializing..." : "Unlock Blueprint"}
-          onCta={handleUnlock}
-        />
-        {error && <div className="text-red-500 text-sm mt-4 text-center">{error}</div>}
-      </>
+      <LockedScreen
+        title="Manual locked"
+        description="Your baseline is set. Unlock to view it."
+        productName="Blueprint"
+        price="$11"
+        priceInterval="one-time"
+        features={[
+          'Energy Style analysis',
+          'Friction patterns',
+          'Family Echoes',
+          'Daily Weather forecast'
+        ]}
+        onUnlock={handleUnlock}
+        isProcessing={isCheckingOut}
+        error={error}
+      />
     );
   }
 
@@ -132,7 +139,7 @@ export default function SelfReadoutClient() {
         {/* Upgrade CTA - silent reference */}
         <Spacer size="xl" />
         <div className="pt-12 border-t border-white/10">
-          <Body>Add your people and access Crisis Mode</Body>
+          <Body muted>Add your people and access Crisis Mode</Body>
           <Spacer size="m" />
           <TextActionButton onClick={handleUpgradeOS} disabled={isCheckingOut}>
             {isCheckingOut ? 'Redirecting...' : 'Upgrade to OS'}

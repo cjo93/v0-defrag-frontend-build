@@ -48,7 +48,7 @@ const REQUIRED_KEYS = ['headline', 'signal', 'confidence', 'whats_happening', 'd
 export function validateStructuredResponse(
   rawResponse: any,
   attempt: number = 1
-): ChatResponse | null {
+): ValidatedChatResponse | null {
   // Check if response has all required keys
   const hasAllKeys = REQUIRED_KEYS.every(key => 
     rawResponse && rawResponse[key] !== undefined
@@ -83,9 +83,9 @@ const FORBIDDEN_PATTERNS = [
   /\b\d+%\b/, // Percentages
 ];
 
-export function filterDisclosure(response: ChatResponse): {
+export function filterDisclosure(response: ValidatedChatResponse): {
   safe: boolean;
-  filtered?: ChatResponse;
+  filtered?: ValidatedChatResponse;
   reason?: string;
 } {
   // Check all fields for forbidden patterns

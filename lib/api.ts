@@ -28,7 +28,7 @@ async function apiCall<T>(
   
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...(options.headers as Record<string, string>),
+    ...options.headers as Record<string, string>,
   };
   
   if (token) {
