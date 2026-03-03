@@ -4,7 +4,8 @@ export type SecurityEventType =
   | 'DISCLOSURE_BLOCKED'
   | 'SCHEMA_VALIDATION_FAILED'
   | 'RATE_LIMIT_EXCEEDED'
-  | 'PROMPT_INJECTION_DETECTED';
+  | 'PROMPT_INJECTION_DETECTED'
+  | 'SAFETY_OVERRIDE_TRIGGERED';
 
 export interface SecurityEvent {
   user_id?: string;

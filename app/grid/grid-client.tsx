@@ -124,29 +124,22 @@ export default function GridClient() {
   // Locked state (no OS)
   if (!isOSActive) {
     return (
-      <LockedScreen
-        title="Grid locked"
-        description="Requires DEFRAG OS to add and view your people."
-        productName="DEFRAG OS"
-        price="$33"
-        priceInterval="month"
-        features={[
-          'Relational Grid for your network',
-          'Connection readouts',
-          'Crisis Mode AI support',
-          'Network tension mapping'
-        ]}
-        onUnlock={handleUpgrade}
-        isProcessing={isCheckingOut}
-        error={error}
-      />
+      <>
+        <LockedScreen
+          title="Grid locked"
+          body="Requires DEFRAG OS to add and view your people."
+          ctaLabel={isCheckingOut ? "Initializing..." : "Upgrade to DEFRAG OS"}
+          onCta={handleUpgrade}
+        />
+        {error && <div className="text-red-500 text-sm mt-4 text-center">{error}</div>}
+      </>
     );
   }
 
   // Active OS Grid
   return (
     <AppShell>
-      <EditorialRail width="app">
+      <EditorialRail variant="app">
         <MicroLabel>Grid</MicroLabel>
         <Spacer size="s" />
         <H1>Your people.</H1>
@@ -213,7 +206,7 @@ export default function GridClient() {
               <form onSubmit={handleAddConnection}>
                 <div>
                   <MicroLabel>Name</MicroLabel>
-                  <Spacer size="xs" />
+                  <Spacer size="s" />
                   <LineInput
                     value={newConnection.name}
                     onChange={(e) => setNewConnection({ ...newConnection, name: e.target.value })}
@@ -226,7 +219,7 @@ export default function GridClient() {
 
                 <div>
                   <MicroLabel>Relationship</MicroLabel>
-                  <Spacer size="xs" />
+                  <Spacer size="s" />
                   <LineInput
                     value={newConnection.relationship_type}
                     onChange={(e) => setNewConnection({ ...newConnection, relationship_type: e.target.value })}
@@ -239,7 +232,7 @@ export default function GridClient() {
 
                 <div>
                   <MicroLabel>Date of Birth</MicroLabel>
-                  <Spacer size="xs" />
+                  <Spacer size="s" />
                   <LineInput
                     type="date"
                     value={newConnection.dob}
@@ -252,7 +245,7 @@ export default function GridClient() {
 
                 <div>
                   <MicroLabel>Birth Time (optional)</MicroLabel>
-                  <Spacer size="xs" />
+                  <Spacer size="s" />
                   <LineInput
                     type="time"
                     value={newConnection.birth_time}
@@ -264,7 +257,7 @@ export default function GridClient() {
 
                 <div>
                   <MicroLabel>Birth City (optional)</MicroLabel>
-                  <Spacer size="xs" />
+                  <Spacer size="s" />
                   <LineInput
                     value={newConnection.birth_city}
                     onChange={(e) => setNewConnection({ ...newConnection, birth_city: e.target.value })}
@@ -275,7 +268,7 @@ export default function GridClient() {
                 {error && (
                   <>
                     <Spacer size="m" />
-                    <Body muted>{error}</Body>
+                    <Body>{error}</Body>
                   </>
                 )}
 
