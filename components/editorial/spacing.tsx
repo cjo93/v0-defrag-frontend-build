@@ -1,5 +1,6 @@
-export function Spacer({ size }: { size: "s" | "m" | "l" | "xl" }) {
+export function Spacer({ size }: { size: "xs" | "s" | "m" | "l" | "xl" }) {
   const map = {
+    xs: "mt-3",  // 0.75rem / 12px
     s: "mt-6",   // 1.5rem / 24px - minor separation
     m: "mt-12",  // 3rem / 48px - between fields
     l: "mt-20",  // 5rem / 80px - between sections

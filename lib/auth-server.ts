@@ -17,11 +17,11 @@ export async function createServerClient() {
   const cookieStore = await cookies();
   
   return createClient(supabaseUrl, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
-    cookies: {
-      get(name: string) {
-        return cookieStore.get(name)?.value;
-      },
-    },
+    global: {
+      headers: {
+        Cookie: cookieStore.getAll().map(c => `${c.name}=${c.value}`).join('; '),
+      }
+    }
   });
 }
 

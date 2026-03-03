@@ -24,9 +24,9 @@ export function H2({ children }: { children: ReactNode }) {
   );
 }
 
-export function Body({ children }: { children: ReactNode }) {
+export function Body({ children, muted }: { children: ReactNode; muted?: boolean }) {
   return (
-    <p className="text-[16px] leading-[1.75] text-white/45">
+    <p className={`text-[16px] leading-[1.75] ${muted ? 'text-white/30' : 'text-white/45'}`}>
       {children}
     </p>
   );

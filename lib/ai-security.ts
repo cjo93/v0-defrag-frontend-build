@@ -1,7 +1,7 @@
 // AI Security Layer - Prevents disclosure of internal logic
 // Implements 3 controls: signal sanitization, structured validation, disclosure filtering
 
-import type { ChatResponse } from './types';
+import type { SovereignGuidanceResponse } from './ai/response-schema';
 
 // Control 1: Signal Sanitization
 // Never send raw network data or engine internals to the model
@@ -26,121 +26,10 @@ export function sanitizeNetworkSignal(
   };
 }
 
-// Control 2: Structured Output Validation
-// Enforce exact JSON schema and reject anything else
-export interface ValidatedChatResponse {
-  headline: string;
-  happening: string;
-  doThis: string;
-  avoid: string;
-  sayThis: string;
-}
-
-const REQUIRED_KEYS = ['headline', 'happening', 'doThis', 'avoid', 'sayThis'];
-
-export function validateStructuredResponse(
-  rawResponse: any,
-  attempt: number = 1
-): ValidatedChatResponse | null {
-  // Check if response has all required keys
-  const hasAllKeys = REQUIRED_KEYS.every(key => 
-    rawResponse && typeof rawResponse[key] === 'string' && rawResponse[key].length > 0
-  );
-
-  if (!hasAllKeys) {
-    console.warn('[AI Security] Invalid response structure, attempt:', attempt);
-    return null;
-  }
-
-  return {
-    headline: rawResponse.headline,
-    happening: rawResponse.happening,
-    doThis: rawResponse.doThis,
-    avoid: rawResponse.avoid,
-    sayThis: rawResponse.sayThis,
-  };
-}
-
-// Control 3: Disclosure Filter
-// Block responses that reveal internal logic
-const FORBIDDEN_PATTERNS = [
-  /\b(algorithm|calculation|score|threshold|mapping|formula)\b/i,
-  /\b(I calculated|I analyzed the data|based on the numbers)\b/i,
-  /\b(node|edge|network graph|data structure)\b/i,
-  /\b(JSON|array|object|key|value)\b/i,
-  /\bhere'?s? (the|a) (list|table|breakdown)\b/i,
-  /\d+\.\d{2,}/, // Precise decimals like 0.73, 3.14159
-  /\b\d+%\b/, // Percentages
-];
-
-export function filterDisclosure(response: ValidatedChatResponse): {
-  safe: boolean;
-  filtered?: ValidatedChatResponse;
-  reason?: string;
-} {
-  // Check all fields for forbidden patterns
-  const allText = Object.values(response).join(' ');
-  
-  for (const pattern of FORBIDDEN_PATTERNS) {
-    if (pattern.test(allText)) {
-      console.warn('[AI Security] Disclosure detected:', pattern);
-      
-      // Return safe fallback response
-      return {
-        safe: false,
-        filtered: {
-          headline: 'Signal received',
-          happening: 'Your network is showing some tension right now. This is temporary.',
-          doThis: 'Take a step back. Give yourself space before responding.',
-          avoid: 'Don\'t make big decisions in the next few hours.',
-          sayThis: 'I need a moment to think about this.',
-        },
-        reason: 'Disclosure filter triggered',
-      };
-    }
-  }
-
-  return { safe: true };
-}
-
-// Combined security check
+// Combined security check (legacy function, not actively used in /api/ai/chat/route.ts but must compile)
 export function secureAIResponse(
   rawResponse: any,
   attempt: number = 1
-): ChatResponse | null {
-  // Validate structure
-  const validated = validateStructuredResponse(rawResponse, attempt);
-  if (!validated) {
-    if (attempt < 2) {
-      // Backend should retry with stricter prompt
-      return null;
-    }
-    // Return safe fallback after max attempts
-    return {
-      conversationId: 'fallback',
-      response: {
-        headline: 'System check',
-        happening: 'The system needs a moment to recalibrate.',
-        doThis: 'Take a pause. Nothing urgent is required right now.',
-        avoid: 'Don\'t force a decision.',
-        sayThis: 'I\'m taking time to process this.',
-      },
-    };
-  }
-
-  // Filter for disclosure
-  const filterResult = filterDisclosure(validated);
-  if (!filterResult.safe) {
-    console.error('[AI Security] Disclosure blocked:', filterResult.reason);
-    return {
-      conversationId: 'filtered',
-      response: filterResult.filtered!,
-    };
-  }
-
-  // All checks passed
-  return {
-    conversationId: 'valid',
-    response: validated,
-  };
+): { conversationId: string; response: any } | null {
+   return null;
 }

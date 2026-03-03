@@ -1,10 +1,14 @@
 'use client';
 
-import { Button, ButtonProps } from '@/components/ui/button';
+import * as React from 'react';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { VariantProps } from 'class-variance-authority';
+import { buttonVariants } from '@/components/ui/button';
 
-interface CTAButtonProps extends ButtonProps {
+interface CTAButtonProps extends React.ComponentProps<'button'>, VariantProps<typeof buttonVariants> {
   iridescent?: boolean;
+  asChild?: boolean;
 }
 
 export function CTAButton({ 
