@@ -57,7 +57,7 @@ export default function Hero() {
           DEFRAG
         </span>
         <div style={{ display: 'flex', gap: 40, alignItems: 'center' }}>
-          {['System', 'Blueprint', 'Protocol'].map((item) => (
+          {['Structure', 'Blueprint', 'Protocol'].map((item) => (
             <Link
               key={item}
               href={item === 'Blueprint' ? '/blueprint' : '#'}
@@ -232,7 +232,7 @@ export default function Hero() {
             }}
           >
             {[
-              { label: 'System Status', value: 'Active' },
+              { label: 'Framework Status', value: 'Active' },
               { label: 'Analysis Mode', value: 'Structural' },
               { label: 'Output', value: 'Blueprint' },
             ].map((item) => (

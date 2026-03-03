@@ -61,7 +61,7 @@ export default function ManualPlaceholderPage({ params }: { params: { session_id
           {progress < 100 ? (
             <span>Computing structural patterns [ {progress}% ]</span>
           ) : (
-            <span>Processing complete. Standing by for Engine Phase 2.</span>
+            <span>Computation complete. Standing by for Phase 2.</span>
           )}
         </p>
       </div>

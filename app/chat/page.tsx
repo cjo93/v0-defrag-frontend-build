@@ -84,7 +84,7 @@ export default function ChatPage() {
     try {
       // Mocking API call to use the updated schema for now
       const response: ChatResponse = {
-        headline: 'System Overload',
+        headline: 'Clarity Overload',
         signal: 'high',
         confidence: {
             overall: 85,
@@ -160,7 +160,7 @@ export default function ChatPage() {
               <Spacer size="s" />
               <H1>Controlled response.</H1>
               <Spacer size="m" />
-              <Body muted>System ready for input.</Body>
+              <Body muted>Ready for input.</Body>
             </>
           ) : (
             <div className="space-y-12">
@@ -236,7 +236,7 @@ export default function ChatPage() {
                                   )}
                                   {message.content.safety && (
                                       <div>
-                                          <MicroLabel>System Note</MicroLabel>
+                                          <MicroLabel>Note</MicroLabel>
                                           <Spacer size="s" />
                                           <Body muted>{message.content.safety}</Body>
                                       </div>
@@ -251,7 +251,7 @@ export default function ChatPage() {
               ))}
               {isLoading && (
                 <div className="border border-white/10 p-6 flex justify-center">
-                  <span className="font-mono text-[12px] text-white/50 uppercase tracking-widest">Processing...</span>
+                  <span className="font-mono text-[12px] text-white/50 uppercase tracking-widest">Reflecting...</span>
                 </div>
               )}
               <div ref={messagesEndRef} />
@@ -278,7 +278,7 @@ export default function ChatPage() {
               disabled={isLoading || !input.trim()}
               className="font-mono text-[14px] tracking-[0.1em] uppercase text-white/70 hover:text-white disabled:opacity-40 pb-4 border-b border-transparent hover:border-white transition-colors duration-200"
             >
-              Execute
+              Continue
             </button>
           </form>
         </div>

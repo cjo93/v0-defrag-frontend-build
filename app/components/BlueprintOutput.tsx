@@ -23,7 +23,7 @@ export default function BlueprintOutput() {
               Structural Orientation: Defined.
             </h1>
             <p style={{ fontFamily: 'serif', fontSize: '18px', color: 'var(--text-secondary)', margin: 0 }}>
-              Your system maintains internal authority under pressure.
+              You maintain internal clarity under pressure.
             </p>
           </div>
 
@@ -35,7 +35,7 @@ export default function BlueprintOutput() {
               Baseline Structure
             </h2>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              {['Authority Processing', 'Clarity Seeking', 'Stabilization Tendency'].map((label, i) => (
+              {['Authority Recognition', 'Clarity Seeking', 'Stabilization Tendency'].map((label, i) => (
                 <div key={i} style={{ padding: '20px 0', borderTop: '1px solid rgba(255,255,255,0.07)', display: 'flex', gap: '28px' }}>
                   <span style={{ fontFamily: 'monospace', fontSize: '10px', color: 'rgba(255,255,255,0.2)' }}>{`0${i + 1}`}</span>
                   <div>
@@ -54,7 +54,7 @@ export default function BlueprintOutput() {
               Defense Configuration
             </h2>
             <p style={{ fontFamily: 'serif', fontSize: '17px', color: 'var(--text-muted)', marginBottom: '20px' }}>
-              Under load, your system increases control to restore order.
+              Under pressure, you increase control to restore clarity.
             </p>
             <div style={{ display: 'inline-block', border: '1px solid var(--line-mid)', padding: '10px 18px', background: 'var(--panel-black)' }}>
               <span style={{ fontFamily: 'monospace', fontSize: '11px', letterSpacing: '0.12em', color: 'var(--text-muted)' }}>
