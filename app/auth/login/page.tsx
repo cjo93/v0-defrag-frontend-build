@@ -58,7 +58,7 @@ export default function LoginPage() {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'apple',
-        options: { redirectTo: `${siteUrl}/dashboard` }
+        options: { redirectTo: `${siteUrl}/auth/callback` }
       });
       if (error) {
         if (error.message?.includes('provider is not enabled') || (error as any).error_code === 'validation_failed') {
