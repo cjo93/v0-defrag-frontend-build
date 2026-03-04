@@ -156,9 +156,30 @@ function ChatClient() {
             <>
               <MicroLabel>Intelligence Console</MicroLabel>
               <Spacer size="s" />
-              <H1>Controlled response.</H1>
+              <H1>Ask about a real relationship or situation in your life.</H1>
               <Spacer size="m" />
-              <Body>System ready for input.</Body>
+              <Body>DEFRAG analyzes relational dynamics through your natal structure.</Body>
+
+              <Spacer size="xl" />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[
+                  "Why doesn't my mom understand when I need space?",
+                  "Why does my dad push me so hard to succeed?",
+                  "Why do people expect me to carry the emotional weight in relationships?",
+                  "Why do I feel responsible for fixing other people's problems?"
+                ].map((suggestion, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setInput(suggestion)}
+                    className="text-left p-5 border border-white/10 hover:border-white/40 transition-colors duration-200 bg-black group"
+                  >
+                    <p className="text-[14px] leading-[1.6] text-white/50 group-hover:text-white/80 transition-colors duration-200">
+                      &quot;{suggestion}&quot;
+                    </p>
+                  </button>
+                ))}
+              </div>
             </>
           ) : (
             <div className="space-y-12">
@@ -266,7 +287,7 @@ function ChatClient() {
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Enter situation parameters..."
+                placeholder="Ask about a relationship dynamic in your life"
                 disabled={isLoading}
                 className="w-full bg-transparent border-b border-white/20 py-4 text-[16px] tracking-[0.02em] font-sans focus:border-white focus:outline-none transition-none placeholder:text-white/25"
               />
