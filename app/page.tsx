@@ -1,3 +1,8 @@
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/auth-context';
 import Hero from './components/landing/Hero'
 import QuietTruth from './components/landing/QuietTruth'
 import WhatWeBelieve from './components/landing/WhatWeBelieve'
@@ -9,6 +14,15 @@ import PrivateByDesign from './components/landing/PrivateByDesign'
 import FinalCTA from './components/landing/FinalCTA'
 
 export default function LandingPage() {
+  const router = useRouter();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      router.push('/dashboard');
+    }
+  }, [user, router]);
+
   return (
     <main
       style={{
