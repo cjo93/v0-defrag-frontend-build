@@ -27,25 +27,26 @@ export default function OnboardingPage() {
       const session = await getSession();
       if (!session) throw new Error("Unauthorized");
 
-      const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.defrag.app';
-      const payload = {
-        dob,
-        birth_time: unknownTime ? "12:00" : time,
-        birth_location: location
-      };
 
-      const res = await fetch(`${API_URL}/api/profile/generate-chart`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify(payload)
-      });
+      const { supabase } = await import('@/lib/supabase');
+      const supabaseClient = supabase;
 
-      if (!res.ok) {
-        throw new Error("Failed to generate chart");
+      const { data: user } = await supabaseClient!.auth.getUser();
+      if (!user.user) throw new Error("Unauthorized");
+
+      const { error } = await supabaseClient!
+        .from('birthlines')
+        .insert({
+          user_id: user.user.id,
+          dob,
+          birth_time: unknownTime ? "12:00" : time,
+          birth_city: location
+        });
+
+      if (error) {
+        throw new Error(error.message);
       }
+
 
       toast({
         title: "Profile created",

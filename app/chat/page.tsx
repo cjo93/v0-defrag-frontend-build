@@ -116,7 +116,7 @@ function ChatClient() {
   // Helper function to render signal color in grayscale
 
   const getSensitivityLabel = (sensitivity: 'low' | 'medium' | 'high') => {
-      switch(signal) {
+      switch(sensitivity) {
           case 'low': return 'stable';
           case 'medium': return 'moderate';
           case 'high': return 'elevated';
@@ -125,7 +125,7 @@ function ChatClient() {
   };
 
   const getSensitivityColor = (sensitivity: 'low' | 'medium' | 'high') => {
-      switch(signal) {
+      switch(sensitivity) {
           case 'low': return 'text-white/40';
           case 'medium': return 'text-white/70';
           case 'high': return 'text-white';
@@ -164,10 +164,10 @@ function ChatClient() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[
-                  "Why doesn't my mom understand when I need space?",
-                  "Why does my dad push me so hard to succeed?",
-                  "Why do people expect me to carry the emotional weight in relationships?",
-                  "Why do I feel responsible for fixing other people's problems?"
+                  "Why doesn't my mom respect my boundaries?",
+                  "Why does my dad push me so hard?",
+                  "Why can't they see who I am?",
+                  "How do I say this without escalation?"
                 ].map((suggestion, i) => (
                   <button
                     key={i}

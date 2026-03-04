@@ -14,12 +14,14 @@ import {
   TextActionButton
 } from '@/components/editorial';
 import { BuildStamp } from '@/components/build-stamp';
+import { getSession } from '@/lib/supabase';
 
 export default function DashboardClient() {
   const router = useRouter();
   const { user } = useAuth();
 
   const [isReady, setIsReady] = useState(false);
+  const [hasData, setHasData] = useState(false);
   const [showBanner, setShowBanner] = useState(true);
 
   useEffect(() => {
@@ -28,8 +30,24 @@ export default function DashboardClient() {
       return;
     }
 
-    // Simulate loading data
-    setIsReady(true);
+    const checkData = async () => {
+      try {
+        const { supabase } = await import('@/lib/supabase');
+        const supabaseClient = supabase;
+        const { data } = await supabaseClient!
+          .from('connections')
+          .select('id')
+          .eq('user_id', user.id)
+          .limit(1);
+
+        setHasData(!!(data && data.length > 0));
+      } catch (err) {
+        console.error("Failed to fetch data", err);
+      } finally {
+        setIsReady(true);
+      }
+    };
+    checkData();
 
     // Auto-hide banner after 5 seconds
     const timer = setTimeout(() => {
@@ -59,97 +77,94 @@ export default function DashboardClient() {
 
       <EditorialRail variant="app">
         <div className={showBanner ? "pt-10" : ""}>
-          {/* SECTION 1 - Relational Dynamics */}
-          <section>
-            <H1>Your relational dynamics</H1>
-            <Spacer size="l" />
-
-            <div className="space-y-8">
-              <div className="border border-white/20 p-6 bg-black">
-                <MicroLabel>Dynamic</MicroLabel>
-                <Spacer size="s" />
-                <H2 className="text-white text-lg font-medium tracking-tight">Strong responsibility patterns in family relationships</H2>
-                <Spacer size="m" />
-                <MicroLabel>Meaning</MicroLabel>
-                <Spacer size="xs" />
-                <Body className="text-white/70">You may often be expected to carry emotional or practical responsibility within your family system.</Body>
-              </div>
-
-              <div className="border border-white/20 p-6 bg-black">
-                <MicroLabel>Dynamic</MicroLabel>
-                <Spacer size="s" />
-                <H2 className="text-white text-lg font-medium tracking-tight">High sensitivity to authority figures</H2>
-                <Spacer size="m" />
-                <MicroLabel>Meaning</MicroLabel>
-                <Spacer size="xs" />
-                <Body className="text-white/70">Pressure or expectations from authority may feel unusually intense.</Body>
-              </div>
-            </div>
-          </section>
-
-          <Spacer size="xl" />
-          <div className="h-px w-full bg-white/10" />
-          <Spacer size="xl" />
-
-          {/* SECTION 2 - Ask about a relationship */}
-          <section>
-            <H1>Ask about a relationship in your life</H1>
-            <Spacer size="l" />
-
-            <div
-              className="border border-white/30 p-4 mb-6 cursor-text hover:border-white/50 transition-colors"
-              onClick={() => router.push('/chat')}
-            >
-              <span className="font-sans text-[16px] text-white/40">Example: Why does my dad push me so hard?</span>
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-start gap-4 cursor-pointer group" onClick={() => router.push('/chat?prompt=Why+does+my+mom+struggle+to+respect+my+boundaries%3F')}>
-                <div className="h-px w-6 bg-white/20 mt-3 group-hover:bg-white/50 transition-colors" />
-                <Body className="text-white/70 group-hover:text-white transition-colors">Why does my mom struggle to respect my boundaries?</Body>
-              </div>
-
-              <div className="flex items-start gap-4 cursor-pointer group" onClick={() => router.push('/chat?prompt=Why+do+people+expect+me+to+take+responsibility+for+everything%3F')}>
-                <div className="h-px w-6 bg-white/20 mt-3 group-hover:bg-white/50 transition-colors" />
-                <Body className="text-white/70 group-hover:text-white transition-colors">Why do people expect me to take responsibility for everything?</Body>
-              </div>
-
-              <div className="flex items-start gap-4 cursor-pointer group" onClick={() => router.push('/chat?prompt=Why+do+partners+pull+away+when+I+get+close%3F')}>
-                <div className="h-px w-6 bg-white/20 mt-3 group-hover:bg-white/50 transition-colors" />
-                <Body className="text-white/70 group-hover:text-white transition-colors">Why do partners pull away when I get close?</Body>
-              </div>
-            </div>
-          </section>
-
-          <Spacer size="xl" />
-          <div className="h-px w-full bg-white/10" />
-          <Spacer size="xl" />
-
-          {/* SECTION 3 - Current Dynamics */}
-          <section>
-            <H1>Current dynamics</H1>
-            <Spacer size="l" />
-
-            <div className="border border-white/20 p-6 bg-black">
-              <MicroLabel>Current Dynamic</MicroLabel>
-              <Spacer size="s" />
-              <H2 className="text-white text-lg font-medium tracking-tight">Communication pressure</H2>
+          {!hasData ? (
+            <div className="border border-white/20 p-8 mt-12 bg-[#111] text-center">
+              <H2>Awaiting input.</H2>
               <Spacer size="m" />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <MicroLabel>Meaning</MicroLabel>
-                  <Spacer size="xs" />
-                  <Body className="text-white/70">Conversations may feel more intense right now.</Body>
-                </div>
-                <div>
-                  <MicroLabel>Advice</MicroLabel>
-                  <Spacer size="xs" />
-                  <Body className="text-white/70">Keep responses short and clear.</Body>
-                </div>
+              <Body>To generate insights, DEFRAG requires relational data.</Body>
+              <Spacer size="l" />
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <button
+                  onClick={() => router.push('/relationships/new')}
+                  className="px-6 py-3 bg-white text-black font-mono text-[12px] tracking-widest uppercase hover:bg-gray-200 transition-colors w-full sm:w-auto"
+                >
+                  Add someone
+                </button>
+                <button
+                  onClick={() => router.push('/dashboard/today')}
+                  className="px-6 py-3 border border-white/30 text-white font-mono text-[12px] tracking-widest uppercase hover:bg-white/10 transition-colors w-full sm:w-auto"
+                >
+                  Generate today's brief
+                </button>
+                <button
+                  onClick={() => router.push('/chat')}
+                  className="px-6 py-3 border border-white/30 text-white font-mono text-[12px] tracking-widest uppercase hover:bg-white/10 transition-colors w-full sm:w-auto"
+                >
+                  Ask about a relationship
+                </button>
               </div>
             </div>
-          </section>
+          ) : (
+            <>
+              {/* PANEL 1 - Today */}
+              <section>
+                <H1>Today</H1>
+                <Spacer size="l" />
+                <div className="border border-white/20 p-6 bg-black">
+                  <MicroLabel>Pressure</MicroLabel>
+                  <Spacer size="s" />
+                  <H2 className="text-white text-lg font-medium tracking-tight">Communication pressure</H2>
+                  <Spacer size="m" />
+                  <Body className="text-white/70">Conversations may feel more intense right now. Keep responses short and clear.</Body>
+                </div>
+              </section>
+
+              <Spacer size="xl" />
+              <div className="h-px w-full bg-white/10" />
+              <Spacer size="xl" />
+
+              {/* PANEL 2 - Relationships */}
+              <section>
+                <H1>Relationships</H1>
+                <Spacer size="l" />
+                <div className="space-y-4">
+                  <div className="flex items-start gap-4 cursor-pointer group" onClick={() => router.push('/relationships')}>
+                    <div className="h-px w-6 bg-white/20 mt-3 group-hover:bg-white/50 transition-colors" />
+                    <Body className="text-white/70 group-hover:text-white transition-colors">View all connections</Body>
+                  </div>
+                </div>
+              </section>
+
+              <Spacer size="xl" />
+              <div className="h-px w-full bg-white/10" />
+              <Spacer size="xl" />
+
+              {/* PANEL 3 - Daily Audio */}
+              <section>
+                <H1>Daily Audio</H1>
+                <Spacer size="l" />
+                <div className="border border-white/20 p-6 bg-black flex items-center justify-between opacity-50">
+                  <Body className="text-white/70">Audio generation currently offline.</Body>
+                </div>
+              </section>
+
+              <Spacer size="xl" />
+              <div className="h-px w-full bg-white/10" />
+              <Spacer size="xl" />
+
+              {/* PANEL 4 - Ask About a Relationship */}
+              <section>
+                <H1>Ask about a relationship</H1>
+                <Spacer size="l" />
+                <div
+                  className="border border-white/30 p-4 mb-6 cursor-text hover:border-white/50 transition-colors"
+                  onClick={() => router.push('/chat')}
+                >
+                  <span className="font-sans text-[16px] text-white/40">Example: Why does my dad push me so hard?</span>
+                </div>
+              </section>
+            </>
+          )}
 
           <Spacer size="xxl" />
         </div>
