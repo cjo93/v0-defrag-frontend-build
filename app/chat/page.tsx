@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useRef, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { sendChatMessage, createCheckoutSession } from '@/lib/api';
 import type { ChatResponse } from '@/lib/types';
@@ -11,8 +11,6 @@ import {
   H1,
   Body, 
   Spacer,
-  LineInput,
-  TextActionButton,
   LockedScreen 
 } from '@/components/editorial';
 import { BuildStamp } from '@/components/build-stamp';
@@ -22,8 +20,9 @@ interface Message {
   content: string | ChatResponse;
 }
 
-export default function ChatPage() {
+function ChatClient() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, signOut } = useAuth();
   
   const [messages, setMessages] = useState<Message[]>([]);
@@ -42,7 +41,13 @@ export default function ChatPage() {
     }
 
     checkOSStatus();
-  }, [user]);
+
+    // Check if there is a prompt in URL to pre-fill
+    const promptParam = searchParams.get('prompt');
+    if (promptParam) {
+      setInput(promptParam);
+    }
+  }, [user, searchParams]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -190,9 +195,9 @@ export default function ChatPage() {
                               </div>
                           </div>
                           
-                          {/* What&apos;s happening */}
+                          {/* What's happening */}
                           <div className="mb-6">
-                            <MicroLabel>What&apos;s happening</MicroLabel>
+                            <MicroLabel>What's happening</MicroLabel>
                             <Spacer size="s" />
                             <ul className="list-disc pl-4 space-y-1">
                                 {message.content.whats_happening.map((point, i) => (
@@ -279,5 +284,17 @@ export default function ChatPage() {
       
       <BuildStamp />
     </div>
+  );
+}
+
+export default function ChatPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-black text-white flex items-center justify-center font-sans">
+        <span className="font-mono text-[12px] text-white/50 uppercase tracking-widest">Initializing Console...</span>
+      </div>
+    }>
+      <ChatClient />
+    </Suspense>
   );
 }
