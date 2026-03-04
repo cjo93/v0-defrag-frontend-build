@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase, getSession } from "@/lib/supabase";
-import { Lock, MessageCircle, Users, Calendar, Headphones, Plus, X, Copy, Check, UserPlus, Edit3, Shield } from "lucide-react";
+import { Lock, Plus, X, Copy, Check, UserPlus, Edit3 } from "lucide-react";
 import Link from "next/link";
 import { TopNav } from "@/components/top-nav";
 import { ServiceUnavailable } from "@/components/service-unavailable";
 import { useToast } from "@/hooks/use-toast";
 import RelationshipMap from "@/components/relationship-map";
+import Panel from "@/components/panel";
+import TodaySummary from "@/components/today-summary";
 
 type UserStatus = {
   plan: 'solo' | 'plus';
@@ -101,173 +103,210 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen bg-black text-white font-sans antialiased">
         <TopNav />
-        <main className="px-6 md:px-8 pt-12 pb-24 flex flex-col items-center">
-          <div className="w-full max-w-[920px]">
-            <div className="animate-pulse space-y-6">
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} className="border border-white/10 bg-white/[0.02] rounded-xl p-6 md:p-8 space-y-4">
-                  <div className="h-3 w-24 bg-white/[0.06] rounded" />
-                  <div className="h-5 w-2/3 bg-white/[0.04] rounded" />
-                  <div className="h-4 w-full bg-white/[0.04] rounded" />
-                </div>
-              ))}
-            </div>
+        <main className="max-w-[1200px] mx-auto px-6 py-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className={`border border-white/10 bg-white/[0.02] p-6 space-y-4 ${
+                  i % 2 === 1 ? "col-span-12 lg:col-span-7" : "col-span-12 lg:col-span-5"
+                }`}
+              >
+                <div className="h-3 w-24 bg-white/[0.06] rounded animate-pulse" />
+                <div className="h-5 w-2/3 bg-white/[0.04] rounded animate-pulse" />
+                <div className="h-4 w-full bg-white/[0.04] rounded animate-pulse" />
+              </div>
+            ))}
           </div>
         </main>
       </div>
     );
   }
 
+  // Build relationship state list for Today panel
+  const relationshipStates = people.map((p) => ({
+    name: p.name,
+    state: ("unclear" as "stable" | "strained" | "cooling" | "improving" | "unclear"),
+  }));
+
   return (
     <div className="min-h-screen bg-black text-white font-sans antialiased">
       <TopNav />
-      <main className="px-6 md:px-8 pt-12 pb-24 flex flex-col items-center">
-        <div className="w-full max-w-[920px] space-y-6">
+      <main className="max-w-[1200px] mx-auto px-6 py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-          {/* ─── TODAY ─── */}
-          <section className="border border-white/10 bg-white/[0.02] rounded-xl p-6 md:p-8 space-y-6 hover:border-white/20 hover:bg-white/[0.04] hover:translate-y-[-1px] transition-all duration-200 ease-out animate-fade-in">
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-white/50" />
-              <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">Today</h2>
-            </div>
-
-            <p className="text-[17px] md:text-[20px] leading-[1.6] text-white/70">
-              Today favors slower conversations. Pressure may rise if discussions become defensive.
-            </p>
-
-            <div className="grid grid-cols-3 gap-4">
-              {[
-                { label: 'Pressure', value: 'Calm', color: 'text-green-400/80' },
-                { label: 'Timing', value: 'Favorable', color: 'text-white' },
-                { label: 'Best For', value: 'Listening', color: 'text-white' },
-              ].map((item) => (
-                <div key={item.label} className="space-y-1">
-                  <span className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/45">{item.label}</span>
-                  <p className={`text-[15px] md:text-[16px] font-medium ${item.color}`}>{item.value}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* ─── RELATIONAL MAP ─── */}
-          {isPlus ? (
-            <section className="border border-white/10 bg-white/[0.02] rounded-xl p-6 md:p-8 space-y-5 hover:border-white/20 hover:bg-white/[0.04] hover:translate-y-[-1px] transition-all duration-200 ease-out animate-fade-in delay-50">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-white/50" />
-                  <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">Relational Field</h2>
-                </div>
-                <button
-                  onClick={() => { setAddMode('choose'); setShowAddModal(true); }}
-                  className="flex items-center gap-1.5 font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50 hover:text-white/80 transition-colors duration-200"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  Add person
-                </button>
-              </div>
-
-              {/* Pending invites */}
-              {pendingInvites.length > 0 && (
-                <div className="space-y-2">
-                  {pendingInvites.map((inv) => (
-                    <div key={inv.id} className="flex items-center justify-between border border-yellow-400/10 bg-yellow-400/[0.03] rounded-lg px-5 py-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 rounded-full bg-yellow-400/60 animate-pulse" />
-                        <span className="text-[14px] text-white/60">{inv.invitee_name || 'Unnamed'}</span>
-                        <span className="font-mono text-[10px] text-yellow-400/60 uppercase tracking-[0.15em]">Pending</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+          {/* ─── Panel 1: Today Summary ─── */}
+          <div className="col-span-12 lg:col-span-7 animate-fade-in">
+            <Panel title="TODAY">
+              {people.length === 0 ? (
+                <p className="text-[14px] text-white/30 leading-[1.6]">
+                  Today favors slower conversations. Add people to see relational state.
+                </p>
+              ) : (
+                <TodaySummary states={relationshipStates} />
               )}
+            </Panel>
+          </div>
 
-              {/* Relationship Map */}
-              <RelationshipMap
-                people={people}
-                onAddPerson={() => { setAddMode('choose'); setShowAddModal(true); }}
-              />
-            </section>
-          ) : (
-            <section className="border border-white/[0.06] bg-white/[0.01] rounded-xl p-6 md:p-8 space-y-4 animate-fade-in delay-50">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-white/30" />
-                  <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/30">Relational Field</h2>
-                </div>
-                <Lock className="w-4 h-4 text-white/30" />
-              </div>
-              <p className="text-[15px] md:text-[16px] text-white/40 leading-[1.6]">
-                Understand group dynamics by adding people you interact with.
-              </p>
-              <Link
-                href="/unlock"
-                className="inline-flex items-center justify-center h-[44px] px-6 border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-xl hover:text-white hover:border-white/35 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] active:scale-[0.98] transition-all duration-200 ease-out"
-              >
-                Upgrade to Plus
-              </Link>
-            </section>
-          )}
-
-          {/* ─── ASK DEFRAG ─── */}
-          <Link href="/chat" className="block group">
-            <section className="border border-white/10 bg-white/[0.02] rounded-xl p-6 md:p-8 space-y-5 group-hover:border-white/20 group-hover:bg-white/[0.04] group-hover:translate-y-[-1px] transition-all duration-200 ease-out animate-fade-in delay-100">
-              <div className="flex items-center gap-2">
-                <MessageCircle className="w-4 h-4 text-white/50" />
-                <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">Ask DEFRAG</h2>
-              </div>
-
-              <div className="grid sm:grid-cols-3 gap-3">
-                {[
-                  "Why does my dad push so hard?",
-                  "Why can't my sister see my perspective?",
-                  "How do I say this without escalation?",
-                ].map((prompt, i) => (
-                  <div key={i} className="border border-white/[0.06] bg-white/[0.02] rounded-lg px-4 py-3 text-[14px] md:text-[15px] text-white/55 hover:border-white/20 hover:text-white/70 transition-all duration-200">
-                    {prompt}
+          {/* ─── Panel 2: Relationship Map ─── */}
+          <div className="col-span-12 lg:col-span-5 animate-fade-in delay-50">
+            {isPlus ? (
+              <Panel title="RELATIONSHIP FIELD">
+                {/* Pending invites */}
+                {pendingInvites.length > 0 && (
+                  <div className="space-y-2 mb-4">
+                    {pendingInvites.map((inv) => (
+                      <div
+                        key={inv.id}
+                        className="flex items-center justify-between border border-yellow-400/10 bg-yellow-400/[0.03] px-4 py-2.5"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-2 h-2 rounded-full bg-yellow-400/60 animate-pulse" />
+                          <span className="text-[14px] text-white/60">
+                            {inv.invitee_name || "Unnamed"}
+                          </span>
+                          <span className="font-mono text-[10px] text-yellow-400/60 uppercase tracking-[0.15em]">
+                            Pending
+                          </span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                )}
 
-              <span className="inline-flex items-center justify-center h-[44px] px-6 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-xl group-hover:bg-white/90 transition-colors duration-200">
-                Start Chat
-              </span>
-            </section>
-          </Link>
+                <RelationshipMap
+                  people={people}
+                  onAddPerson={() => {
+                    setAddMode("choose");
+                    setShowAddModal(true);
+                  }}
+                />
+              </Panel>
+            ) : (
+              <Panel title="RELATIONSHIP FIELD">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <p className="text-[14px] text-white/40 leading-[1.6]">
+                      Understand group dynamics by adding people you interact with.
+                    </p>
+                    <Lock className="w-4 h-4 text-white/30 shrink-0 ml-4" />
+                  </div>
+                  <Link
+                    href="/unlock"
+                    className="inline-flex items-center justify-center h-[40px] px-5 border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/35 active:scale-[0.98] transition-all duration-200"
+                  >
+                    Upgrade to Plus
+                  </Link>
+                </div>
+              </Panel>
+            )}
+          </div>
 
-          {/* ─── DAILY BRIEF ─── */}
-          <section className="border border-white/10 bg-white/[0.02] rounded-xl p-6 md:p-8 space-y-5 hover:border-white/20 hover:bg-white/[0.04] hover:translate-y-[-1px] transition-all duration-200 ease-out animate-fade-in delay-150">
-            <div className="flex items-center gap-2">
-              <Headphones className="w-4 h-4 text-white/50" />
-              <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">Daily Brief</h2>
-            </div>
-
-            <p className="text-[15px] md:text-[16px] text-white/65 leading-[1.6]">
-              Daily overview of relational dynamics, timing windows, and communication patterns.
-            </p>
-
-            <div className="border border-white/[0.06] bg-white/[0.02] rounded-lg px-5 py-4 flex items-center justify-center">
-              <span className="font-mono text-[11px] md:text-[12px] text-white/35 tracking-[0.2em] uppercase">Coming soon</span>
-            </div>
-          </section>
-
-          {/* ─── UPGRADE (Solo only) ─── */}
-          {!isPlus && (
-            <Link href="/unlock" className="block group">
-              <section className="border border-white/10 bg-white/[0.02] rounded-xl p-6 md:p-8 group-hover:border-white/20 group-hover:bg-white/[0.04] group-hover:translate-y-[-1px] transition-all duration-200 ease-out animate-fade-in delay-200">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50 mb-3">Upgrade to Plus</h2>
-                    <p className="text-[15px] md:text-[16px] text-white/65 leading-[1.6]">
-                      Unlock relationship mapping, multi-person dynamics, and priority support.
+          {/* ─── Panel 3: People ─── */}
+          <div className="col-span-12 lg:col-span-5 animate-fade-in delay-100">
+            <Panel title="PEOPLE">
+              {people.length === 0 ? (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <p className="text-[14px] text-white/50 leading-[1.6]">
+                      Your relational field is empty.
+                    </p>
+                    <p className="text-[13px] text-white/30 leading-[1.6]">
+                      Add someone to begin understanding your relationship dynamics.
                     </p>
                   </div>
-                  <span className="font-mono text-[15px] md:text-[16px] font-semibold text-white shrink-0 ml-6">
-                    $33/mo →
-                  </span>
+                  <button
+                    onClick={() => {
+                      setAddMode("choose");
+                      setShowAddModal(true);
+                    }}
+                    className="inline-flex items-center justify-center h-[40px] px-5 border border-white/25 text-white/80 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/50 active:scale-[0.98] transition-all duration-200"
+                  >
+                    Add first person
+                  </button>
                 </div>
-              </section>
-            </Link>
+              ) : (
+                <div className="space-y-0">
+                  {people.map((person) => (
+                    <div
+                      key={person.id}
+                      className="flex justify-between items-center py-2.5 border-b border-white/[0.05] last:border-b-0"
+                    >
+                      <span className="text-[14px] text-white/70">
+                        {person.name}
+                      </span>
+                      <span className="text-[12px] text-white/30 font-mono">
+                        {person.relationship_label ?? "—"}
+                      </span>
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => {
+                      setAddMode("choose");
+                      setShowAddModal(true);
+                    }}
+                    className="mt-4 inline-flex items-center gap-1.5 font-mono text-[12px] uppercase tracking-[0.2em] text-white/40 hover:text-white/70 active:scale-[0.98] transition-all duration-200"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    Add person
+                  </button>
+                </div>
+              )}
+            </Panel>
+          </div>
+
+          {/* ─── Panel 4: Ask DEFRAG ─── */}
+          <div className="col-span-12 lg:col-span-7 animate-fade-in delay-150">
+            <Panel title="ASK DEFRAG">
+              <div className="space-y-4">
+                <div className="grid sm:grid-cols-3 gap-3">
+                  {[
+                    "Why does my mom react this way?",
+                    "Why does my partner shut down during conflict?",
+                    "Why does my boss push me so hard?",
+                  ].map((prompt) => (
+                    <Link
+                      key={prompt}
+                      href={`/chat?prompt=${encodeURIComponent(prompt)}`}
+                      className="border border-white/10 bg-white/[0.02] px-4 py-3 text-[14px] text-white/55 hover:border-white/20 hover:bg-white/[0.04] hover:text-white/70 active:scale-[0.98] transition-all duration-200"
+                    >
+                      {prompt}
+                    </Link>
+                  ))}
+                </div>
+                <Link
+                  href="/chat"
+                  className="inline-flex items-center justify-center h-[40px] px-6 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:bg-white/90 active:scale-[0.98] transition-all duration-200"
+                >
+                  Start Chat
+                </Link>
+              </div>
+            </Panel>
+          </div>
+
+          {/* ─── Upgrade CTA (Solo only) ─── */}
+          {!isPlus && (
+            <div className="col-span-12 animate-fade-in delay-200">
+              <Link href="/unlock" className="block group">
+                <div className="border border-white/10 bg-white/[0.02] p-6 hover:border-white/20 hover:bg-white/[0.04] active:scale-[0.998] transition-all duration-200">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="font-mono text-[12px] uppercase tracking-[0.2em] text-white/40 font-medium mb-2">
+                        Upgrade to Plus
+                      </div>
+                      <p className="text-[14px] text-white/65 leading-[1.6]">
+                        Unlock relationship mapping, multi-person dynamics, and priority support.
+                      </p>
+                    </div>
+                    <span className="font-mono text-[15px] font-semibold text-white shrink-0 ml-6">
+                      $33/mo →
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </div>
           )}
+
         </div>
       </main>
 
