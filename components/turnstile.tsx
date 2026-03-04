@@ -78,7 +78,7 @@ export function Turnstile({ onVerify, onError, onExpire, className }: TurnstileP
     // Dev mode: auto-pass when no key configured
     if (process.env.NODE_ENV === 'development') {
       return (
-        <div className={`text-xs text-gray-500 text-center py-2 ${className || ''}`}>
+        <div className={`text-[11px] text-white/30 text-center py-2 ${className || ''}`}>
           [Turnstile disabled in dev]
         </div>
       );

@@ -95,10 +95,10 @@ function UnlockContent() {
     <div className="min-h-screen bg-black text-white font-mono flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-3xl space-y-8">
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">DEFRAG</h1>
-          <p className="text-gray-400">Choose your plan to continue</p>
+          <h1 className="text-3xl font-bold tracking-[0.2em]">DEFRAG</h1>
+          <p className="font-mono text-[12px] text-white/40 tracking-widest">Choose your plan to continue</p>
           {canceled && (
-            <p className="text-sm text-yellow-500">Checkout was canceled. Pick a plan when you're ready.</p>
+            <p className="text-[13px] text-yellow-500/80">Checkout was canceled. Pick a plan when you're ready.</p>
           )}
         </div>
 
@@ -106,26 +106,26 @@ function UnlockContent() {
           {plans.map((plan) => (
             <div
               key={plan.id}
-              className={`border p-6 space-y-6 ${
+              className={`border p-6 space-y-6 transition-colors duration-200 ${
                 plan.highlighted 
-                  ? 'border-white bg-[#0a0a0a]' 
-                  : 'border-[#333] bg-[#111]'
+                  ? 'border-white/25 bg-white/[0.03] hover:border-white/40' 
+                  : 'border-white/10 bg-white/[0.02] hover:border-white/20'
               }`}
             >
               <div>
                 <h2 className="text-xl font-bold">{plan.name}</h2>
-                <p className="text-sm text-gray-500 mt-1">{plan.description}</p>
+                <p className="font-mono text-[12px] text-white/40 mt-1">{plan.description}</p>
               </div>
 
               <div className="flex items-baseline gap-1">
                 <span className="text-4xl font-bold">{plan.price}</span>
-                <span className="text-gray-500">{plan.period}</span>
+                <span className="text-white/30">{plan.period}</span>
               </div>
 
               <ul className="space-y-3">
                 {plan.features.map((feature, i) => (
-                  <li key={i} className="flex items-center gap-2 text-sm">
-                    <Check className="w-4 h-4 text-gray-400" />
+                  <li key={i} className="flex items-center gap-2 text-[14px] text-white/70">
+                    <Check className="w-4 h-4 text-white/30" />
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -134,11 +134,11 @@ function UnlockContent() {
               <Button
                 onClick={() => handleCheckout(plan.id)}
                 disabled={loading !== null}
-                className={`w-full rounded-none font-bold tracking-wider ${
+                className={`w-full rounded-none font-mono text-[13px] font-bold tracking-widest ${
                   plan.highlighted
-                    ? 'bg-white text-black hover:bg-gray-200'
-                    : 'bg-[#222] text-white hover:bg-[#333] border border-[#444]'
-                }`}
+                    ? 'bg-white text-black hover:bg-white/90'
+                    : 'bg-white/[0.02] text-white hover:bg-white/[0.06] border border-white/10 hover:border-white/20'
+                } transition-all duration-200 disabled:opacity-40`}
               >
                 {loading === plan.id ? 'LOADING...' : plan.cta.toUpperCase()}
               </Button>
@@ -146,7 +146,7 @@ function UnlockContent() {
           ))}
         </div>
 
-        <p className="text-center text-xs text-gray-600">
+        <p className="text-center text-[11px] text-white/20 font-mono tracking-wider">
           Cancel anytime. No commitment required.
         </p>
       </div>

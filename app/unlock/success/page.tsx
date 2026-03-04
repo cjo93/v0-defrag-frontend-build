@@ -38,23 +38,23 @@ function SuccessContent() {
   return (
     <div className="min-h-screen bg-black text-white font-mono flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md text-center space-y-6">
-        <CheckCircle className="w-16 h-16 text-white mx-auto" />
+        <CheckCircle className="w-16 h-16 text-white/80 mx-auto" />
 
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold tracking-tight">You're In</h1>
-          <p className="text-gray-400">
+          <h1 className="text-2xl font-bold tracking-[0.2em]">YOU'RE IN</h1>
+          <p className="text-[14px] text-white/50">
             Your subscription is active. Welcome to DEFRAG.
           </p>
         </div>
 
-        <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+        <div className="flex items-center justify-center gap-2 text-[12px] text-white/30">
           <Loader2 className="w-4 h-4 animate-spin" />
           <span>Redirecting to dashboard in {countdown}s...</span>
         </div>
 
         <Link
           href="/dashboard"
-          className="inline-block text-sm font-bold tracking-wider text-white hover:underline"
+          className="inline-block font-mono text-[13px] font-bold tracking-widest text-white hover:text-white/80 transition-colors duration-200"
         >
           GO TO DASHBOARD NOW →
         </Link>
