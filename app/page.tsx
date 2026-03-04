@@ -83,7 +83,7 @@ export default function LandingPage() {
           Today&apos;s overview at a glance.
         </h2>
         <p className="text-[15px] md:text-[16px] text-white/55 leading-[1.6] mb-8 max-w-[540px]">
-          A quick read on pressure, people, and what needs care.
+          A quick read on dynamics, people, and what needs care.
         </p>
         <DashboardPreview />
       </section>

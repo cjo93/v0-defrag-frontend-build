@@ -155,7 +155,7 @@ export default function OnboardingPage() {
                   disabled={unknownTime}
                   className="bg-black border-white/[0.08] rounded-xl focus-visible:ring-1 focus-visible:ring-white/20 focus-visible:border-white/30 disabled:opacity-40 h-[48px] px-5 text-[15px]"
                 />
-                <p className="font-mono text-[11px] text-white/35 tracking-[0.1em]">Optional. If unknown, the system estimates using noon.</p>
+                <p className="font-mono text-[11px] text-white/35 tracking-[0.1em]">Optional. If unknown, we estimate using noon.</p>
               </div>
               <div className="flex items-center space-x-2.5">
                 <Checkbox

@@ -23,7 +23,7 @@ export default function BlueprintOutput() {
               Structural Orientation: Defined.
             </h1>
             <p style={{ fontFamily: 'serif', fontSize: '18px', color: 'var(--text-secondary)', margin: 0 }}>
-              Your system maintains internal authority under pressure.
+              Your approach maintains internal authority under tension.
             </p>
           </div>
 
@@ -54,7 +54,7 @@ export default function BlueprintOutput() {
               Defense Configuration
             </h2>
             <p style={{ fontFamily: 'serif', fontSize: '17px', color: 'var(--text-muted)', marginBottom: '20px' }}>
-              Under load, your system increases control to restore order.
+              Under load, your approach increases control to restore order.
             </p>
             <div style={{ display: 'inline-block', border: '1px solid var(--line-mid)', padding: '10px 18px', background: 'var(--panel-black)' }}>
               <span style={{ fontFamily: 'monospace', fontSize: '11px', letterSpacing: '0.12em', color: 'var(--text-muted)' }}>

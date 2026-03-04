@@ -17,13 +17,13 @@ export default function AuthCallbackPage() {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_IN') {
-        router.replace("/dashboard");
+        router.replace("/onboarding");
       }
     });
 
     // Fallback: if session already exists after a short delay, redirect anyway
     const timeout = setTimeout(() => {
-      router.replace("/dashboard");
+      router.replace("/onboarding");
     }, 3000);
 
     return () => {

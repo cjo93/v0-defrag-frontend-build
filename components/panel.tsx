@@ -13,7 +13,7 @@ export default function Panel({
     <div
       className={`border border-white/10 bg-white/[0.02] p-6 hover:border-white/20 transition-all duration-200 ${className}`}
     >
-      <div className="font-mono text-[12px] uppercase tracking-[0.2em] text-white/40 font-medium mb-4">
+      <div className="font-mono text-[11px] uppercase tracking-[0.28em] text-white/40 font-medium mb-4">
         {title}
       </div>
       {children}

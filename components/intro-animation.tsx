@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 const hashtags = [
   '#defragmentation',
   '#clarity',
-  '#systems',
+  '#dynamics',
   '#patterns',
   '#baseline',
   '#network',

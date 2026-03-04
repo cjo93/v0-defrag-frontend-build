@@ -36,7 +36,7 @@ export default function SignupPage() {
         email,
         password,
         options: {
-          emailRedirectTo: `${siteUrl}/dashboard`,
+          emailRedirectTo: `${siteUrl}/auth/callback`,
         },
       });
 
@@ -49,7 +49,7 @@ export default function SignupPage() {
         setPassword("");
       } else {
         toast({ title: "Account created", description: "Welcome to DEFRAG." });
-        router.push("/dashboard");
+        router.push("/onboarding");
       }
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });

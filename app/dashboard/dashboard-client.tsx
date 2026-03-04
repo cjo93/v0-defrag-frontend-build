@@ -72,7 +72,7 @@ export default function DashboardClient() {
                 <Spacer size="m" />
                 <MicroLabel>Meaning</MicroLabel>
                 <Spacer size="xs" />
-                <Body className="text-white/70">You may often be expected to carry emotional or practical responsibility within your family system.</Body>
+                <Body className="text-white/70">You may often be expected to carry emotional or practical responsibility within your family.</Body>
               </div>
 
               <div className="border border-white/20 p-6 bg-black">
@@ -133,7 +133,7 @@ export default function DashboardClient() {
             <div className="border border-white/20 p-6 bg-black">
               <MicroLabel>Current Dynamic</MicroLabel>
               <Spacer size="s" />
-              <H2 className="text-white text-lg font-medium tracking-tight">Communication pressure</H2>
+              <H2 className="text-white text-lg font-medium tracking-tight">Communication tension</H2>
               <Spacer size="m" />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

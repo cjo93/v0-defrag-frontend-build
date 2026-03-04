@@ -103,7 +103,7 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen bg-black text-white font-sans antialiased">
         <TopNav />
-        <main className="max-w-[1200px] mx-auto px-6 py-10">
+        <main className="max-w-[1100px] mx-auto px-6 py-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {[1, 2, 3, 4].map((i) => (
               <div
@@ -132,7 +132,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-black text-white font-sans antialiased">
       <TopNav />
-      <main className="max-w-[1200px] mx-auto px-6 py-10">
+      <main className="max-w-[1100px] mx-auto px-6 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
           {/* ─── Panel 1: Today Summary ─── */}
@@ -291,7 +291,7 @@ export default function DashboardPage() {
                 <div className="border border-white/10 bg-white/[0.02] p-6 hover:border-white/20 hover:bg-white/[0.04] active:scale-[0.998] transition-all duration-200">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="font-mono text-[12px] uppercase tracking-[0.2em] text-white/40 font-medium mb-2">
+                      <div className="font-mono text-[11px] uppercase tracking-[0.28em] text-white/40 font-medium mb-2">
                         Upgrade to Plus
                       </div>
                       <p className="text-[14px] text-white/65 leading-[1.6]">
