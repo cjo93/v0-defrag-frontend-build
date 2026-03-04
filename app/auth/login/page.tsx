@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { Turnstile } from "@/components/turnstile";
 import { ServiceUnavailable } from "@/components/service-unavailable";
+import { Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -136,9 +137,10 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className="w-full inline-flex items-center justify-center h-[48px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:bg-white/90 active:scale-[0.98] transition-all duration-200 ease-out disabled:opacity-40 disabled:cursor-not-allowed rounded-sm"
+              className="w-full inline-flex items-center justify-center gap-2 h-[48px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:bg-white/90 active:scale-[0.98] transition-all duration-200 ease-out disabled:opacity-40 disabled:cursor-not-allowed rounded-sm"
               disabled={loading || (isTurnstileRequired && !turnstileToken)}
             >
+              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
               {loading ? "Signing in..." : "Sign in"}
             </button>
           </form>

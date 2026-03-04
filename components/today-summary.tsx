@@ -27,11 +27,11 @@ export default function TodaySummary({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-0">
       {states.map((p) => (
         <div
           key={p.name}
-          className="flex justify-between items-center text-[14px]"
+          className="flex justify-between items-center text-[14px] py-2.5 border-b border-white/[0.05] last:border-b-0"
         >
           <span className="text-white/70">{p.name}</span>
           <span

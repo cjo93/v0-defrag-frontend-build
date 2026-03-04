@@ -18,6 +18,14 @@ const STATE_STROKE: Record<string, string> = {
   unclear: 'rgba(255,255,255,0.25)',
 };
 
+const STATE_LABEL: Record<string, string> = {
+  stable: 'Stable',
+  improving: 'Improving',
+  strained: 'Strained',
+  cooling: 'Cooling',
+  unclear: 'Unclear',
+};
+
 const STATE_ORDER: Record<string, number> = {
   strained: 0,
   cooling: 1,
@@ -34,6 +42,7 @@ const CENTER = SIZE / 2;
 export default function RelationshipField({ people }: { people: Person[] }) {
   const router = useRouter();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
 
   if (people.length === 0) {
     return (
@@ -49,9 +58,10 @@ export default function RelationshipField({ people }: { people: Person[] }) {
     .slice(0, MAX_VISIBLE);
 
   const angleStep = (2 * Math.PI) / visible.length;
+  const hoveredPerson = visible.find(p => p.id === hoveredId);
 
   return (
-    <div className="flex items-center justify-center w-full">
+    <div className="flex items-center justify-center w-full relative">
       <svg
         viewBox={`0 0 ${SIZE} ${SIZE}`}
         className="w-full max-w-[400px]"
@@ -93,8 +103,23 @@ export default function RelationshipField({ people }: { people: Person[] }) {
             <g
               key={person.id}
               className="cursor-pointer"
-              onMouseEnter={() => setHoveredId(person.id)}
-              onMouseLeave={() => setHoveredId(null)}
+              onMouseEnter={(e) => {
+                setHoveredId(person.id);
+                const svg = e.currentTarget.closest('svg');
+                if (svg) {
+                  const rect = svg.getBoundingClientRect();
+                  const scaleX = rect.width / SIZE;
+                  const scaleY = rect.height / SIZE;
+                  setTooltipPos({
+                    x: x * scaleX,
+                    y: y * scaleY - 12,
+                  });
+                }
+              }}
+              onMouseLeave={() => {
+                setHoveredId(null);
+                setTooltipPos(null);
+              }}
               onClick={() => router.push(`/chat?person_id=${person.id}`)}
             >
               <circle
@@ -120,6 +145,30 @@ export default function RelationshipField({ people }: { people: Person[] }) {
           );
         })}
       </svg>
+
+      {/* Hover tooltip */}
+      {hoveredPerson && tooltipPos && (
+        <div
+          className="absolute pointer-events-none animate-fade-in z-10"
+          style={{
+            left: tooltipPos.x,
+            top: tooltipPos.y,
+            transform: 'translate(-50%, -100%)',
+          }}
+        >
+          <div className="border border-white/15 bg-[#111] rounded-sm px-3 py-2 space-y-0.5 shadow-lg">
+            <p className="text-[13px] text-white font-medium whitespace-nowrap">{hoveredPerson.name}</p>
+            {hoveredPerson.relationship_label && (
+              <p className="font-mono text-[10px] text-white/40 uppercase tracking-[0.12em]">
+                {hoveredPerson.relationship_label}
+              </p>
+            )}
+            <p className="font-mono text-[10px] text-white/50 uppercase tracking-[0.12em]">
+              {STATE_LABEL[hoveredPerson.relationship_state ?? 'unclear']}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

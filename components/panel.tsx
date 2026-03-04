@@ -10,15 +10,16 @@ export default function Panel({
   className?: string;
 }) {
   return (
-    <div
+    <section
       className={`border border-white/10 bg-white/[0.02] p-6 transition-all duration-200 hover:border-white/20 hover:-translate-y-[1px] rounded-sm ${className}`}
+      aria-label={title || undefined}
     >
       {title && (
-        <div className="font-mono text-[11px] uppercase tracking-[0.28em] text-white/40 font-medium mb-4">
+        <div className="font-mono text-[11px] uppercase tracking-[0.28em] text-white/40 font-medium pb-3 mb-4 border-b border-white/[0.06]">
           {title}
         </div>
       )}
       {children}
-    </div>
+    </section>
   );
 }

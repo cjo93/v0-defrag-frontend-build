@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase, getSession } from "@/lib/supabase";
-import { Lock, Plus, X, Copy, Check, UserPlus, Edit3 } from "lucide-react";
+import { Lock, Plus, X, Copy, Check, UserPlus, Edit3, MessageCircle, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { TopNav } from "@/components/top-nav";
 import { ServiceUnavailable } from "@/components/service-unavailable";
@@ -49,6 +49,7 @@ export default function DashboardPage() {
   const [addMode, setAddMode] = useState<'choose' | 'manual' | 'invite'>('choose');
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
   const [dailyBriefing, setDailyBriefing] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   if (!supabase) return <ServiceUnavailable />;
 
@@ -162,6 +163,23 @@ export default function DashboardPage() {
     }))
     .sort((a, b) => (STATE_ORDER[a.state] ?? 4) - (STATE_ORDER[b.state] ?? 4));
 
+  const handleDeletePerson = async (personId: string) => {
+    if (!supabase) return;
+    try {
+      const { error } = await supabase
+        .from('people')
+        .delete()
+        .eq('id', personId);
+      if (error) throw error;
+      setPeople(prev => prev.filter(p => p.id !== personId));
+      setConfirmDeleteId(null);
+      toast({ title: "Removed", description: "Person has been removed." });
+    } catch (err) {
+      console.error('Delete error:', err);
+      toast({ title: "Error", description: "Could not remove person.", variant: "destructive" });
+    }
+  };
+
   return (
     <div className="min-h-screen text-white font-sans antialiased">
       <TopNav />
@@ -271,14 +289,49 @@ export default function DashboardPage() {
                   {people.map((person) => (
                     <div
                       key={person.id}
-                      className="flex justify-between items-center py-2.5 border-b border-white/[0.05] last:border-b-0"
+                      className="group flex justify-between items-center py-2.5 border-b border-white/[0.05] last:border-b-0 hover:bg-white/[0.02] -mx-2 px-2 rounded-sm transition-colors duration-150"
                     >
-                      <span className="text-[14px] text-white/70">
-                        {person.name}
-                      </span>
-                      <span className="text-[12px] text-white/30 font-mono">
-                        {person.relationship_label ?? "—"}
-                      </span>
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="text-[14px] text-white/70 truncate">
+                          {person.name}
+                        </span>
+                        <span className="text-[12px] text-white/30 font-mono shrink-0">
+                          {person.relationship_label ?? "—"}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150 shrink-0">
+                        <Link
+                          href={`/chat?person_id=${person.id}`}
+                          className="p-1.5 text-white/30 hover:text-white/70 transition-colors"
+                          title={`Chat about ${person.name}`}
+                        >
+                          <MessageCircle className="w-3.5 h-3.5" />
+                        </Link>
+                        {confirmDeleteId === person.id ? (
+                          <div className="flex items-center gap-1.5 animate-fade-in">
+                            <button
+                              onClick={() => handleDeletePerson(person.id)}
+                              className="font-mono text-[10px] text-red-400/80 hover:text-red-400 uppercase tracking-[0.1em] transition-colors"
+                            >
+                              Confirm
+                            </button>
+                            <button
+                              onClick={() => setConfirmDeleteId(null)}
+                              className="font-mono text-[10px] text-white/30 hover:text-white/50 uppercase tracking-[0.1em] transition-colors"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setConfirmDeleteId(person.id)}
+                            className="p-1.5 text-white/20 hover:text-red-400/70 transition-colors"
+                            title={`Remove ${person.name}`}
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   ))}
                   <button

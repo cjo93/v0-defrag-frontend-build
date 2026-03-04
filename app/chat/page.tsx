@@ -3,11 +3,18 @@
 import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { TopNav } from '@/components/top-nav';
+import { supabase } from '@/lib/supabase';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+}
+
+interface PersonContext {
+  id: string;
+  name: string;
+  relationship_label: string | null;
 }
 
 const RELATIONAL_PROMPTS = [
@@ -26,8 +33,24 @@ function ChatClient() {
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [error, setError] = useState('');
+  const [personContext, setPersonContext] = useState<PersonContext | null>(null);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Load person context if person_id is in URL
+  useEffect(() => {
+    const personId = searchParams.get('person_id');
+    if (personId && supabase) {
+      supabase
+        .from('people')
+        .select('id, name, relationship_label')
+        .eq('id', personId)
+        .single()
+        .then(({ data }) => {
+          if (data) setPersonContext(data);
+        });
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const promptParam = searchParams.get('prompt');
@@ -63,6 +86,7 @@ function ChatClient() {
         body: JSON.stringify({
           message: userMessage,
           conversation_id: conversationId,
+          person_id: personContext?.id || searchParams.get('person_id') || undefined,
         }),
       });
 
@@ -100,6 +124,20 @@ function ChatClient() {
 
       <div className="flex-1 overflow-y-auto px-6 md:px-8 pt-20 pb-32">
         <div className="mx-auto w-full max-w-[800px] space-y-6">
+
+          {/* Person context bar */}
+          {personContext && (
+            <div className="flex items-center gap-3 border border-white/10 bg-white/[0.02] px-4 py-3 rounded-sm animate-fade-in">
+              <div className="w-2 h-2 rounded-full bg-white/40" />
+              <span className="text-[14px] text-white/70">{personContext.name}</span>
+              {personContext.relationship_label && (
+                <span className="font-mono text-[10px] text-white/35 uppercase tracking-[0.15em]">
+                  {personContext.relationship_label}
+                </span>
+              )}
+            </div>
+          )}
+
           {messages.length === 0 ? (
             <div className="min-h-[60vh] flex flex-col justify-center">
               <div className="text-center mb-12 animate-fade-in">
@@ -110,7 +148,10 @@ function ChatClient() {
                   What&apos;s on your mind?
                 </h1>
                 <p className="text-[14px] text-white/55 leading-[1.6]">
-                  Explore relational dynamics and patterns
+                  {personContext 
+                    ? `Ask anything about your relationship with ${personContext.name}`
+                    : 'Explore relational dynamics and patterns'
+                  }
                 </p>
               </div>
               
@@ -134,16 +175,16 @@ function ChatClient() {
               {messages.map((message, i) => (
                 <div 
                   key={i}
-                  className={`animate-fade-in ${message.role === 'user' ? 'ml-auto max-w-[80%]' : 'mr-auto max-w-full'}`}
+                  className={`animate-fade-in ${message.role === 'user' ? 'flex justify-end' : ''}`}
                 >
                   {message.role === 'user' ? (
-                    <div className="bg-white/[0.05] border border-white/15 p-5 rounded-sm">
+                    <div className="bg-white/[0.05] border border-white/15 p-5 rounded-sm max-w-[620px]">
                       <p className="text-[14px] text-white leading-[1.6]">
                         {message.content}
                       </p>
                     </div>
                   ) : (
-                    <div className="bg-white/[0.02] border border-white/10 p-5 rounded-sm">
+                    <div className="bg-white/[0.02] border border-white/10 p-5 rounded-sm max-w-[720px]">
                       <div className="text-[14px] text-white/70 leading-[1.6] whitespace-pre-wrap">
                         {message.content}
                       </div>
@@ -153,7 +194,7 @@ function ChatClient() {
               ))}
               
               {isLoading && (
-                <div className="bg-white/[0.02] border border-white/10 p-5 rounded-sm animate-fade-in">
+                <div className="bg-white/[0.02] border border-white/10 p-5 rounded-sm animate-fade-in max-w-[720px]">
                   <div className="flex gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-white/30 animate-pulse" />
                     <span className="w-1.5 h-1.5 rounded-full bg-white/30 animate-pulse delay-100" />
@@ -167,8 +208,14 @@ function ChatClient() {
           )}
           
           {error && (
-            <div className="text-center py-4">
-              <span className="text-[14px] text-red-400">{error}</span>
+            <div className="text-center py-4 animate-fade-in">
+              <span className="text-[14px] text-red-400/80">{error}</span>
+              <button
+                onClick={() => setError('')}
+                className="ml-3 text-[13px] text-white/40 hover:text-white/60 underline transition-colors"
+              >
+                Dismiss
+              </button>
             </div>
           )}
         </div>
@@ -181,14 +228,16 @@ function ChatClient() {
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask about a relationship dynamic"
+                placeholder={personContext ? `Ask about ${personContext.name}...` : "Ask about a relationship dynamic"}
                 disabled={isLoading}
+                aria-label="Message input"
                 className="w-full bg-transparent border border-white/10 rounded-sm h-[48px] px-5 text-[14px] text-white focus:border-white/30 focus:outline-none transition-all duration-200 ease-out placeholder:text-white/30"
               />
             </div>
             <button 
               type="submit" 
               disabled={isLoading || !input.trim()}
+              aria-label="Send message"
               className="inline-flex items-center justify-center h-[48px] px-7 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 active:scale-[0.98] transition-all duration-200 ease-out disabled:opacity-40"
             >
               Send
