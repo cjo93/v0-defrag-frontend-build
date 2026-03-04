@@ -27,11 +27,20 @@ export async function POST(req: NextRequest) {
   try {
     console.log('[DEFRAG_API] POST /api/checkout');
 
+    if (!process.env.STRIPE_SECRET_KEY) {
+      console.error('[DEFRAG_API] Checkout: missing STRIPE env group');
+      return NextResponse.json({ ok: false, error: 'misconfigured' }, { status: 503 });
+    }
+
     const stripe = getStripe();
     const PRICE_IDS = getPriceIds();
 
     // Get authenticated user
     const supabase = await createServerClient();
+    if (!supabase) {
+      console.error('[DEFRAG_API] Checkout: missing SUPABASE env group');
+      return NextResponse.json({ ok: false, error: 'misconfigured' }, { status: 503 });
+    }
     const { data: { session }, error: authError } = await supabase.auth.getSession();
 
     if (authError || !session?.user) {

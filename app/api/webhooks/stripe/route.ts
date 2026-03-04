@@ -23,6 +23,11 @@ function getWebhookSecret(): string {
 export async function POST(req: NextRequest) {
   console.log('[DEFRAG_API] POST /api/webhooks/stripe');
 
+  if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
+    console.error('[DEFRAG_API] Webhook: missing STRIPE env group');
+    return NextResponse.json({ ok: false, error: 'misconfigured' }, { status: 503 });
+  }
+
   const stripe = getStripe();
   const webhookSecret = getWebhookSecret();
 

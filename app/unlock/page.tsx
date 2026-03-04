@@ -3,8 +3,9 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { getSession } from "@/lib/supabase";
+import { supabase, getSession } from "@/lib/supabase";
 import { Check } from "lucide-react";
+import { ServiceUnavailable } from "@/components/service-unavailable";
 
 const plans = [
   {
@@ -44,6 +45,8 @@ function UnlockContent() {
   const searchParams = useSearchParams();
   const { toast } = useToast();
   const [loading, setLoading] = useState<string | null>(null);
+
+  if (!supabase) return <ServiceUnavailable />;
 
   const canceled = searchParams.get('canceled');
 

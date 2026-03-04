@@ -6,6 +6,7 @@ import { supabase, getSession } from "@/lib/supabase";
 import { Lock, MessageCircle, Users, Calendar, Headphones } from "lucide-react";
 import Link from "next/link";
 import { TopNav } from "@/components/top-nav";
+import { ServiceUnavailable } from "@/components/service-unavailable";
 
 type UserStatus = {
   plan: 'solo' | 'plus';
@@ -16,6 +17,8 @@ export default function DashboardPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState<UserStatus | null>(null);
+
+  if (!supabase) return <ServiceUnavailable />;
 
   useEffect(() => {
     async function loadStatus() {

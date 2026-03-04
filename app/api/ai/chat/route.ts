@@ -9,7 +9,8 @@ export async function POST(req: NextRequest) {
     // Get authenticated user
     const supabase = await createServerClient();
     if (!supabase) {
-      return NextResponse.json({ message: 'Service temporarily unavailable' }, { status: 503 });
+      console.error('[DEFRAG_API] Chat: missing SUPABASE env group');
+      return NextResponse.json({ ok: false, error: 'misconfigured' }, { status: 503 });
     }
     const { data: { session }, error: authError } = await supabase.auth.getSession();
 

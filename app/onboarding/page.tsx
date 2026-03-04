@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { supabase, getSession } from "@/lib/supabase";
+import { ServiceUnavailable } from "@/components/service-unavailable";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -19,6 +20,8 @@ export default function OnboardingPage() {
   const [unknownTime, setUnknownTime] = useState(false);
   const [birthCity, setBirthCity] = useState("");
   const [loading, setLoading] = useState(false);
+
+  if (!supabase) return <ServiceUnavailable />;
 
   const handleNext = () => {
     if (step === 1 && !dob) {
