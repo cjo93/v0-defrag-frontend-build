@@ -8,7 +8,7 @@ import Link from "next/link";
 import { TopNav } from "@/components/top-nav";
 import { ServiceUnavailable } from "@/components/service-unavailable";
 import { useToast } from "@/hooks/use-toast";
-import RelationshipField from "@/components/relationship-field";
+import RelationshipMap from "@/components/relationship-map/relationship-map";
 import Panel from "@/components/panel";
 import TodaySummary from "@/components/today-summary";
 import DailyInsight from "@/components/dashboard/daily-insight";
@@ -269,7 +269,7 @@ export default function DashboardPage() {
                   </div>
                 )}
 
-                <RelationshipField
+                <RelationshipMap
                   people={people.map(p => ({
                     id: p.id,
                     name: p.name,
