@@ -16,17 +16,17 @@ export function H1({ children }: { children: ReactNode }) {
   );
 }
 
-export function H2({ children }: { children: ReactNode }) {
+export function H2({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <h2 className="font-display text-[24px] md:text-[32px] leading-[1.3] tracking-[-0.01em] font-medium text-white">
+    <h2 className={`font-display text-[24px] md:text-[32px] leading-[1.3] tracking-[-0.01em] font-medium text-white ${className || ''}`}>
       {children}
     </h2>
   );
 }
 
-export function Body({ children }: { children: ReactNode }) {
+export function Body({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <p className="text-[16px] leading-[1.75] text-white/45">
+    <p className={`text-[16px] leading-[1.75] text-white/45 ${className || ''}`}>
       {children}
     </p>
   );

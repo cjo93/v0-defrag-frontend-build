@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { getSession } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -27,29 +28,34 @@ export default function OnboardingPage() {
       const session = await getSession();
       if (!session) throw new Error("Unauthorized");
 
-      const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.defrag.app';
-      const payload = {
-        dob,
-        birth_time: unknownTime ? "12:00" : time,
-        birth_location: location
-      };
-
-      const res = await fetch(`${API_URL}/api/profile/generate-chart`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify(payload)
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+      const supabase = createClient(supabaseUrl, supabaseKey, {
+        global: {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`
+          }
+        }
       });
 
-      if (!res.ok) {
-        throw new Error("Failed to generate chart");
+      const birth_time = unknownTime ? "12:00" : time;
+
+      const { error } = await supabase
+        .from('birthlines')
+        .insert({
+          user_id: session.user.id,
+          dob,
+          birth_time,
+          birth_city: location
+        });
+
+      if (error) {
+         throw error;
       }
 
       toast({
         title: "Profile created",
-        description: "Your chart has been generated successfully.",
+        description: "Your natal data has been stored successfully.",
       });
 
       router.push("/dashboard");
