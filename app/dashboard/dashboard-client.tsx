@@ -1,161 +1,133 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/lib/auth-context';
-import {
-  AppShell,
-  EditorialRail,
-  MicroLabel,
-  H1,
-  H2,
-  Body,
-  Spacer,
-  TextActionButton
-} from '@/components/editorial';
-import { BuildStamp } from '@/components/build-stamp';
+import { useEffect, useState } from "react";
+import { getSession } from "@/lib/supabase";
+import Link from 'next/link';
 
 export default function DashboardClient() {
-  const router = useRouter();
-  const { user } = useAuth();
-
-  const [isReady, setIsReady] = useState(false);
-  const [showBanner, setShowBanner] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    if (!user) {
-      router.push('/');
-      return;
+    // Thin client: fetch compiled data from API
+    async function fetchDashboard() {
+      try {
+        const session = await getSession();
+        if (!session) return;
+
+        const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.defrag.app';
+        const res = await fetch(`${API_URL}/api/dashboard`, {
+          headers: { 'Authorization': `Bearer ${session.access_token}` }
+        });
+
+        if (res.ok) {
+          const json = await res.json();
+          setData(json);
+        } else {
+          setData({});
+        }
+      } catch (e) {
+        console.error("Error fetching dashboard", e);
+        setData({});
+      } finally {
+        setLoading(false);
+      }
     }
-
-    // Simulate loading data
-    setIsReady(true);
-
-    // Auto-hide banner after 5 seconds
-    const timer = setTimeout(() => {
-      setShowBanner(false);
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }, [user, router]);
-
-  if (!isReady) {
-    return (
-      <AppShell>
-        <div className="flex h-screen items-center justify-center bg-black">
-          <span className="font-mono text-[12px] text-white/50 uppercase tracking-widest">Initializing...</span>
-        </div>
-      </AppShell>
-    );
-  }
+    fetchDashboard();
+  }, []);
 
   return (
-    <AppShell>
-      {showBanner && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-white text-black py-2 px-6 text-center">
-          <span className="font-mono text-[10px] uppercase tracking-widest font-medium">Natal profile loaded successfully</span>
+    <div className="min-h-screen bg-black text-white font-mono p-8 flex flex-col items-center">
+      <header className="w-full max-w-4xl flex justify-between items-center border-b border-[#333] pb-4 mb-8">
+        <h1 className="text-xl font-bold tracking-widest">DEFRAG</h1>
+        <div className="text-xs text-gray-500">Connected to api.defrag.app</div>
+      </header>
+
+      {loading ? (
+        <div className="animate-pulse flex flex-col space-y-4 w-full max-w-4xl">
+          <div className="h-32 bg-[#111] border border-[#333]" />
+          <div className="h-64 bg-[#111] border border-[#333]" />
+        </div>
+      ) : (
+        <div className="w-full max-w-4xl space-y-8">
+
+          {/* PANEL 1 - Today */}
+          <section className="border border-[#333] p-6 bg-[#0a0a0a]">
+            <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-4">Today</h2>
+            {!data?.today ? (
+              <div className="flex flex-col items-center justify-center p-8 border border-dashed border-[#333]">
+                <p className="text-sm text-gray-500 mb-4">No data generated for today.</p>
+                <button className="bg-white text-black px-6 py-2 text-sm font-bold tracking-widest hover:bg-gray-200 transition-colors">
+                  Generate today's brief
+                </button>
+              </div>
+            ) : (
+              <ul className="space-y-2 text-sm">
+                {Object.entries(data.today).map(([key, val]: any) => (
+                  <li key={key} className="flex justify-between border-b border-[#222] pb-2">
+                    <span className="text-gray-300">{key}</span>
+                    <span className="text-white">{val}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          {/* PANEL 2 - Relationships */}
+          <section className="border border-[#333] p-6 bg-[#0a0a0a]">
+            <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-4">Relationships</h2>
+            {!data?.relationships?.length ? (
+              <div className="flex flex-col items-center justify-center p-8 border border-dashed border-[#333]">
+                <p className="text-sm text-gray-500 mb-4">No connections analyzed yet.</p>
+                <Link href="/relationships/new" className="bg-white text-black px-6 py-2 text-sm font-bold tracking-widest hover:bg-gray-200 transition-colors">
+                  Add someone
+                </Link>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {data.relationships.map((rel: any, i: number) => (
+                  <div key={i} className="border border-[#222] p-4 text-center">
+                    <div className="text-lg">{rel.name}</div>
+                    <div className="text-xs text-gray-500 mt-2">{rel.status || 'Active'}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* PANEL 3 - Daily Audio */}
+          <section className="border border-[#333] p-6 bg-[#0a0a0a]">
+            <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-4">Daily Audio</h2>
+            {!data?.daily_audio ? (
+              <div className="flex flex-col items-center justify-center p-8 border border-dashed border-[#333]">
+                <p className="text-sm text-gray-500 mb-4">No audio brief available.</p>
+                <button className="bg-white text-black px-6 py-2 text-sm font-bold tracking-widest hover:bg-gray-200 transition-colors">
+                  Generate today's brief
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-500">Family dynamics, transit pressures, communication patterns.</p>
+                </div>
+                <audio controls className="h-8 max-w-[200px]" src={data.daily_audio} />
+              </div>
+            )}
+          </section>
+
+          {/* PANEL 4 - Ask About a Relationship */}
+          <section className="border border-[#333] p-6 bg-[#0a0a0a]">
+            <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-4">Ask About a Relationship</h2>
+            <div className="flex flex-col items-center justify-center p-8 border border-dashed border-[#333]">
+              <p className="text-sm text-gray-500 mb-4">Analyze dynamics with the Intelligence Console.</p>
+              <Link href="/chat" className="bg-white text-black px-6 py-2 text-sm font-bold tracking-widest hover:bg-gray-200 transition-colors">
+                Ask about a relationship
+              </Link>
+            </div>
+          </section>
+
         </div>
       )}
-
-      <EditorialRail variant="app">
-        <div className={showBanner ? "pt-10" : ""}>
-          {/* SECTION 1 - Relational Dynamics */}
-          <section>
-            <H1>Your relational dynamics</H1>
-            <Spacer size="l" />
-
-            <div className="space-y-8">
-              <div className="border border-white/20 p-6 bg-black">
-                <MicroLabel>Dynamic</MicroLabel>
-                <Spacer size="s" />
-                <H2 className="text-white text-lg font-medium tracking-tight">Strong responsibility patterns in family relationships</H2>
-                <Spacer size="m" />
-                <MicroLabel>Meaning</MicroLabel>
-                <Spacer size="xs" />
-                <Body className="text-white/70">You may often be expected to carry emotional or practical responsibility within your family system.</Body>
-              </div>
-
-              <div className="border border-white/20 p-6 bg-black">
-                <MicroLabel>Dynamic</MicroLabel>
-                <Spacer size="s" />
-                <H2 className="text-white text-lg font-medium tracking-tight">High sensitivity to authority figures</H2>
-                <Spacer size="m" />
-                <MicroLabel>Meaning</MicroLabel>
-                <Spacer size="xs" />
-                <Body className="text-white/70">Pressure or expectations from authority may feel unusually intense.</Body>
-              </div>
-            </div>
-          </section>
-
-          <Spacer size="xl" />
-          <div className="h-px w-full bg-white/10" />
-          <Spacer size="xl" />
-
-          {/* SECTION 2 - Ask about a relationship */}
-          <section>
-            <H1>Ask about a relationship in your life</H1>
-            <Spacer size="l" />
-
-            <div
-              className="border border-white/30 p-4 mb-6 cursor-text hover:border-white/50 transition-colors"
-              onClick={() => router.push('/chat')}
-            >
-              <span className="font-sans text-[16px] text-white/40">Example: Why does my dad push me so hard?</span>
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-start gap-4 cursor-pointer group" onClick={() => router.push('/chat?prompt=Why+does+my+mom+struggle+to+respect+my+boundaries%3F')}>
-                <div className="h-px w-6 bg-white/20 mt-3 group-hover:bg-white/50 transition-colors" />
-                <Body className="text-white/70 group-hover:text-white transition-colors">Why does my mom struggle to respect my boundaries?</Body>
-              </div>
-
-              <div className="flex items-start gap-4 cursor-pointer group" onClick={() => router.push('/chat?prompt=Why+do+people+expect+me+to+take+responsibility+for+everything%3F')}>
-                <div className="h-px w-6 bg-white/20 mt-3 group-hover:bg-white/50 transition-colors" />
-                <Body className="text-white/70 group-hover:text-white transition-colors">Why do people expect me to take responsibility for everything?</Body>
-              </div>
-
-              <div className="flex items-start gap-4 cursor-pointer group" onClick={() => router.push('/chat?prompt=Why+do+partners+pull+away+when+I+get+close%3F')}>
-                <div className="h-px w-6 bg-white/20 mt-3 group-hover:bg-white/50 transition-colors" />
-                <Body className="text-white/70 group-hover:text-white transition-colors">Why do partners pull away when I get close?</Body>
-              </div>
-            </div>
-          </section>
-
-          <Spacer size="xl" />
-          <div className="h-px w-full bg-white/10" />
-          <Spacer size="xl" />
-
-          {/* SECTION 3 - Current Dynamics */}
-          <section>
-            <H1>Current dynamics</H1>
-            <Spacer size="l" />
-
-            <div className="border border-white/20 p-6 bg-black">
-              <MicroLabel>Current Dynamic</MicroLabel>
-              <Spacer size="s" />
-              <H2 className="text-white text-lg font-medium tracking-tight">Communication pressure</H2>
-              <Spacer size="m" />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <MicroLabel>Meaning</MicroLabel>
-                  <Spacer size="xs" />
-                  <Body className="text-white/70">Conversations may feel more intense right now.</Body>
-                </div>
-                <div>
-                  <MicroLabel>Advice</MicroLabel>
-                  <Spacer size="xs" />
-                  <Body className="text-white/70">Keep responses short and clear.</Body>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <Spacer size="xxl" />
-        </div>
-      </EditorialRail>
-
-      <BuildStamp />
-    </AppShell>
+    </div>
   );
 }
