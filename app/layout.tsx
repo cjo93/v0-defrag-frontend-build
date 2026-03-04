@@ -19,10 +19,10 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: 'DEFRAG — The user manual for you, and your people.',
+    default: 'DEFRAG — Clarity for hard relationships',
     template: '%s | DEFRAG',
   },
-  description: 'A relational intelligence platform. Understand yourself. Navigate your relationships. Reduce friction where it matters most.',
+  description: 'DEFRAG helps you understand tension, timing, and patterns in relationships — so you can choose a calmer next step.',
   applicationName: 'DEFRAG',
   keywords: ['relationships', 'self-understanding', 'astrology', 'natal chart', 'communication', 'relational intelligence'],
   authors: [{ name: 'DEFRAG' }],
@@ -37,21 +37,21 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: siteUrl,
     siteName: 'DEFRAG',
-    title: 'DEFRAG — The user manual for you, and your people.',
-    description: 'A relational intelligence platform. Understand yourself. Navigate your relationships. Reduce friction where it matters most.',
+    title: 'DEFRAG',
+    description: 'Clarity for hard relationships.',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'DEFRAG - Relational Intelligence',
+        alt: 'DEFRAG — Clarity for hard relationships',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'DEFRAG — The user manual for you, and your people.',
-    description: 'A relational intelligence platform. Understand yourself. Navigate your relationships.',
+    title: 'DEFRAG — Clarity for hard relationships',
+    description: 'DEFRAG helps you understand tension, timing, and patterns in relationships — so you can choose a calmer next step.',
     images: ['/og-image.png'],
     creator: '@defragapp',
   },
