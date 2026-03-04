@@ -90,7 +90,7 @@ function ChatClient() {
       // Mocking API call to use the updated schema for now
       const response: ChatResponse = {
         headline: 'System Overload',
-        signal: 'high',
+        pressure: 'high',
         confidence: {
             overall: 85,
             data_confidence: 90,
@@ -113,10 +113,10 @@ function ChatClient() {
     }
   };
 
-  // Helper function to render signal color in grayscale
+  // Helper function to render pressure color in grayscale
 
-  const getSensitivityLabel = (sensitivity: 'low' | 'medium' | 'high') => {
-      switch(signal) {
+  const getPressureLabel = (sensitivity: 'low' | 'medium' | 'high') => {
+      switch(sensitivity) {
           case 'low': return 'stable';
           case 'medium': return 'moderate';
           case 'high': return 'elevated';
@@ -124,8 +124,8 @@ function ChatClient() {
       }
   };
 
-  const getSensitivityColor = (sensitivity: 'low' | 'medium' | 'high') => {
-      switch(signal) {
+  const getPressureColor = (sensitivity: 'low' | 'medium' | 'high') => {
+      switch(sensitivity) {
           case 'low': return 'text-white/40';
           case 'medium': return 'text-white/70';
           case 'high': return 'text-white';
@@ -166,8 +166,8 @@ function ChatClient() {
                 {[
                   "Why doesn't my mom understand when I need space?",
                   "Why does my dad push me so hard to succeed?",
-                  "Why do people expect me to carry the emotional weight in relationships?",
-                  "Why do I feel responsible for fixing other people's problems?"
+                  "How do I tell my partner I need more boundaries without escalating?",
+                  "Why do conversations with my sibling always turn into an argument over small things?"
                 ].map((suggestion, i) => (
                   <button
                     key={i}
@@ -202,9 +202,9 @@ function ChatClient() {
                               </h2>
                               <div className="flex items-center gap-4">
                                   <div className="flex flex-col items-end">
-                                      <MicroLabel>Sensitivity</MicroLabel>
-                                      <span className={`font-mono text-[12px] uppercase ${getSensitivityColor(message.content.signal)}`}>
-                                          {getSensitivityLabel(message.content.signal)}
+                                      <MicroLabel>Pressure</MicroLabel>
+                                      <span className={`font-mono text-[12px] uppercase ${getPressureColor(message.content.pressure)}`}>
+                                          {getPressureLabel(message.content.pressure)}
                                       </span>
                                   </div>
                                   <div className="flex flex-col items-end">
