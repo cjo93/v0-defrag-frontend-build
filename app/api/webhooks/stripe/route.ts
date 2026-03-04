@@ -26,29 +26,48 @@ export async function POST(req: Request) {
   try {
     event = stripe.webhooks.constructEvent(payload, sig, endpointSecret || '')
   } catch (err: any) {
-    console.warn(`Webhook Error: ${err.message}`)
+    console.error(`[DEFRAG_API] Webhook signature verification failed: ${err.message}`)
     return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 })
   }
 
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object as Stripe.Checkout.Session
+    console.log(`[DEFRAG_API] stripe webhook received: ${event.type}`);
 
-    const sessionId = session.metadata?.supabase_session_id
+  switch (event.type) {
+    case 'checkout.session.completed': {
+      const session = event.data.object as Stripe.Checkout.Session;
+      const sessionId = session.metadata?.supabase_session_id;
 
-    if (sessionId) {
-      // Update status to unlocked
-      const { error } = await supabase
-        .from('staged_sessions')
-        .update({ status: 'unlocked' })
-        .eq('session_id', sessionId)
+      console.log('[DEFRAG_API] checkout completed', { sessionId });
 
-      if (error) {
-        console.error('Failed to unlock session:', error)
-      } else {
-        console.log(`[DEFRAG_API] Session ${sessionId} unlocked via Stripe webhook.`)
-        // Kick off computation engine via background task or pub/sub here later.
+      if (sessionId) {
+        // Update status to unlocked
+        const { error } = await supabase
+          .from('staged_sessions')
+          .update({ status: 'unlocked' })
+          .eq('session_id', sessionId);
+
+        if (error) {
+          console.error('[DEFRAG_API] Failed to unlock session:', error);
+        } else {
+          console.log(`[DEFRAG_API] Session ${sessionId} unlocked via Stripe webhook.`);
+        }
       }
+      break;
     }
+    case 'invoice.payment_succeeded': {
+      console.log('[DEFRAG_API] invoice payment succeeded');
+      // Sync subscription state logic
+      break;
+    }
+    case 'customer.subscription.created':
+    case 'customer.subscription.updated':
+    case 'customer.subscription.deleted': {
+      console.log(`[DEFRAG_API] subscription event: ${event.type}`);
+      // Sync subscription state logic
+      break;
+    }
+    default:
+      console.log(`[DEFRAG_API] Unhandled event type ${event.type}`);
   }
 
   return NextResponse.json({ received: true })
