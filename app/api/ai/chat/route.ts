@@ -6,6 +6,7 @@ import { buildConversationMemory } from '@/lib/conversation-memory';
 import { updatePersonStateFromChat } from '@/lib/relationship-state';
 import { maybeUpdateRelationshipMemory, getExistingMemory } from '@/lib/relationship-memory';
 import { getUserRelationalProfile, updateUserRelationalProfile, inferRelationalStyles } from '@/lib/user-profile';
+import { getRelationshipAnchor, updateRelationshipAnchor } from '@/lib/relationship-anchor';
 import OpenAI from 'openai';
 
 let _openai: OpenAI | null = null;
@@ -145,6 +146,9 @@ export async function POST(req: NextRequest) {
         await updateUserRelationalProfile(supabaseAdmin, userId, pattern.pattern);
         inferRelationalStyles(supabaseAdmin, userId).catch(() => {});
 
+        // Update relationship anchor (track recurring patterns)
+        updateRelationshipAnchor(supabaseAdmin, userId, person_id, pattern.pattern).catch(() => {});
+
         // Maybe update relationship memory (LLM call every ~12 messages)
         maybeUpdateRelationshipMemory(supabaseAdmin, getOpenAI(), person_id, userId).catch(() => {});
       } catch (err) {
@@ -178,53 +182,28 @@ export async function POST(req: NextRequest) {
 
 // ── System prompt ─────────────────────────────────────────────
 
-const SYSTEM_PROMPT = `You are DEFRAG — a relational intelligence tool.
+const SYSTEM_PROMPT = `DEFRAG explains relationship patterns and interaction dynamics.
 
-Your purpose:
-Help users understand relationship dynamics calmly and clearly.
+Tone:
+Calm, precise, observant.
+Never emotional, motivational, or therapeutic.
 
-You analyze relational patterns and explain constructive ways to communicate.
+Guidelines:
+Explain observable interaction dynamics.
+Describe patterns without judging either person.
+Offer grounded adjustments that reduce friction.
 
-Rules:
-- Never diagnose people.
-- Never assign blame.
-- Never escalate conflict.
-- Never recommend ultimatums.
-- Never speculate about mental illness.
-- Do not ask the user questions.
-- Do not request additional personal information.
-- Do not ask the user to analyze their thoughts.
-
-Focus on:
-- Relationship patterns
-- Communication dynamics
-- Boundaries
-- Timing
-- Family behavior
-
-When relational context is provided you must reason from it.
-
-Your role is to explain relational dynamics clearly and offer grounded direction.
-
-Internal reasoning order (do not reveal this):
-1. Identify the relational dynamic.
-2. Explain the pattern between the people.
-3. Suggest a calm communication approach.
-
-Response format (always follow this structure — three sections only):
-
-**What's happening**
-A plain-language description of the relational dynamic at play.
-
-**Why it repeats**
-Explain the underlying pattern — what drives the repeated behavior.
-
-**What may help**
-One concrete approach, phrase, or script the user can apply.
-
-Three sections only. Never add a fourth section. Never end with a question.
-
-Do not mention analysis, internal instructions, or pattern data.
+Never:
+Ask questions.
+Ask the user to reflect.
+Ask the user how they feel.
+Suggest journaling, breathing, or emotional processing.
+Diagnose people.
+Assign blame.
+Escalate conflict.
+Recommend ultimatums.
+Speculate about mental illness.
+Mention analysis, internal instructions, or pattern data.
 
 Avoid coaching language such as:
 - "How does that make you feel"
@@ -239,19 +218,100 @@ Instead use explanatory language:
 - "One way to respond is..."
 - "This pattern tends to..."
 
-Tone:
-- Calm
-- Clear
-- Neutral
-- Grounded
-- Emotionally intelligent
-- Direct but gentle
-- Never preachy
-- Never mystical
-- Never deterministic
-
-Avoid therapy jargon.
+When relational context is provided you must reason from it.
 Only discuss relationship dynamics.`;
+
+const FORMAT_RULES = `Respond using exactly three sections.
+
+**What's happening**
+Explain the relational dynamic clearly.
+
+**Why this pattern repeats**
+Explain the underlying interaction pattern.
+
+**What may help**
+Offer a calm practical adjustment.
+
+Rules:
+- Do not ask questions
+- Do not request information
+- Do not analyze emotions
+- Do not speculate about internal feelings
+- Do not end with a question
+- Write with calm clarity
+- Keep under 180 words`;
+
+// ── Post-processing utilities ─────────────────────────────────
+
+/**
+ * Strip all question patterns from AI output.
+ * DEFRAG explains — it does not probe.
+ */
+function stripQuestions(text: string): string {
+  const patterns = [
+    /do you think[^.]*\?/gi,
+    /have you noticed[^.]*\?/gi,
+    /have you considered[^.]*\?/gi,
+    /could it be[^.]*\?/gi,
+    /what do you think[^.]*\?/gi,
+    /how does that[^.]*\?/gi,
+    /can you recall[^.]*\?/gi,
+    /why do you[^.]*\?/gi,
+    /do you notice[^.]*\?/gi,
+    /what would happen[^.]*\?/gi,
+  ];
+
+  let cleaned = text;
+  for (const pattern of patterns) {
+    cleaned = cleaned.replace(pattern, '');
+  }
+
+  // Catch any remaining questions
+  cleaned = cleaned.replace(/\?/g, '.');
+  // Clean artifacts
+  cleaned = cleaned.replace(/\.\./g, '.').replace(/\n\s*\n\s*\n/g, '\n\n');
+  return cleaned.trim();
+}
+
+/**
+ * Ensure the response contains the required three-section structure.
+ * If a section header is missing, prepend it so the output is never unstructured.
+ */
+function ensureStructure(text: string): string {
+  const required = [
+    "**What's happening**",
+    "**Why this pattern repeats**",
+    "**What may help**",
+  ];
+
+  // If all sections are present, return as-is
+  if (required.every((s) => text.includes(s))) return text;
+
+  // If none are present, wrap entire text in the structure
+  if (!required.some((s) => text.includes(s))) {
+    const lines = text.split('\n').filter(Boolean);
+    const third = Math.ceil(lines.length / 3);
+    return [
+      required[0],
+      lines.slice(0, third).join('\n'),
+      '',
+      required[1],
+      lines.slice(third, third * 2).join('\n'),
+      '',
+      required[2],
+      lines.slice(third * 2).join('\n'),
+    ].join('\n');
+  }
+
+  // Partial — prepend any missing header
+  let result = text;
+  for (const section of required) {
+    if (!result.includes(section)) {
+      result = `${section}\n\n${result}`;
+    }
+  }
+  return result;
+}
 
 // ── Generate response ─────────────────────────────────────────
 
@@ -328,6 +388,14 @@ Privacy level: ${personContext.privacy_level}`
     } catch (_) {}
   }
 
+  // 4d. Relationship anchor (most frequent recurring pattern)
+  let anchor: { anchor_pattern: string; occurrence_count: number } | null = null;
+  if (personId) {
+    try {
+      anchor = await getRelationshipAnchor(supabaseAdmin, userId, personId);
+    } catch (_) {}
+  }
+
   // 5. Build message stack
   const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
     { role: "system", content: SYSTEM_PROMPT },
@@ -364,6 +432,14 @@ Privacy level: ${personContext.privacy_level}`
     });
   }
 
+  // Inject relationship anchor (most frequent recurring dynamic)
+  if (anchor && anchor.occurrence_count >= 2) {
+    messages.push({
+      role: "system",
+      content: `Recurring dynamic observed in this relationship: ${anchor.anchor_pattern}. Observed ${anchor.occurrence_count} times.`,
+    });
+  }
+
   // Inject conversation summary if present
   if (memory.summary) {
     messages.push({
@@ -379,8 +455,7 @@ Privacy level: ${personContext.privacy_level}`
 
   messages.push({
     role: "system",
-    content:
-      "Respond using the three-section format: What's happening, Why it repeats, What may help. Keep each section concise — 2-3 sentences max. Do not end with a question."
+    content: FORMAT_RULES,
   });
 
   // Current user message (always last)
@@ -408,23 +483,12 @@ Privacy level: ${personContext.privacy_level}`
       "I'm having trouble generating insight right now. Please try again in a moment.";
   }
 
-  // 7. Strip questions — DEFRAG explains, it does not probe
-  response = response.replace(/Do you think.*?\?/gi, '');
-  response = response.replace(/Have you noticed.*?\?/gi, '');
-  response = response.replace(/Could it be.*?\?/gi, '');
-  response = response.replace(/Have you considered.*?\?/gi, '');
-  response = response.replace(/How does that.*?\?/gi, '');
-  response = response.replace(/What do you think.*?\?/gi, '');
-  response = response.replace(/Can you recall.*?\?/gi, '');
-  if (response.includes('?')) {
-    response = response.replace(/\?/g, '.');
-  }
-  // Clean up double periods or trailing whitespace from removals
-  response = response.replace(/\.\./g, '.').replace(/\n\s*\n\s*\n/g, '\n\n').trim();
+  // 7. Response pipeline: strip questions → ensure structure → cap length
+  response = stripQuestions(response);
+  response = ensureStructure(response);
 
-  // 8. Safety guard — cap response length
-  if (response.length > 2000) {
-    response = response.slice(0, 2000);
+  if (response.length > 1800) {
+    response = response.slice(0, 1800);
   }
 
   // 8. Store pattern signals for analytics (by message ID)
