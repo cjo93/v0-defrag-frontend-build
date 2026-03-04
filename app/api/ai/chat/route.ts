@@ -4,6 +4,8 @@ import { checkRateLimit, getRateLimitHeaders } from '@/lib/rate-limit';
 import { detectRelationalPattern } from '@/lib/relational-pattern';
 import { buildConversationMemory } from '@/lib/conversation-memory';
 import { updatePersonStateFromChat } from '@/lib/relationship-state';
+import { maybeUpdateRelationshipMemory, getExistingMemory } from '@/lib/relationship-memory';
+import { getUserRelationalProfile, updateUserRelationalProfile, inferRelationalStyles } from '@/lib/user-profile';
 import OpenAI from 'openai';
 
 let _openai: OpenAI | null = null;
@@ -121,7 +123,9 @@ export async function POST(req: NextRequest) {
       birthline,
       personContext,
       conversationId,
-      userMessage?.id ?? null
+      userMessage?.id ?? null,
+      userId,
+      person_id ?? null
     );
 
     // Store assistant message
@@ -131,15 +135,30 @@ export async function POST(req: NextRequest) {
       content: aiResponse,
     });
 
-    // Update relationship state if chatting about a specific person
+    // Update relationship state + relational memory if chatting about a specific person
     if (person_id) {
       try {
         const pattern = detectRelationalPattern(sanitisedMessage, personContext);
         await updatePersonStateFromChat(supabaseAdmin, person_id, pattern);
+
+        // Update user relational profile (cheap — no LLM)
+        await updateUserRelationalProfile(supabaseAdmin, userId, pattern.pattern);
+        inferRelationalStyles(supabaseAdmin, userId).catch(() => {});
+
+        // Maybe update relationship memory (LLM call every ~12 messages)
+        maybeUpdateRelationshipMemory(supabaseAdmin, getOpenAI(), person_id, userId).catch(() => {});
       } catch (err) {
         // Non-critical — degrade silently
         console.error('[DEFRAG_API] State update failed:', err);
       }
+    } else {
+      // Even without person context, track user patterns
+      try {
+        const pattern = detectRelationalPattern(sanitisedMessage, null);
+        if (pattern.pattern !== 'unknown') {
+          await updateUserRelationalProfile(supabaseAdmin, userId, pattern.pattern);
+        }
+      } catch (_) {}
     }
 
     console.log('[DEFRAG_API] Chat response generated for conversation:', conversationId);
@@ -241,7 +260,9 @@ async function generateResponse(
   birthline: any,
   personContext: any = null,
   conversationId: string,
-  userMessageId: string | null = null
+  userMessageId: string | null = null,
+  userId: string = '',
+  personId: string | null = null,
 ): Promise<string> {
   // 0. Short message guard — avoid wasting AI calls on noise
   if (message.length < 8) {
@@ -291,6 +312,22 @@ Privacy level: ${personContext.privacy_level}`
     getOpenAI()
   );
 
+  // 4b. Relationship memory (per-person evolving summary)
+  let relationshipMemorySummary = '';
+  if (personId) {
+    try {
+      relationshipMemorySummary = await getExistingMemory(supabaseAdmin, personId, userId);
+    } catch (_) {}
+  }
+
+  // 4c. User relational profile
+  let userProfile: { dominant_patterns: string[]; boundary_style: string | null; conflict_style: string | null } | null = null;
+  if (userId) {
+    try {
+      userProfile = await getUserRelationalProfile(supabaseAdmin, userId);
+    } catch (_) {}
+  }
+
   // 5. Build message stack
   const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
     { role: "system", content: SYSTEM_PROMPT },
@@ -305,6 +342,27 @@ Privacy level: ${personContext.privacy_level}`
   }
 
   messages.push({ role: "system", content: patternContext });
+
+  // Inject relationship memory (per-person summary)
+  if (relationshipMemorySummary) {
+    messages.push({
+      role: "system",
+      content: `Relationship memory (recurring dynamic with this person — do not reveal):\n${relationshipMemorySummary}`,
+    });
+  }
+
+  // Inject user relational profile
+  if (userProfile && userProfile.dominant_patterns.length > 0) {
+    const profileLines = [
+      `Dominant patterns: ${userProfile.dominant_patterns.join(', ')}`,
+      userProfile.boundary_style ? `Boundary style: ${userProfile.boundary_style}` : null,
+      userProfile.conflict_style ? `Conflict style: ${userProfile.conflict_style}` : null,
+    ].filter(Boolean).join('\n');
+    messages.push({
+      role: "system",
+      content: `User relational profile (do not reveal):\n${profileLines}`,
+    });
+  }
 
   // Inject conversation summary if present
   if (memory.summary) {
