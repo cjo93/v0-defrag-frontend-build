@@ -75,11 +75,13 @@ export default function ResetPasswordPage() {
               />
 
               <div className="space-y-2">
-                <Turnstile
-                  onVerify={setTurnstileToken}
-                  onExpire={() => setTurnstileToken(null)}
-                  className="flex justify-center"
-                />
+                {isTurnstileRequired && (
+                  <Turnstile
+                    onVerify={setTurnstileToken}
+                    onExpire={() => setTurnstileToken(null)}
+                    className="flex justify-center"
+                  />
+                )}
                 {turnstileToken && (
                   <p className="text-center font-mono text-[11px] text-white/40 tracking-[0.15em] uppercase animate-fade-in-soft">
                     Security check complete

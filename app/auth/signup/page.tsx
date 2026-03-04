@@ -44,7 +44,9 @@ export default function SignupPage() {
 
       // If email confirmation is required, user won't have a session yet
       if (data.user && !data.session) {
-        toast({ title: "Check your email", description: "We sent a confirmation link. Click it to activate your account." });
+        toast({ title: "Check your email", description: "Confirm your account before signing in." });
+        setEmail("");
+        setPassword("");
       } else {
         toast({ title: "Account created", description: "Welcome to DEFRAG." });
         router.push("/dashboard");
@@ -84,11 +86,13 @@ export default function SignupPage() {
           />
 
           <div className="space-y-2">
-            <Turnstile
-              onVerify={setTurnstileToken}
-              onExpire={() => setTurnstileToken(null)}
-              className="flex justify-center"
-            />
+            {isTurnstileRequired && (
+              <Turnstile
+                onVerify={setTurnstileToken}
+                onExpire={() => setTurnstileToken(null)}
+                className="flex justify-center"
+              />
+            )}
             {turnstileToken && (
               <p className="text-center font-mono text-[11px] text-white/40 tracking-[0.15em] uppercase animate-fade-in-soft">
                 Security check complete

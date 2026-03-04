@@ -141,15 +141,18 @@ export default function DashboardPage() {
                   ))}
                 </div>
               ) : (
-                <div className="space-y-4">
-                  <p className="text-[15px] md:text-[16px] text-white/65 leading-[1.6]">
-                    Add family and team members to map group dynamics.
+                <div className="space-y-4 text-center py-4">
+                  <p className="text-[15px] md:text-[16px] text-white/50 leading-[1.6]">
+                    No relationships added yet.
+                  </p>
+                  <p className="text-[13px] md:text-[14px] text-white/35 leading-[1.6]">
+                    Add someone to begin understanding your relational patterns.
                   </p>
                   <Link
                     href="/relationships"
                     className="inline-flex items-center justify-center h-[44px] px-6 border border-white/25 text-white/80 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-xl hover:text-white hover:border-white/50 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] active:scale-[0.98] transition-all duration-200 ease-out"
                   >
-                    Add Person
+                    Add someone
                   </Link>
                 </div>
               )}
@@ -164,7 +167,7 @@ export default function DashboardPage() {
                 <Lock className="w-4 h-4 text-white/30" />
               </div>
               <p className="text-[15px] md:text-[16px] text-white/40 leading-[1.6]">
-                Add family and team members to understand group dynamics.
+                Understand group dynamics by adding people you interact with.
               </p>
               <Link
                 href="/unlock"

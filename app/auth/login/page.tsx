@@ -34,7 +34,13 @@ export default function LoginPage() {
 
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+      if (error) {
+        if (error.message.includes('Invalid login credentials')) {
+          toast({ title: "Invalid credentials", description: "Check your email and password.", variant: "destructive" });
+          return;
+        }
+        throw error;
+      }
       router.push("/dashboard");
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
@@ -114,11 +120,13 @@ export default function LoginPage() {
             />
 
             <div className="space-y-2">
-              <Turnstile
-                onVerify={setTurnstileToken}
-                onExpire={() => setTurnstileToken(null)}
-                className="flex justify-center"
-              />
+              {isTurnstileRequired && (
+                <Turnstile
+                  onVerify={setTurnstileToken}
+                  onExpire={() => setTurnstileToken(null)}
+                  className="flex justify-center"
+                />
+              )}
               {turnstileToken && (
                 <p className="text-center font-mono text-[11px] text-white/40 tracking-[0.15em] uppercase animate-fade-in-soft">
                   Security check complete

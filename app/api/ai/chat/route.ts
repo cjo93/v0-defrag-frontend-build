@@ -101,9 +101,15 @@ export async function POST(req: NextRequest) {
 
 async function generateResponse(message: string, birthline: any): Promise<string> {
   // TODO: Integrate with AI provider (Vercel AI Gateway, OpenAI, etc.)
-  // Response structure: Recognize → Clarify → Suggest → Invite
-  // Safety: Never diagnose. Never blame. Never escalate. Never suggest ultimatums.
-  // Vocabulary: patterns, pressure, boundaries, timing, communication
+  // SYSTEM PROMPT DIRECTIVE:
+  // - Focus exclusively on relational dynamics. Never ask about internal thinking patterns.
+  // - Response structure: 1) Recognize situation  2) Explain relational dynamic  3) Suggest calm response  4) Invite reflection
+  // - Safety: Never diagnose. Never blame. Never escalate. Never suggest ultimatums.
+  // - Vocabulary: patterns, pressure, boundaries, timing, communication, dynamics
+  // - Example user questions:
+  //   "Why does my mom react this way when I need space?"
+  //   "Why does my partner think I'm distant?"
+  //   "How do I say this to my dad without escalation?"
   
   const lowerMessage = message.toLowerCase();
   
