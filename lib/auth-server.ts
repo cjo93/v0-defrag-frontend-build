@@ -29,7 +29,7 @@ export async function createServerClient() {
  * Extracts and validates user ID from request.
  * Throws UNAUTHORIZED error if missing or invalid.
  */
-export async function requireUserId(req: Request): Promise<string> {
+export async function requireUserId(req?: Request): Promise<string> {
   const supabase = await createServerClient();
   
   const {

@@ -19,6 +19,7 @@ export default function OnboardingPage() {
   const [location, setLocation] = useState("");
   const [loading, setLoading] = useState(false);
 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -27,29 +28,39 @@ export default function OnboardingPage() {
       const session = await getSession();
       if (!session) throw new Error("Unauthorized");
 
-      const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.defrag.app';
+      // Direct write to Supabase birthlines per instructions
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          global: {
+            headers: {
+              Authorization: `Bearer ${session.access_token}`
+            }
+          }
+        }
+      );
+
+      const finalTime = unknownTime ? "12:00:00" : (time.includes(':') && time.length === 5 ? time + ':00' : time);
+
       const payload = {
+        user_id: session.user.id,
         dob,
-        birth_time: unknownTime ? "12:00" : time,
-        birth_location: location
+        birth_time: unknownTime ? null : finalTime,
+        birth_city: location
       };
 
-      const res = await fetch(`${API_URL}/api/profile/generate-chart`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify(payload)
-      });
+      const { error } = await supabase.from('birthlines').insert(payload);
 
-      if (!res.ok) {
-        throw new Error("Failed to generate chart");
+      if (error) {
+        console.error('Insert error:', error);
+        throw new Error("Failed to save birthline data.");
       }
 
       toast({
         title: "Profile created",
-        description: "Your chart has been generated successfully.",
+        description: "Your baseline has been saved successfully.",
       });
 
       router.push("/dashboard");
