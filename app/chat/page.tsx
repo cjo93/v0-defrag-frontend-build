@@ -87,24 +87,7 @@ function ChatClient() {
     setIsLoading(true);
     
     try {
-      // Mocking API call to use the updated schema for now
-      const response: ChatResponse = {
-        headline: 'System Overload',
-        signal: 'high',
-        confidence: {
-            overall: 85,
-            data_confidence: 90,
-            pattern_confidence: 80
-        },
-        whats_happening: [
-            'Escalation pattern detected.',
-            'Communication breakdown likely.'
-        ],
-        do_this_now: 'Step away from the screen. Take 3 slow breaths. Count to 10. Return when calmer.',
-        one_line_to_say: 'I need a moment before continuing this.',
-        repeat_pattern: 'Tendency to push for resolution when overwhelmed.'
-      };
-      
+      const response = await sendChatMessage(userMessage);
       setMessages(prev => [...prev, { role: 'assistant', content: response }]);
     } catch (err: any) {
       setError(err.message || 'Failed to send message');
@@ -113,10 +96,10 @@ function ChatClient() {
     }
   };
 
-  // Helper function to render signal color in grayscale
+  // Helper function to render pressure color in grayscale
 
   const getSensitivityLabel = (sensitivity: 'low' | 'medium' | 'high') => {
-      switch(signal) {
+      switch(sensitivity) {
           case 'low': return 'stable';
           case 'medium': return 'moderate';
           case 'high': return 'elevated';
@@ -125,7 +108,7 @@ function ChatClient() {
   };
 
   const getSensitivityColor = (sensitivity: 'low' | 'medium' | 'high') => {
-      switch(signal) {
+      switch(sensitivity) {
           case 'low': return 'text-white/40';
           case 'medium': return 'text-white/70';
           case 'high': return 'text-white';
@@ -195,14 +178,14 @@ function ChatClient() {
                     <div className="border border-white/20 p-6 rounded-none bg-black">
                       {typeof message.content === 'object' && (
                         <>
-                          {/* Header / Signal */}
+                          {/* Header / Pressure */}
                           <div className="flex justify-between items-start border-b border-white/10 pb-4 mb-4">
                               <h2 className="font-sans text-[24px] leading-[1.3] tracking-[-0.01em] font-medium text-white">
                                 {message.content.headline}
                               </h2>
                               <div className="flex items-center gap-4">
                                   <div className="flex flex-col items-end">
-                                      <MicroLabel>Sensitivity</MicroLabel>
+                                      <MicroLabel>Pressure</MicroLabel>
                                       <span className={`font-mono text-[12px] uppercase ${getSensitivityColor(message.content.signal)}`}>
                                           {getSensitivityLabel(message.content.signal)}
                                       </span>
