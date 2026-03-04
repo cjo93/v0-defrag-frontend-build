@@ -1,6 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient, supabaseAdmin } from '@/lib/auth-server';
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/rate-limit';
+import { detectRelationalPattern } from '@/lib/relational-pattern';
+import { buildConversationMemory } from '@/lib/conversation-memory';
+import OpenAI from 'openai';
+
+let _openai: OpenAI | null = null;
+function getOpenAI(): OpenAI {
+  if (!_openai) {
+    _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  }
+  return _openai;
+}
 
 export async function POST(req: NextRequest) {
   console.log('[DEFRAG_API] POST /api/ai/chat');
@@ -96,8 +107,13 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Generate AI response (placeholder - integrate with actual AI provider)
-    const aiResponse = await generateResponse(message, birthline, personContext);
+    // Generate AI response
+    const aiResponse = await generateResponse(
+      message,
+      birthline,
+      personContext,
+      conversationId
+    );
 
     // Store assistant message
     await supabaseAdmin.from('messages').insert({
@@ -121,92 +137,142 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function generateResponse(message: string, birthline: any, personContext: any = null): Promise<string> {
-  // TODO: Integrate with AI provider (Vercel AI Gateway, OpenAI, etc.)
-  // SYSTEM PROMPT DIRECTIVE:
-  // - Focus exclusively on relational dynamics. Never ask about internal thinking patterns.
-  // - Response structure: 1) Recognize situation  2) Explain relational dynamic  3) Suggest calm response  4) Invite reflection
-  // - Safety: Never diagnose. Never blame. Never escalate. Never suggest ultimatums.
-  // - Vocabulary: patterns, pressure, boundaries, timing, communication, dynamics
-  // - Example user questions:
-  //   "Why does my mom react this way when I need space?"
-  //   "Why does my partner think I'm distant?"
-  //   "How do I say this to my dad without escalation?"
-  //
-  // PERSON CONTEXT INJECTION (when available):
-  // - User relationship: {personContext.relationship_label}
-  // - Person name: {personContext.name}
-  // - Natal data: available fields based on privacy level
-  // - Privacy level: {personContext.privacy_level}
-  
-  const lowerMessage = message.toLowerCase();
-  
-  if (lowerMessage.includes('mom') || lowerMessage.includes('mother')) {
-    return `It sounds like you're trying to maintain connection with your mother while protecting your own space.
+// ── System prompt ─────────────────────────────────────────────
 
-She may interpret distance as rejection rather than independence. When you pull back, her instinct may be to move closer — which can feel like pressure from your side.
+const SYSTEM_PROMPT = `You are DEFRAG — a relational intelligence guide.
 
-You might try naming what you need without over-explaining: "I need some quiet tonight — it's not about you." Short, clear statements tend to land better than long justifications.
+Your role:
+Help users understand relationship dynamics calmly and clearly.
 
-Does that pattern — where space gets read as rejection — feel familiar in this relationship?`;
+Rules:
+- Never diagnose.
+- Never assign blame.
+- Never escalate conflict.
+- Never suggest ultimatums.
+- Never speculate about mental illness.
+
+Focus on:
+- Patterns
+- Communication
+- Boundaries
+- Timing
+- Family systems dynamics
+
+Response structure:
+1. Recognize the situation
+2. Explain the relational pattern
+3. Suggest a calm communication approach
+4. Invite reflection
+
+Tone:
+- Calm
+- Clear
+- Neutral
+- Grounded
+- Emotionally intelligent
+- Never preachy
+- Never mystical
+- Never deterministic
+
+Avoid therapy language.
+Do not ask about internal thinking patterns.
+Only discuss relationship dynamics.`;
+
+// ── Generate response ─────────────────────────────────────────
+
+async function generateResponse(
+  message: string,
+  birthline: any,
+  personContext: any = null,
+  conversationId: string
+): Promise<string> {
+  // 1. Relational pattern analysis (local, zero cost)
+  const pattern = detectRelationalPattern(message, personContext);
+
+  const patternContext = `Detected relational signals:
+
+relationship type: ${pattern.relationshipType}
+tension type: ${pattern.tensionType}
+pattern: ${pattern.pattern}
+escalation risk: ${pattern.escalationRisk}
+guidance mode: ${pattern.guidanceMode}
+
+Use these signals to inform your response. Do not mention these signals directly to the user.`;
+
+  // 2. Natal context
+  const natalContext = birthline
+    ? `User natal data available:
+birth_date: ${birthline.birth_date}
+birth_time: ${birthline.birth_time ?? "unknown"}
+birth_place: ${birthline.birth_place ?? "unknown"}`
+    : "";
+
+  // 3. Relationship context
+  const relationshipContext = personContext
+    ? `Relationship context:
+
+Name: ${personContext.name}
+Relationship: ${personContext.relationship_label}
+
+Available natal data:
+birth_date: ${personContext.birth_date}
+birth_time: ${personContext.birth_time ?? "hidden"}
+birth_place: ${personContext.birth_place ?? "hidden"}
+
+Privacy level: ${personContext.privacy_level}`
+    : "";
+
+  // 4. Conversation memory (compressed history)
+  const memory = await buildConversationMemory(
+    supabaseAdmin,
+    conversationId,
+    getOpenAI()
+  );
+
+  // 5. Build message stack
+  const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+    { role: "system", content: SYSTEM_PROMPT },
+  ];
+
+  if (natalContext) {
+    messages.push({ role: "system", content: natalContext });
   }
-  
-  if (lowerMessage.includes('dad') || lowerMessage.includes('father')) {
-    return `It sounds like you're trying to be seen by your father without triggering his default mode of pushing harder.
 
-Your father may interpret pressure as motivation — while you experience it as control. These two readings of the same behavior often create a loop: he pushes, you withdraw, he pushes harder.
-
-You might try framing the boundary around what helps you stay engaged: "I do better when I have space to figure it out first." This redirects without rejecting.
-
-Does that dynamic — where his care shows up as pressure — feel like a recurring pattern?`;
-  }
-  
-  if (lowerMessage.includes('sister') || lowerMessage.includes('sibling') || lowerMessage.includes('brother')) {
-    return `It sounds like you're navigating a dynamic where you and your sibling see the same situation very differently.
-
-Siblings often develop complementary roles in a family system. If one person became the mediator, the other may have become the challenger — and those roles can persist long after they're useful.
-
-You might try approaching the next conversation with curiosity rather than correction: "I see it differently — can you walk me through your side?" This tends to lower defensiveness.
-
-Has this pattern of seeing things from opposite angles been present for a long time?`;
-  }
-  
-  if (lowerMessage.includes('boundaries') || lowerMessage.includes('boundary') || lowerMessage.includes('space')) {
-    return `It sounds like you're trying to create a boundary without it being received as a wall.
-
-People who care about you may interpret boundaries as rejection — especially if the relationship has historically had few limits. The shift can feel sudden to them even when it's been building for you.
-
-A boundary doesn't need justification to be valid. Try stating what you need simply: "I need some time this evening" is complete on its own. Over-explaining often invites negotiation.
-
-Does this tension around boundaries tend to show up with the same people?`;
-  }
-  
-  if (lowerMessage.includes('escalat') || lowerMessage.includes('fight') || lowerMessage.includes('argue') || lowerMessage.includes('conflict')) {
-    return `It sounds like you're trying to find a way to communicate without the conversation spiraling.
-
-Escalation usually happens when both people feel unheard. The instinct is to speak louder or more forcefully — but that tends to trigger defense rather than understanding.
-
-You might try leading with curiosity before making your point: "Help me understand what you're feeling right now." This creates a pause that can redirect the energy. If things are already heated, a simple "I want to continue this — can we take five minutes?" is a reset, not a retreat.
-
-Is there a specific moment where these conversations tend to tip over?`;
+  if (relationshipContext) {
+    messages.push({ role: "system", content: relationshipContext });
   }
 
-  if (lowerMessage.includes('perspective') || lowerMessage.includes('understand') || lowerMessage.includes('see my')) {
-    return `It sounds like you're trying to be understood by someone who keeps interpreting things differently.
+  messages.push({ role: "system", content: patternContext });
 
-When two people have different communication styles, the same words can carry very different weights. What feels like a reasonable request to you may land as a demand or criticism to them — and vice versa.
-
-You might try reflecting their view back before sharing yours: "It sounds like you see it as... For me, it feels more like..." This signals that you're listening, which tends to lower resistance.
-
-Has this gap in how things are interpreted been consistent, or does it shift depending on the topic?`;
+  // Inject conversation summary if present
+  if (memory.summary) {
+    messages.push({
+      role: "system",
+      content: `Conversation summary (earlier context):\n${memory.summary}`,
+    });
   }
-  
-  // Default response
-  return `It sounds like you're working through something that matters to you.
 
-Relational patterns often have deep roots — they repeat not because people don't care, but because the underlying dynamics haven't shifted yet. Recognizing the pattern is the first step toward choosing a different response.
+  // Inject recent messages
+  for (const m of memory.recentMessages) {
+    messages.push({ role: m.role, content: m.content });
+  }
 
-Can you tell me more about what typically happens in these situations? Understanding the specific sequence — who says what, and when it turns — can help us find a different approach.
+  // Current user message (always last)
+  messages.push({ role: "user", content: message });
 
-What part of this dynamic feels most stuck right now?`;
+  // 6. Call OpenAI
+  const completion = await getOpenAI().chat.completions.create({
+    model: "gpt-4.1",
+    temperature: 0.4,
+    messages,
+  });
+
+  let response = completion.choices[0]?.message?.content || "";
+
+  // 7. Safety guard — cap response length
+  if (response.length > 2000) {
+    response = response.slice(0, 2000);
+  }
+
+  return response;
 }
