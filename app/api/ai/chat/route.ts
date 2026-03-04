@@ -8,6 +8,9 @@ export async function POST(req: NextRequest) {
   try {
     // Get authenticated user
     const supabase = await createServerClient();
+    if (!supabase) {
+      return NextResponse.json({ message: 'Service temporarily unavailable' }, { status: 503 });
+    }
     const { data: { session }, error: authError } = await supabase.auth.getSession();
 
     if (authError || !session?.user) {

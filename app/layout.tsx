@@ -93,7 +93,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const buildSha = process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA || 'LOCAL';
+  const buildSha = process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA || process.env.VERCEL_GIT_COMMIT_SHA || 'LOCAL';
   const buildTimestamp = process.env.NEXT_PUBLIC_BUILD_TIMESTAMP;
   const buildDate = buildTimestamp ? buildTimestamp.split('T')[0] : new Date().toISOString().split('T')[0];
 

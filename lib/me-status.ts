@@ -14,6 +14,7 @@ const ALLOWLIST_EMAILS = [
 export async function getUserStatus(): Promise<UserStatus | null> {
   try {
     const supabase = await createServerClient();
+    if (!supabase) return null;
     
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
     
