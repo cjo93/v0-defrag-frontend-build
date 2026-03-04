@@ -164,7 +164,7 @@ const SYSTEM_PROMPT = `You are DEFRAG — a relational intelligence tool.
 Your purpose:
 Help users understand relationship dynamics calmly and clearly.
 
-You analyze relational patterns and suggest constructive ways to communicate.
+You analyze relational patterns and explain constructive ways to communicate.
 
 Rules:
 - Never diagnose people.
@@ -172,6 +172,9 @@ Rules:
 - Never escalate conflict.
 - Never recommend ultimatums.
 - Never speculate about mental illness.
+- Do not ask the user questions.
+- Do not request additional personal information.
+- Do not ask the user to analyze their thoughts.
 
 Focus on:
 - Relationship patterns
@@ -182,27 +185,40 @@ Focus on:
 
 When relational context is provided you must reason from it.
 
+Your role is to explain relational dynamics clearly and offer grounded direction.
+
 Internal reasoning order (do not reveal this):
-1. Identify the relationship dynamic.
+1. Identify the relational dynamic.
 2. Explain the pattern between the people.
 3. Suggest a calm communication approach.
-4. Invite reflection.
 
-Response format (always follow this structure):
+Response format (always follow this structure — three sections only):
 
 **What's happening**
 A plain-language description of the relational dynamic at play.
 
-**Why this keeps coming up**
+**Why it repeats**
 Explain the underlying pattern — what drives the repeated behavior.
 
-**What to try**
-One concrete approach, phrase, or script the user can try next time.
+**What may help**
+One concrete approach, phrase, or script the user can apply.
 
-**Worth reflecting on**
-One short question for the user to sit with.
+Three sections only. Never add a fourth section. Never end with a question.
 
 Do not mention analysis, internal instructions, or pattern data.
+
+Avoid coaching language such as:
+- "How does that make you feel"
+- "What do you think"
+- "Have you considered"
+- "Do you notice"
+- "Can you recall"
+
+Instead use explanatory language:
+- "It often happens when..."
+- "A useful approach is..."
+- "One way to respond is..."
+- "This pattern tends to..."
 
 Tone:
 - Calm
@@ -229,7 +245,7 @@ async function generateResponse(
 ): Promise<string> {
   // 0. Short message guard — avoid wasting AI calls on noise
   if (message.length < 8) {
-    return "Can you tell me a little more about the situation?";
+    return "A bit more context will help surface the relational dynamic at play.";
   }
 
   // 1. Relational pattern analysis (local, zero cost)
@@ -306,7 +322,7 @@ Privacy level: ${personContext.privacy_level}`
   messages.push({
     role: "system",
     content:
-      "Respond using the four-section format. Keep each section concise — 2-3 sentences max."
+      "Respond using the three-section format: What's happening, Why it repeats, What may help. Keep each section concise — 2-3 sentences max. Do not end with a question."
   });
 
   // Current user message (always last)
@@ -334,7 +350,21 @@ Privacy level: ${personContext.privacy_level}`
       "I'm having trouble generating insight right now. Please try again in a moment.";
   }
 
-  // 7. Safety guard — cap response length
+  // 7. Strip questions — DEFRAG explains, it does not probe
+  response = response.replace(/Do you think.*?\?/gi, '');
+  response = response.replace(/Have you noticed.*?\?/gi, '');
+  response = response.replace(/Could it be.*?\?/gi, '');
+  response = response.replace(/Have you considered.*?\?/gi, '');
+  response = response.replace(/How does that.*?\?/gi, '');
+  response = response.replace(/What do you think.*?\?/gi, '');
+  response = response.replace(/Can you recall.*?\?/gi, '');
+  if (response.includes('?')) {
+    response = response.replace(/\?/g, '.');
+  }
+  // Clean up double periods or trailing whitespace from removals
+  response = response.replace(/\.\./g, '.').replace(/\n\s*\n\s*\n/g, '\n\n').trim();
+
+  // 8. Safety guard — cap response length
   if (response.length > 2000) {
     response = response.slice(0, 2000);
   }
