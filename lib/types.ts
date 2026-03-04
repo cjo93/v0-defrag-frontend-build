@@ -70,7 +70,7 @@ export interface Readout {
 
 export interface ChatResponse {
   headline: string;
-  signal: 'low' | 'medium' | 'high';
+  pressure: 'low' | 'medium' | 'high';
   confidence: {
     overall: number;
     data_confidence: number;

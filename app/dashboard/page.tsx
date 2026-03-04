@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { getSession } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any>(null);
 
@@ -32,6 +34,11 @@ export default function DashboardPage() {
     fetchDashboard();
   }, []);
 
+  const handleChatNavigation = (e: React.FormEvent) => {
+    e.preventDefault();
+    router.push("/chat");
+  };
+
   return (
     <div className="min-h-screen bg-black text-white font-mono p-8 flex flex-col items-center">
       <header className="w-full max-w-4xl flex justify-between items-center border-b border-[#333] pb-4 mb-8">
@@ -40,35 +47,37 @@ export default function DashboardPage() {
       </header>
 
       {loading ? (
-        <div className="animate-pulse flex flex-col space-y-4 w-full max-w-4xl">
+        <div className="w-full max-w-4xl space-y-8 animate-pulse">
+          <div className="h-40 bg-[#111] border border-[#333]" />
+          <div className="h-40 bg-[#111] border border-[#333]" />
+          <div className="h-20 bg-[#111] border border-[#333]" />
           <div className="h-32 bg-[#111] border border-[#333]" />
-          <div className="h-64 bg-[#111] border border-[#333]" />
         </div>
       ) : (
         <div className="w-full max-w-4xl space-y-8">
 
-          {/* SECTION 1 - Natal Overview */}
+          {/* SECTION 1 - Today */}
           <section className="border border-[#333] p-6 bg-[#0a0a0a]">
-            <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-4">Natal Overview</h2>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="border border-[#222] p-4 text-center">
-                <div className="text-xs text-gray-500">SUN</div>
-                <div className="text-lg">{data?.natal?.sun || "Aquarius"}</div>
-              </div>
-              <div className="border border-[#222] p-4 text-center">
-                <div className="text-xs text-gray-500">MOON</div>
-                <div className="text-lg">{data?.natal?.moon || "Scorpio"}</div>
-              </div>
-              <div className="border border-[#222] p-4 text-center">
-                <div className="text-xs text-gray-500">RISING</div>
-                <div className="text-lg">{data?.natal?.rising || "Gemini"}</div>
-              </div>
-            </div>
+            <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-4">Today</h2>
+            <ul className="space-y-2 text-sm">
+              <li className="flex justify-between border-b border-[#222] pb-2">
+                <span className="text-gray-300">Communication Pressure</span>
+                <span className="text-white">{data?.metrics?.communication || "Medium"}</span>
+              </li>
+              <li className="flex justify-between border-b border-[#222] pb-2">
+                <span className="text-gray-300">Authority Dynamics</span>
+                <span className="text-white">{data?.metrics?.authority || "High"}</span>
+              </li>
+              <li className="flex justify-between border-b border-[#222] pb-2">
+                <span className="text-gray-300">Boundary Tension</span>
+                <span className="text-white">{data?.metrics?.boundaries || "Low"}</span>
+              </li>
+            </ul>
           </section>
 
-          {/* SECTION 2 - Relational Dynamics Table */}
+          {/* SECTION 2 - Relationships */}
           <section className="border border-[#333] p-6 bg-[#0a0a0a]">
-            <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-4">Relational Dynamics</h2>
+            <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-4">Relationships</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
                 <thead className="text-xs text-gray-500 border-b border-[#333]">
@@ -89,37 +98,23 @@ export default function DashboardPage() {
                     </tr>
                   )) : (
                     <tr className="border-b border-[#222]">
-                      <td className="py-3 px-4">Saturn</td>
-                      <td className="py-3 px-4">4th House</td>
-                      <td className="py-3 px-4">Family Responsibility</td>
-                      <td className="py-3 px-4">Pressure from family expectations</td>
+                      <td colSpan={4} className="py-8 px-4 text-center text-gray-500 italic">No relational dynamics detected yet.</td>
                     </tr>
                   )}
                 </tbody>
               </table>
             </div>
+            <div className="mt-4 text-right">
+                <button
+                  onClick={() => router.push('/relationships')}
+                  className="text-xs text-white border-b border-white hover:text-gray-300 hover:border-gray-300 transition-colors uppercase tracking-widest"
+                >
+                  Manage Relationships
+                </button>
+            </div>
           </section>
 
-          {/* SECTION 3 - Live Astrology Metrics */}
-          <section className="border border-[#333] p-6 bg-[#0a0a0a]">
-            <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-4">Live Metrics</h2>
-            <ul className="space-y-2 text-sm">
-              <li className="flex justify-between border-b border-[#222] pb-2">
-                <span className="text-gray-300">Communication Pressure</span>
-                <span className="text-white">Medium</span>
-              </li>
-              <li className="flex justify-between border-b border-[#222] pb-2">
-                <span className="text-gray-300">Authority Dynamics</span>
-                <span className="text-white">High</span>
-              </li>
-              <li className="flex justify-between border-b border-[#222] pb-2">
-                <span className="text-gray-300">Boundary Tension</span>
-                <span className="text-white">Low</span>
-              </li>
-            </ul>
-          </section>
-
-          {/* SECTION 4 - Daily Audio Overview */}
+          {/* SECTION 3 - Daily Audio Overview */}
           <section className="border border-[#333] p-6 bg-[#0a0a0a] flex items-center justify-between">
             <div>
               <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-2">Daily Audio Brief</h2>
@@ -128,20 +123,21 @@ export default function DashboardPage() {
             <audio controls className="h-8 max-w-[200px]" src="/api/audio/daily" />
           </section>
 
-          {/* SECTION 5 - Relationship Chat */}
+          {/* SECTION 4 - Relationship Chat */}
           <section className="border border-[#333] p-6 bg-[#0a0a0a]">
-            <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-4">Relationship Chat</h2>
-            <form className="flex space-x-2" onSubmit={(e) => e.preventDefault()}>
+            <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-4">Ask About a Relationship</h2>
+            <form className="flex space-x-2" onSubmit={handleChatNavigation}>
               <input
                 type="text"
                 placeholder="Why does my dad push me so hard?"
                 className="flex-1 bg-black border border-[#333] px-4 py-2 text-sm focus:outline-none focus:border-white transition-colors"
+                onChange={() => {}} // Ignore input here, route to chat
               />
               <button
                 type="submit"
                 className="bg-white text-black px-6 py-2 text-sm font-bold tracking-widest hover:bg-gray-200 transition-colors"
               >
-                SEND
+                ASK
               </button>
             </form>
           </section>

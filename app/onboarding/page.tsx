@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { getSession } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -26,33 +27,44 @@ export default function OnboardingPage() {
     try {
       const session = await getSession();
       if (!session) throw new Error("Unauthorized");
+      if (!supabase) throw new Error("Supabase is not configured");
 
-      const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.defrag.app';
-      const payload = {
+      const birth_time = unknownTime ? "12:00" : time;
+
+      // Ensure a profile exists for the user first if not already present
+      // RLS policies might require profiles to exist before inserting birthlines
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .single();
+
+      if (!profile) {
+        await supabase.from('profiles').insert({
+          user_id: session.user.id,
+          email: session.user.email,
+          subscription_status: 'trialing'
+        });
+      }
+
+      // Insert directly into Supabase 'birthlines' table
+      const { error } = await supabase.from('birthlines').insert({
+        user_id: session.user.id,
         dob,
-        birth_time: unknownTime ? "12:00" : time,
-        birth_location: location
-      };
-
-      const res = await fetch(`${API_URL}/api/profile/generate-chart`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify(payload)
+        birth_time,
+        birth_city: location,
       });
 
-      if (!res.ok) {
-        throw new Error("Failed to generate chart");
+      if (error) {
+        throw error;
       }
 
       toast({
         title: "Profile created",
-        description: "Your chart has been generated successfully.",
+        description: "Your baseline has been saved successfully.",
       });
 
-      router.push("/dashboard");
+      router.push("/relationships");
     } catch (err: any) {
       toast({
         title: "Error",
@@ -111,7 +123,7 @@ export default function OnboardingPage() {
           </div>
           {unknownTime && (
             <p className="text-xs text-gray-500 mt-1">
-              Defaulting to 12:00 PM (Noon Chart). A noon chart still produces accurate planetary relationships. <a href="#" className="underline">How to find your birth time</a>
+              Defaulting to 12:00 PM (Noon Chart). A noon chart still produces accurate planetary relationships.
             </p>
           )}
 
@@ -133,7 +145,7 @@ export default function OnboardingPage() {
             className="w-full bg-white text-black hover:bg-gray-200 rounded-none font-bold tracking-wider"
             disabled={loading}
           >
-            {loading ? "GENERATING..." : "GENERATE CHART"}
+            {loading ? "SAVING..." : "SAVE BASELINE"}
           </Button>
         </form>
       </div>
