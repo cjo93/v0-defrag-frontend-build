@@ -4,15 +4,25 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
+import { Turnstile } from "@/components/turnstile";
 
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+
+  const isTurnstileRequired = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
   const handleMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (isTurnstileRequired && !turnstileToken) {
+      toast({ title: "Verification required", description: "Please complete the security check.", variant: "destructive" });
+      return;
+    }
+    
     setLoading(true);
 
     if (!supabase) {
@@ -48,6 +58,11 @@ export default function LoginPage() {
   };
 
   const handleOAuth = async (provider: 'google' | 'apple') => {
+    if (isTurnstileRequired && !turnstileToken) {
+      toast({ title: "Verification required", description: "Please complete the security check.", variant: "destructive" });
+      return;
+    }
+    
     if (!supabase) return;
 
     try {
@@ -104,10 +119,17 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
+            
+            <Turnstile 
+              onVerify={setTurnstileToken}
+              onExpire={() => setTurnstileToken(null)}
+              className="flex justify-center"
+            />
+            
             <button
               type="submit"
               className="w-full bg-[#111] border border-[#333] text-white py-3 text-sm font-bold tracking-widest hover:bg-[#222] transition-colors"
-              disabled={loading}
+              disabled={loading || (isTurnstileRequired && !turnstileToken)}
             >
               {loading ? "SENDING..." : "SEND MAGIC LINK"}
             </button>

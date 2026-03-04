@@ -1,152 +1,208 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSession } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
+import { supabase, getSession } from "@/lib/supabase";
+import { Lock, MessageCircle, Users, Calendar, Headphones } from "lucide-react";
+import Link from "next/link";
+
+type UserStatus = {
+  plan: 'basic' | 'plus';
+  has_relationships: boolean;
+};
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<any>(null);
+  const [status, setStatus] = useState<UserStatus | null>(null);
 
   useEffect(() => {
-    // Thin client: fetch compiled data from API
-    async function fetchDashboard() {
+    async function loadStatus() {
       try {
         const session = await getSession();
-        if (!session) return;
-
-        const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.defrag.app';
-        const res = await fetch(`${API_URL}/api/dashboard`, {
-          headers: { 'Authorization': `Bearer ${session.access_token}` }
-        });
-
-        if (res.ok) {
-          const json = await res.json();
-          setData(json);
+        if (!session || !supabase) {
+          router.push('/auth/login');
+          return;
         }
-      } catch (e) {
-        console.error("Error fetching dashboard", e);
+
+        // Get user profile
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('plan')
+          .eq('user_id', session.user.id)
+          .single();
+
+        // Count connections
+        const { count } = await supabase
+          .from('connections')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', session.user.id);
+
+        setStatus({
+          plan: profile?.plan || 'basic',
+          has_relationships: (count || 0) > 0,
+        });
+      } catch (err) {
+        console.error('Dashboard load error:', err);
       } finally {
         setLoading(false);
       }
     }
-    fetchDashboard();
-  }, []);
+    loadStatus();
+  }, [router]);
+
+  const isPlus = status?.plan === 'plus';
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black text-white font-mono p-8 flex flex-col items-center">
+        <div className="w-full max-w-4xl">
+          <div className="animate-pulse space-y-6">
+            <div className="h-8 w-32 bg-[#111]" />
+            <div className="grid md:grid-cols-2 gap-6">
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="h-48 bg-[#111] border border-[#333]" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-white font-mono p-8 flex flex-col items-center">
       <header className="w-full max-w-4xl flex justify-between items-center border-b border-[#333] pb-4 mb-8">
         <h1 className="text-xl font-bold tracking-widest">DEFRAG</h1>
-        <div className="text-xs text-gray-500">Connected to api.defrag.app</div>
+        <Link href="/settings" className="text-xs text-gray-500 hover:text-white transition-colors">
+          Settings
+        </Link>
       </header>
 
-      {loading ? (
-        <div className="animate-pulse flex flex-col space-y-4 w-full max-w-4xl">
-          <div className="h-32 bg-[#111] border border-[#333]" />
-          <div className="h-64 bg-[#111] border border-[#333]" />
+      <div className="w-full max-w-4xl grid md:grid-cols-2 gap-6">
+        
+        {/* Panel 1: Today (Pressure + timing) */}
+        <div className="border border-[#333] p-6 bg-[#0a0a0a] space-y-4">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-gray-400" />
+            <h2 className="text-sm uppercase tracking-widest text-gray-400">Today</h2>
+          </div>
+          
+          <div className="space-y-3">
+            <div className="flex justify-between items-center border-b border-[#222] pb-2">
+              <span className="text-sm text-gray-300">Current Pressure</span>
+              <span className="text-sm font-medium">Medium</span>
+            </div>
+            <div className="flex justify-between items-center border-b border-[#222] pb-2">
+              <span className="text-sm text-gray-300">Timing Window</span>
+              <span className="text-sm font-medium">Favorable</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-300">Best for</span>
+              <span className="text-sm font-medium">Conversations</span>
+            </div>
+          </div>
+          
+          <p className="text-xs text-gray-500 pt-2">
+            Steady energy today. Good timing for difficult conversations after 2pm.
+          </p>
         </div>
-      ) : (
-        <div className="w-full max-w-4xl space-y-8">
 
-          {/* SECTION 1 - Natal Overview */}
-          <section className="border border-[#333] p-6 bg-[#0a0a0a]">
-            <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-4">Natal Overview</h2>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="border border-[#222] p-4 text-center">
-                <div className="text-xs text-gray-500">SUN</div>
-                <div className="text-lg">{data?.natal?.sun || "Aquarius"}</div>
-              </div>
-              <div className="border border-[#222] p-4 text-center">
-                <div className="text-xs text-gray-500">MOON</div>
-                <div className="text-lg">{data?.natal?.moon || "Scorpio"}</div>
-              </div>
-              <div className="border border-[#222] p-4 text-center">
-                <div className="text-xs text-gray-500">RISING</div>
-                <div className="text-lg">{data?.natal?.rising || "Gemini"}</div>
+        {/* Panel 2: Ask (Chat entry) */}
+        <Link href="/chat" className="block">
+          <div className="border border-[#333] p-6 bg-[#0a0a0a] space-y-4 h-full hover:border-white transition-colors cursor-pointer">
+            <div className="flex items-center gap-2">
+              <MessageCircle className="w-4 h-4 text-gray-400" />
+              <h2 className="text-sm uppercase tracking-widest text-gray-400">Ask</h2>
+            </div>
+            
+            <div className="space-y-2">
+              <p className="text-sm text-gray-300">Ask about your relationships</p>
+              <div className="space-y-1 text-xs text-gray-500">
+                <p>• Why doesn't my mom respect my boundaries?</p>
+                <p>• Why does my dad push so hard?</p>
+                <p>• How do I say this without escalation?</p>
               </div>
             </div>
-          </section>
 
-          {/* SECTION 2 - Relational Dynamics Table */}
-          <section className="border border-[#333] p-6 bg-[#0a0a0a]">
-            <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-4">Relational Dynamics</h2>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs text-gray-500 border-b border-[#333]">
-                  <tr>
-                    <th className="py-3 px-4">Planet</th>
-                    <th className="py-3 px-4">House</th>
-                    <th className="py-3 px-4">Aspect</th>
-                    <th className="py-3 px-4">Relational Meaning</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data?.dynamics?.length ? data.dynamics.map((row: any, i: number) => (
-                    <tr key={i} className="border-b border-[#222]">
-                      <td className="py-3 px-4">{row.planet}</td>
-                      <td className="py-3 px-4">{row.house}</td>
-                      <td className="py-3 px-4">{row.aspect}</td>
-                      <td className="py-3 px-4">{row.meaning}</td>
-                    </tr>
-                  )) : (
-                    <tr className="border-b border-[#222]">
-                      <td className="py-3 px-4">Saturn</td>
-                      <td className="py-3 px-4">4th House</td>
-                      <td className="py-3 px-4">Family Responsibility</td>
-                      <td className="py-3 px-4">Pressure from family expectations</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+            <div className="pt-2">
+              <span className="text-sm font-bold tracking-wider">START CHAT →</span>
             </div>
-          </section>
+          </div>
+        </Link>
 
-          {/* SECTION 3 - Live Astrology Metrics */}
-          <section className="border border-[#333] p-6 bg-[#0a0a0a]">
-            <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-4">Live Metrics</h2>
-            <ul className="space-y-2 text-sm">
-              <li className="flex justify-between border-b border-[#222] pb-2">
-                <span className="text-gray-300">Communication Pressure</span>
-                <span className="text-white">Medium</span>
-              </li>
-              <li className="flex justify-between border-b border-[#222] pb-2">
-                <span className="text-gray-300">Authority Dynamics</span>
-                <span className="text-white">High</span>
-              </li>
-              <li className="flex justify-between border-b border-[#222] pb-2">
-                <span className="text-gray-300">Boundary Tension</span>
-                <span className="text-white">Low</span>
-              </li>
-            </ul>
-          </section>
+        {/* Panel 3: Relationships (locked unless Plus) */}
+        {isPlus ? (
+          <Link href="/relationships" className="block">
+            <div className="border border-[#333] p-6 bg-[#0a0a0a] space-y-4 h-full hover:border-white transition-colors cursor-pointer">
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-gray-400" />
+                <h2 className="text-sm uppercase tracking-widest text-gray-400">Relationships</h2>
+              </div>
+              
+              <div className="space-y-2">
+                <p className="text-sm text-gray-300">
+                  {status?.has_relationships 
+                    ? 'View your relationship graph' 
+                    : 'Add family and team members'}
+                </p>
+                <p className="text-xs text-gray-500">
+                  Understand dynamics and timing for each person.
+                </p>
+              </div>
 
-          {/* SECTION 4 - Daily Audio Overview */}
-          <section className="border border-[#333] p-6 bg-[#0a0a0a] flex items-center justify-between">
-            <div>
-              <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-2">Daily Audio Brief</h2>
-              <p className="text-xs text-gray-500">Family dynamics, transit pressures, communication patterns.</p>
+              <div className="pt-2">
+                <span className="text-sm font-bold tracking-wider">
+                  {status?.has_relationships ? 'VIEW RELATIONSHIPS →' : 'ADD PERSON →'}
+                </span>
+              </div>
             </div>
-            <audio controls className="h-8 max-w-[200px]" src="/api/audio/daily" />
-          </section>
+          </Link>
+        ) : (
+          <div className="border border-[#333] p-6 bg-[#0a0a0a] space-y-4 opacity-60">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-gray-400" />
+                <h2 className="text-sm uppercase tracking-widest text-gray-400">Relationships</h2>
+              </div>
+              <Lock className="w-4 h-4 text-gray-500" />
+            </div>
+            
+            <p className="text-sm text-gray-400">
+              Add family and team members to understand group dynamics.
+            </p>
+            
+            <Link 
+              href="/unlock" 
+              className="inline-block text-sm font-bold tracking-wider text-white hover:underline"
+            >
+              UPGRADE TO PLUS →
+            </Link>
+          </div>
+        )}
 
-          {/* SECTION 5 - Relationship Chat */}
-          <section className="border border-[#333] p-6 bg-[#0a0a0a]">
-            <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-4">Relationship Chat</h2>
-            <form className="flex space-x-2" onSubmit={(e) => e.preventDefault()}>
-              <input
-                type="text"
-                placeholder="Why does my dad push me so hard?"
-                className="flex-1 bg-black border border-[#333] px-4 py-2 text-sm focus:outline-none focus:border-white transition-colors"
-              />
-              <button
-                type="submit"
-                className="bg-white text-black px-6 py-2 text-sm font-bold tracking-widest hover:bg-gray-200 transition-colors"
-              >
-                SEND
-              </button>
-            </form>
-          </section>
+        {/* Panel 4: Daily Audio */}
+        <div className="border border-[#333] p-6 bg-[#0a0a0a] space-y-4">
+          <div className="flex items-center gap-2">
+            <Headphones className="w-4 h-4 text-gray-400" />
+            <h2 className="text-sm uppercase tracking-widest text-gray-400">Daily Audio</h2>
+          </div>
+          
+          <p className="text-sm text-gray-300">
+            Your personalized daily briefing
+          </p>
+          
+          <p className="text-xs text-gray-500">
+            Family dynamics, timing windows, and communication patterns for today.
+          </p>
+
+          <div className="pt-2">
+            <div className="bg-[#111] border border-[#333] p-3 text-center">
+              <span className="text-xs text-gray-500">Audio coming soon</span>
+            </div>
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

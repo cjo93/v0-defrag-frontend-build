@@ -2,78 +2,43 @@
 
 import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useAuth } from '@/lib/auth-context';
-import { sendChatMessage, createCheckoutSession } from '@/lib/api';
-import type { ChatResponse } from '@/lib/types';
-import { 
-  AppShell,
-  MicroLabel, 
-  H1,
-  Body, 
-  Spacer,
-  LockedScreen 
-} from '@/components/editorial';
 import { BuildStamp } from '@/components/build-stamp';
 
 interface Message {
   role: 'user' | 'assistant';
-  content: string | ChatResponse;
+  content: string;
+  timestamp: Date;
 }
+
+const RELATIONAL_PROMPTS = [
+  "Why doesn't my mom respect my boundaries?",
+  "Why does my dad push so hard?",
+  "Why can't they see who I am?",
+  "How do I say this without escalation?",
+];
 
 function ChatClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, signOut } = useAuth();
   
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isOSActive, setIsOSActive] = useState(false);
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [conversationId, setConversationId] = useState<string | null>(null);
   const [error, setError] = useState('');
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!user) {
-      router.push('/');
-      return;
-    }
-
-    checkOSStatus();
-
-    // Check if there is a prompt in URL to pre-fill
     const promptParam = searchParams.get('prompt');
     if (promptParam) {
       setInput(promptParam);
     }
-  }, [user, searchParams]);
+  }, [searchParams]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
-
-  const checkOSStatus = async () => {
-    try {
-      const hasOS = false; // TODO: Replace with actual subscription check
-      setIsOSActive(hasOS);
-    } catch (err: any) {
-      setError(err.message || 'Failed to check subscription status');
-    }
-  };
-
-  const handleUpgrade = async () => {
-    setIsCheckingOut(true);
-    setError('');
-    
-    try {
-      const { url } = await createCheckoutSession('os');
-      window.location.href = url;
-    } catch (err: any) {
-      setError(err.message || 'Failed to create checkout session');
-      setIsCheckingOut(false);
-    }
-  };
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,205 +46,150 @@ function ChatClient() {
 
     const userMessage = input.trim();
     setInput('');
+    setError('');
     
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    setMessages(prev => [...prev, { 
+      role: 'user', 
+      content: userMessage,
+      timestamp: new Date()
+    }]);
     
     setIsLoading(true);
     
     try {
-      // Mocking API call to use the updated schema for now
-      const response: ChatResponse = {
-        headline: 'System Overload',
-        signal: 'high',
-        confidence: {
-            overall: 85,
-            data_confidence: 90,
-            pattern_confidence: 80
-        },
-        whats_happening: [
-            'Escalation pattern detected.',
-            'Communication breakdown likely.'
-        ],
-        do_this_now: 'Step away from the screen. Take 3 slow breaths. Count to 10. Return when calmer.',
-        one_line_to_say: 'I need a moment before continuing this.',
-        repeat_pattern: 'Tendency to push for resolution when overwhelmed.'
-      };
+      const response = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: userMessage,
+          conversation_id: conversationId,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Failed to send message');
+      }
+
+      const data = await response.json();
       
-      setMessages(prev => [...prev, { role: 'assistant', content: response }]);
-    } catch (err: any) {
-      setError(err.message || 'Failed to send message');
+      if (data.conversation_id) {
+        setConversationId(data.conversation_id);
+      }
+      
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: data.response,
+        timestamp: new Date()
+      }]);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to send message';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Helper function to render signal color in grayscale
-
-  const getSensitivityLabel = (sensitivity: 'low' | 'medium' | 'high') => {
-      switch(signal) {
-          case 'low': return 'stable';
-          case 'medium': return 'moderate';
-          case 'high': return 'elevated';
-          default: return 'stable';
-      }
+  const handlePromptClick = (prompt: string) => {
+    setInput(prompt);
   };
 
-  const getSensitivityColor = (sensitivity: 'low' | 'medium' | 'high') => {
-      switch(signal) {
-          case 'low': return 'text-white/40';
-          case 'medium': return 'text-white/70';
-          case 'high': return 'text-white';
-          default: return 'text-white/40';
-      }
+  const handleBack = () => {
+    router.push('/dashboard');
   };
-
-  if (!isOSActive) {
-    return (
-      <>
-        <LockedScreen
-          title="Console locked"
-          body="Requires DEFRAG OS for active intelligence support."
-          ctaLabel={isCheckingOut ? "Initializing..." : "Upgrade to DEFRAG OS"}
-          onCta={handleUpgrade}
-        />
-        {error && <div className="text-red-500 text-sm mt-4 text-center">{error}</div>}
-      </>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col font-sans">
-      {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-6 pt-24 pb-32 safe-top">
-        <div className="mx-auto w-full max-w-[760px]">
+      <div className="border-b border-white/20 px-6 py-6">
+        <div className="mx-auto w-full max-w-[760px] flex items-center justify-between">
+          <button 
+            onClick={handleBack}
+            className="font-mono text-[12px] text-white/50 hover:text-white uppercase tracking-widest transition-colors"
+          >
+            ← Back
+          </button>
+          <span className="font-mono text-[12px] text-white/30 uppercase tracking-widest">
+            Ask
+          </span>
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-6 py-8">
+        <div className="mx-auto w-full max-w-[760px] space-y-8">
           {messages.length === 0 ? (
-            <>
-              <MicroLabel>Intelligence Console</MicroLabel>
-              <Spacer size="s" />
-              <H1>Ask about a real relationship or situation in your life.</H1>
-              <Spacer size="m" />
-              <Body>DEFRAG analyzes relational dynamics through your natal structure.</Body>
-
-              <Spacer size="xl" />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[
-                  "Why doesn't my mom understand when I need space?",
-                  "Why does my dad push me so hard to succeed?",
-                  "Why do people expect me to carry the emotional weight in relationships?",
-                  "Why do I feel responsible for fixing other people's problems?"
-                ].map((suggestion, i) => (
+            <div className="min-h-[60vh] flex flex-col justify-center">
+              <div className="text-center mb-12">
+                <h1 className="font-serif text-[32px] md:text-[42px] font-light tracking-[-0.02em] text-white mb-4">
+                  What&apos;s on your mind?
+                </h1>
+                <p className="font-sans text-[16px] text-white/50 tracking-[0.02em]">
+                  Explore relational dynamics and patterns
+                </p>
+              </div>
+              
+              <div className="grid gap-3 max-w-md mx-auto">
+                {RELATIONAL_PROMPTS.map((prompt, i) => (
                   <button
                     key={i}
-                    onClick={() => setInput(suggestion)}
-                    className="text-left p-5 border border-white/10 hover:border-white/40 transition-colors duration-200 bg-black group"
+                    onClick={() => handlePromptClick(prompt)}
+                    className="text-left px-6 py-4 border border-white/10 hover:border-white/30 hover:bg-white/5 transition-all duration-200"
                   >
-                    <p className="text-[14px] leading-[1.6] text-white/50 group-hover:text-white/80 transition-colors duration-200">
-                      &quot;{suggestion}&quot;
-                    </p>
+                    <span className="font-sans text-[15px] text-white/70 leading-relaxed">
+                      {prompt}
+                    </span>
                   </button>
                 ))}
               </div>
-            </>
+            </div>
           ) : (
-            <div className="space-y-12">
-              {messages.map((message, index) => (
-                <div key={index}>
+            <div className="space-y-6">
+              {messages.map((message, i) => (
+                <div 
+                  key={i}
+                  className={`${message.role === 'user' ? 'ml-auto max-w-[80%]' : 'mr-auto max-w-full'}`}
+                >
                   {message.role === 'user' ? (
-                    <div className="flex justify-end mb-4">
-                      <div className="max-w-[85%] border-b border-white/20 pb-2">
-                        <Body>{message.content as string}</Body>
-                      </div>
+                    <div className="border border-white/20 p-6">
+                      <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest block mb-3">
+                        You
+                      </span>
+                      <p className="font-sans text-[16px] text-white leading-relaxed">
+                        {message.content}
+                      </p>
                     </div>
                   ) : (
-                    <div className="border border-white/20 p-6 rounded-none bg-black">
-                      {typeof message.content === 'object' && (
-                        <>
-                          {/* Header / Signal */}
-                          <div className="flex justify-between items-start border-b border-white/10 pb-4 mb-4">
-                              <h2 className="font-sans text-[24px] leading-[1.3] tracking-[-0.01em] font-medium text-white">
-                                {message.content.headline}
-                              </h2>
-                              <div className="flex items-center gap-4">
-                                  <div className="flex flex-col items-end">
-                                      <MicroLabel>Sensitivity</MicroLabel>
-                                      <span className={`font-mono text-[12px] uppercase ${getSensitivityColor(message.content.signal)}`}>
-                                          {getSensitivityLabel(message.content.signal)}
-                                      </span>
-                                  </div>
-                                  <div className="flex flex-col items-end">
-                                      <MicroLabel>Confidence</MicroLabel>
-                                      <span className="font-mono text-[12px] text-white/70">
-                                          {message.content.confidence.overall}%
-                                      </span>
-                                  </div>
-                              </div>
-                          </div>
-                          
-                          {/* What's happening */}
-                          <div className="mb-6">
-                            <MicroLabel>What's happening</MicroLabel>
-                            <Spacer size="s" />
-                            <ul className="list-disc pl-4 space-y-1">
-                                {message.content.whats_happening.map((point, i) => (
-                                    <li key={i}><Body>{point}</Body></li>
-                                ))}
-                            </ul>
-                          </div>
-                          
-                          {/* Do this now */}
-                          <div className="mb-6">
-                            <MicroLabel>Do this now</MicroLabel>
-                            <Spacer size="s" />
-                            <Body>{message.content.do_this_now}</Body>
-                          </div>
-                          
-                          {/* Say this */}
-                          <div className="mb-6">
-                            <MicroLabel>One line to say</MicroLabel>
-                            <Spacer size="s" />
-                            <div className="border-l-2 border-white/40 pl-4 py-1 my-2">
-                                <Body>&quot;{message.content.one_line_to_say}&quot;</Body>
-                            </div>
-                          </div>
-
-                          {/* Optional sections */}
-                          {(message.content.repeat_pattern || message.content.safety) && (
-                              <div className="border-t border-white/10 pt-4 mt-4 grid grid-cols-1 gap-4">
-                                  {message.content.repeat_pattern && (
-                                      <div>
-                                          <MicroLabel>Pattern Recognition</MicroLabel>
-                                          <Spacer size="s" />
-                                          <Body>{message.content.repeat_pattern}</Body>
-                                      </div>
-                                  )}
-                                  {message.content.safety && (
-                                      <div>
-                                          <MicroLabel>System Note</MicroLabel>
-                                          <Spacer size="s" />
-                                          <Body>{message.content.safety}</Body>
-                                      </div>
-                                  )}
-                              </div>
-                          )}
-                        </>
-                      )}
+                    <div className="border border-white/10 p-6 bg-white/[0.02]">
+                      <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest block mb-3">
+                        Response
+                      </span>
+                      <div className="font-sans text-[16px] text-white/80 leading-relaxed whitespace-pre-wrap">
+                        {message.content}
+                      </div>
                     </div>
                   )}
                 </div>
               ))}
+              
               {isLoading && (
                 <div className="border border-white/10 p-6 flex justify-center">
-                  <span className="font-mono text-[12px] text-white/50 uppercase tracking-widest">Processing...</span>
+                  <span className="font-mono text-[12px] text-white/50 uppercase tracking-widest">
+                    Processing...
+                  </span>
                 </div>
               )}
+              
               <div ref={messagesEndRef} />
+            </div>
+          )}
+          
+          {error && (
+            <div className="text-center py-4">
+              <span className="font-sans text-[14px] text-red-400">{error}</span>
             </div>
           )}
         </div>
       </div>
 
-      {/* Input area - pinned to bottom */}
       <div className="border-t border-white/20 bg-black px-6 py-6 safe-bottom">
         <div className="mx-auto w-full max-w-[760px]">
           <form onSubmit={handleSend} className="flex items-end gap-4">
@@ -297,7 +207,7 @@ function ChatClient() {
               disabled={isLoading || !input.trim()}
               className="font-mono text-[14px] tracking-[0.1em] uppercase text-white/70 hover:text-white disabled:opacity-40 pb-4 border-b border-transparent hover:border-white transition-colors duration-200"
             >
-              Execute
+              Send
             </button>
           </form>
         </div>
@@ -312,7 +222,7 @@ export default function ChatPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-black text-white flex items-center justify-center font-sans">
-        <span className="font-mono text-[12px] text-white/50 uppercase tracking-widest">Initializing Console...</span>
+        <span className="font-mono text-[12px] text-white/50 uppercase tracking-widest">Initializing...</span>
       </div>
     }>
       <ChatClient />
