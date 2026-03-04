@@ -2,22 +2,17 @@
   --bg-black: #000000;
   --panel-black: #050505;
   --text-primary: #ffffff;
-  --text-secondary: #888888;
-  --text-muted: rgba(255,255,255,0.75);
-  --line-low: rgba(255,255,255,0.12);
-  --line-mid: rgba(255,255,255,0.25);
+  --text-secondary: rgba(255,255,255,0.6);
+  --text-muted: rgba(255,255,255,0.3);
+  --line-low: rgba(255,255,255,0.1);
+  --line-mid: rgba(255,255,255,0.2);
   --accent-risk: #ffffff;
-  --grid-opacity-hero: 0.04;
-  --grid-opacity-diagnostic: 0.06;
-  --spacing-xxl: 140px;
-  --spacing-xl: 120px;
-  --spacing-lg: 80px;
-  --spacing-md: 40px;
-  --spacing-sm: 20px;
+  --radius-card: 12px;
+  --radius-button: 8px;
+  --radius-input: 8px;
 }
 
 * {
-  border-radius: 0px !important;
   box-sizing: border-box;
 }
 
@@ -31,6 +26,5 @@ body {
 }
 
 button, input, select, textarea {
-  border-radius: 0px !important;
   font-family: inherit;
 }

@@ -9,27 +9,27 @@ import { Check } from "lucide-react";
 
 const plans = [
   {
-    id: 'basic',
-    name: 'Basic',
-    price: '$9',
+    id: 'solo',
+    name: 'Solo',
+    price: '$19',
     period: '/month',
     description: 'Your personal insights',
     features: [
-      'Your natal profile',
-      'Daily pressure insights',
-      'Relational chat assistant',
+      'Personal chart',
+      'AI relationship questions',
+      'Daily insights',
       'Timing recommendations',
     ],
-    cta: 'Start with Basic',
+    cta: 'Start with Solo',
   },
   {
     id: 'plus',
     name: 'Plus',
-    price: '$19',
+    price: '$33',
     period: '/month',
     description: 'Understand your relationships',
     features: [
-      'Everything in Basic',
+      'Everything in Solo',
       'Add family & team members',
       'Relationship overlays',
       'Group dynamics insights',
@@ -95,7 +95,7 @@ function UnlockContent() {
     <div className="min-h-screen bg-black text-white font-mono flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-3xl space-y-8">
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold tracking-[0.2em]">DEFRAG</h1>
+          <h1 className="font-serif text-[32px] font-light tracking-[-0.02em]">DEFRAG</h1>
           <p className="font-mono text-[12px] text-white/40 tracking-widest">Choose your plan to continue</p>
           {canceled && (
             <p className="text-[13px] text-yellow-500/80">Checkout was canceled. Pick a plan when you're ready.</p>
@@ -106,7 +106,7 @@ function UnlockContent() {
           {plans.map((plan) => (
             <div
               key={plan.id}
-              className={`border p-6 space-y-6 transition-colors duration-200 ${
+              className={`border p-6 space-y-6 transition-colors duration-200 rounded-xl ${
                 plan.highlighted 
                   ? 'border-white/25 bg-white/[0.03] hover:border-white/40' 
                   : 'border-white/10 bg-white/[0.02] hover:border-white/20'
@@ -134,7 +134,7 @@ function UnlockContent() {
               <Button
                 onClick={() => handleCheckout(plan.id)}
                 disabled={loading !== null}
-                className={`w-full rounded-none font-mono text-[13px] font-bold tracking-widest ${
+                className={`w-full rounded-lg font-mono text-[13px] font-bold tracking-widest ${
                   plan.highlighted
                     ? 'bg-white text-black hover:bg-white/90'
                     : 'bg-white/[0.02] text-white hover:bg-white/[0.06] border border-white/10 hover:border-white/20'

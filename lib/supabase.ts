@@ -2,19 +2,11 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const isProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
 
 const isConfigured = !!supabaseUrl && !!supabaseAnonKey;
 
-// Production: strict enforcement. Preview/dev: optional with warning
-if (!isConfigured && isProduction) {
-  throw new Error(
-    'Missing Supabase configuration in production. NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY must be set.'
-  );
-}
-
 if (!isConfigured) {
-  console.warn('[Auth] Supabase not configured - auth features disabled in preview');
+  console.warn('[Auth] Supabase not configured - auth features disabled');
 }
 
 export const supabase: SupabaseClient | null = isConfigured

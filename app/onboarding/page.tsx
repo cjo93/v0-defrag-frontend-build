@@ -99,12 +99,12 @@ export default function OnboardingPage() {
           {[1, 2, 3].map((s) => (
             <div
               key={s}
-              className={`w-8 h-1 ${s <= step ? 'bg-white' : 'bg-white/10'} transition-colors duration-200`}
+              className={`w-8 h-1 rounded-full ${s <= step ? 'bg-white' : 'bg-white/10'} transition-colors duration-200`}
             />
           ))}
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6 bg-white/[0.02] p-6 border border-white/10">
+        <form onSubmit={handleSubmit} className="space-y-6 bg-white/[0.02] p-6 border border-white/10 rounded-xl">
           
           {/* Step 1: Date of Birth */}
           {step === 1 && (
@@ -121,13 +121,13 @@ export default function OnboardingPage() {
                   value={dob}
                   onChange={(e) => setDob(e.target.value)}
                   required
-                  className="bg-black border-white/10 rounded-none focus-visible:ring-1 focus-visible:ring-white/30"
+                  className="bg-black border-white/10 rounded-lg focus-visible:ring-1 focus-visible:ring-white/30"
                 />
               </div>
               <Button
                 type="button"
                 onClick={handleNext}
-                className="w-full bg-white text-black hover:bg-white/90 rounded-none font-mono text-[13px] font-bold tracking-widest"
+                className="w-full bg-white text-black hover:bg-white/90 rounded-lg font-mono text-[13px] font-bold tracking-widest"
               >
                 CONTINUE
               </Button>
@@ -149,7 +149,7 @@ export default function OnboardingPage() {
                   value={unknownTime ? "12:00" : time}
                   onChange={(e) => setTime(e.target.value)}
                   disabled={unknownTime}
-                  className="bg-black border-white/10 rounded-none focus-visible:ring-1 focus-visible:ring-white/30 disabled:opacity-40"
+                  className="bg-black border-white/10 rounded-lg focus-visible:ring-1 focus-visible:ring-white/30 disabled:opacity-40"
                 />
               </div>
               <div className="flex items-center space-x-2">
@@ -157,7 +157,7 @@ export default function OnboardingPage() {
                   id="unknownTime"
                   checked={unknownTime}
                   onCheckedChange={(c) => setUnknownTime(c === true)}
-                  className="rounded-none border-white/25 data-[state=checked]:bg-white data-[state=checked]:text-black"
+                  className="rounded border-white/25 data-[state=checked]:bg-white data-[state=checked]:text-black"
                 />
                 <Label htmlFor="unknownTime" className="text-[13px] cursor-pointer text-white/70">
                   I don't know my birth time
@@ -173,14 +173,14 @@ export default function OnboardingPage() {
                   type="button"
                   onClick={handleBack}
                   variant="outline"
-                  className="flex-1 border-white/10 text-white hover:bg-white/[0.04] hover:border-white/20 rounded-none font-mono text-[13px] tracking-wider"
+                  className="flex-1 border-white/10 text-white hover:bg-white/[0.04] hover:border-white/20 rounded-lg font-mono text-[13px] tracking-wider"
                 >
                   BACK
                 </Button>
                 <Button
                   type="button"
                   onClick={handleNext}
-                  className="flex-1 bg-white text-black hover:bg-white/90 rounded-none font-mono text-[13px] font-bold tracking-widest"
+                  className="flex-1 bg-white text-black hover:bg-white/90 rounded-lg font-mono text-[13px] font-bold tracking-widest"
                 >
                   CONTINUE
                 </Button>
@@ -204,7 +204,7 @@ export default function OnboardingPage() {
                   value={birthCity}
                   onChange={(e) => setBirthCity(e.target.value)}
                   required
-                  className="bg-black border-white/10 rounded-none focus-visible:ring-1 focus-visible:ring-white/30 placeholder:text-white/25"
+                  className="bg-black border-white/10 rounded-lg focus-visible:ring-1 focus-visible:ring-white/30 placeholder:text-white/25"
                 />
               </div>
               <div className="flex gap-2">
@@ -212,13 +212,13 @@ export default function OnboardingPage() {
                   type="button"
                   onClick={handleBack}
                   variant="outline"
-                  className="flex-1 border-white/10 text-white hover:bg-white/[0.04] hover:border-white/20 rounded-none font-mono text-[13px] tracking-wider"
+                  className="flex-1 border-white/10 text-white hover:bg-white/[0.04] hover:border-white/20 rounded-lg font-mono text-[13px] tracking-wider"
                 >
                   BACK
                 </Button>
                 <Button
                   type="submit"
-                  className="flex-1 bg-white text-black hover:bg-white/90 rounded-none font-mono text-[13px] font-bold tracking-widest"
+                  className="flex-1 bg-white text-black hover:bg-white/90 rounded-lg font-mono text-[13px] font-bold tracking-widest"
                   disabled={loading}
                 >
                   {loading ? "SAVING..." : "COMPLETE"}

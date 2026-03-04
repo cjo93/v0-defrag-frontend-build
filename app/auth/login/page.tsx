@@ -80,7 +80,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-black text-white font-mono flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-8 bg-white/[0.02] p-8 border border-white/10">
+      <div className="w-full max-w-md space-y-8 bg-white/[0.02] p-8 border border-white/10 rounded-xl">
         <div className="text-center">
           <h1 className="text-2xl font-bold tracking-[0.2em]">DEFRAG</h1>
           <p className="font-mono text-[12px] text-white/40 mt-2 tracking-widest">ACCESS YOUR ACCOUNT</p>
@@ -89,14 +89,14 @@ export default function LoginPage() {
         <div className="space-y-4">
           <button
             onClick={() => handleOAuth('google')}
-            className="w-full bg-white text-black py-3 font-mono text-[13px] font-bold tracking-widest hover:bg-white/90 transition-colors duration-200"
+            className="w-full bg-white text-black py-3 font-mono text-[13px] font-bold tracking-widest hover:bg-white/90 transition-colors duration-200 rounded-lg"
           >
             CONTINUE WITH GOOGLE
           </button>
 
           <button
             onClick={() => handleOAuth('apple')}
-            className="w-full bg-white/[0.02] border border-white/10 text-white py-3 font-mono text-[13px] font-bold tracking-widest hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200"
+            className="w-full bg-white/[0.02] border border-white/10 text-white py-3 font-mono text-[13px] font-bold tracking-widest hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200 rounded-lg"
           >
             CONTINUE WITH APPLE
           </button>
@@ -114,7 +114,7 @@ export default function LoginPage() {
             <input
               type="email"
               placeholder="Email address"
-              className="w-full bg-black border border-white/10 px-4 py-3 text-[14px] text-white placeholder:text-white/25 focus:border-white/30 transition-colors duration-200 focus:outline-none"
+              className="w-full bg-black border border-white/10 px-4 py-3 text-[14px] text-white placeholder:text-white/25 focus:border-white/30 transition-colors duration-200 focus:outline-none rounded-lg"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -128,7 +128,7 @@ export default function LoginPage() {
             
             <button
               type="submit"
-              className="w-full bg-white/[0.02] border border-white/10 text-white py-3 font-mono text-[13px] font-bold tracking-widest hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full bg-white/[0.02] border border-white/10 text-white py-3 font-mono text-[13px] font-bold tracking-widest hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed rounded-lg"
               disabled={loading || (isTurnstileRequired && !turnstileToken)}
             >
               {loading ? "SENDING..." : "SEND MAGIC LINK"}

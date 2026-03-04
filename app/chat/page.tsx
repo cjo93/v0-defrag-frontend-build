@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { BuildStamp } from '@/components/build-stamp';
+import { TopNav } from '@/components/top-nav';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -100,19 +101,7 @@ function ChatClient() {
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col font-sans">
-      <div className="border-b border-white/20 px-6 py-6">
-        <div className="mx-auto w-full max-w-[760px] flex items-center justify-between">
-          <button 
-            onClick={handleBack}
-            className="font-mono text-[12px] text-white/50 hover:text-white uppercase tracking-widest transition-colors"
-          >
-            ← Back
-          </button>
-          <span className="font-mono text-[12px] text-white/30 uppercase tracking-widest">
-            Ask
-          </span>
-        </div>
-      </div>
+      <TopNav />
 
       <div className="flex-1 overflow-y-auto px-6 py-8">
         <div className="mx-auto w-full max-w-[760px] space-y-8">
@@ -132,7 +121,7 @@ function ChatClient() {
                   <button
                     key={i}
                     onClick={() => handlePromptClick(prompt)}
-                    className="text-left px-6 py-4 border border-white/10 hover:border-white/30 hover:bg-white/5 transition-all duration-200"
+                    className="text-left px-6 py-4 border border-white/10 hover:border-white/30 hover:bg-white/5 transition-all duration-200 rounded-xl"
                   >
                     <span className="font-sans text-[15px] text-white/70 leading-relaxed">
                       {prompt}
@@ -149,7 +138,7 @@ function ChatClient() {
                   className={`${message.role === 'user' ? 'ml-auto max-w-[80%]' : 'mr-auto max-w-full'}`}
                 >
                   {message.role === 'user' ? (
-                    <div className="border border-white/20 p-6">
+                    <div className="border border-white/20 rounded-xl p-6">
                       <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest block mb-3">
                         You
                       </span>
@@ -158,7 +147,7 @@ function ChatClient() {
                       </p>
                     </div>
                   ) : (
-                    <div className="border border-white/10 p-6 bg-white/[0.02]">
+                    <div className="border border-white/10 rounded-xl p-6 bg-white/[0.02]">
                       <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest block mb-3">
                         Response
                       </span>
@@ -171,7 +160,7 @@ function ChatClient() {
               ))}
               
               {isLoading && (
-                <div className="border border-white/10 p-6 flex justify-center">
+                <div className="border border-white/10 rounded-xl p-6 flex justify-center">
                   <span className="font-mono text-[12px] text-white/50 uppercase tracking-widest">
                     Processing...
                   </span>

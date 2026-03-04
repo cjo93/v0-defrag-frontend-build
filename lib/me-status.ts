@@ -47,19 +47,19 @@ export async function getUserStatus(): Promise<UserStatus | null> {
       .select('id', { count: 'exact', head: true })
       .eq('user_id', userId);
 
-    const plan: Plan = profile?.plan || 'basic';
+    const plan: Plan = profile?.plan || 'solo';
     const subscriptionStatus: SubscriptionStatus = profile?.subscription_status || 'pending';
 
     // Determine unlock states
     const isActiveSubscription = ['active', 'trialing', 'unlocked'].includes(subscriptionStatus);
-    const isBasicUnlocked = isAllowlisted || isActiveSubscription;
+    const isSoloUnlocked = isAllowlisted || isActiveSubscription;
     const isPlusUnlocked = isAllowlisted || (plan === 'plus' && isActiveSubscription);
 
     return {
       profile_ready: !!profile,
       has_birthline: !!birthline,
       has_relationships: (connectionCount || 0) > 0,
-      is_basic_unlocked: isBasicUnlocked,
+      is_solo_unlocked: isSoloUnlocked,
       is_plus_unlocked: isPlusUnlocked,
       plan: isAllowlisted ? 'plus' : plan,
       subscription_status: isAllowlisted ? 'unlocked' : subscriptionStatus,
@@ -85,7 +85,7 @@ export function getRedirectPath(status: UserStatus | null): string {
   }
 
   // Has birthline but not unlocked → unlock screen
-  if (!status.is_basic_unlocked) {
+  if (!status.is_solo_unlocked) {
     return '/unlock';
   }
 
@@ -104,7 +104,7 @@ export async function ensureProfile(userId: string, email: string): Promise<void
       .upsert({
         user_id: userId,
         email,
-        plan: 'basic',
+        plan: 'solo',
         subscription_status: 'pending',
       }, {
         onConflict: 'user_id',

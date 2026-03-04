@@ -18,7 +18,7 @@ function getStripe(): Stripe {
 // Price IDs - configure these in Stripe Dashboard
 function getPriceIds(): Record<string, string> {
   return {
-    basic: process.env.STRIPE_BASIC_PRICE_ID || '',
+    solo: process.env.STRIPE_SOLO_PRICE_ID || '',
     plus: process.env.STRIPE_PLUS_PRICE_ID || '',
   };
 }

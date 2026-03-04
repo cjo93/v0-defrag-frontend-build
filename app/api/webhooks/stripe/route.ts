@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
 
 async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   const userId = session.metadata?.user_id;
-  const plan = session.metadata?.plan || 'basic';
+  const plan = session.metadata?.plan || 'solo';
 
   if (!userId) {
     console.error('[DEFRAG_API] Checkout complete: Missing user_id in metadata');
