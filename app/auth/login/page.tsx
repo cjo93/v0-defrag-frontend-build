@@ -16,6 +16,7 @@ export default function LoginPage() {
 
   if (!supabase) return <ServiceUnavailable />;
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://defrag.app';
   const isTurnstileRequired = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
   const handleMagicLink = async (e: React.FormEvent) => {
@@ -38,7 +39,7 @@ export default function LoginPage() {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`,
+          emailRedirectTo: `${siteUrl}/dashboard`,
         },
       });
 
@@ -72,7 +73,7 @@ export default function LoginPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/dashboard`
+          redirectTo: `${siteUrl}/dashboard`
         }
       });
       if (error) throw error;
