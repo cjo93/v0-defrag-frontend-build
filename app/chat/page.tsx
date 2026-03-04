@@ -176,7 +176,7 @@ export default function ChatPage() {
                               </h2>
                               <div className="flex items-center gap-4">
                                   <div className="flex flex-col items-end">
-                                      <MicroLabel>Signal</MicroLabel>
+                                      <MicroLabel>Pattern</MicroLabel>
                                       <span className={`font-mono text-[12px] uppercase ${getSignalColor(message.content.signal)}`}>
                                           {getSignalLabel(message.content.signal)}
                                       </span>

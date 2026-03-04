@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { buildSignalPacket, type SignalPacket } from '@/lib/ai/signal-packet';
+import { buildPatternPacket, type PatternPacket } from '@/lib/ai/pattern-packet';
 import { SovereignGuidanceSchema, SAFE_FALLBACK_RESPONSE } from '@/lib/ai/response-schema';
 import { guardResponse, checkSafetyOverride } from '@/lib/ai/disclosure-guard';
 import { logSecurityEvent } from '@/lib/ai/security-events';
@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
     }
     
     // 4. Build Signal Packet (Layer 1: Strict input shaping)
-    const packet: SignalPacket = buildSignalPacket({
+    const packet: PatternPacket = buildPatternPacket({
       tier,
       timezone: body.timezone,
       city: body.city,

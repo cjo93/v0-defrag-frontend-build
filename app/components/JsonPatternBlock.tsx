@@ -1,6 +1,6 @@
 'use client';
 
-export default function JsonSignalBlock() {
+export default function JsonPatternBlock() {
   return (
     <div className="blur-reveal delay-450" style={{
       border: '1px solid var(--line-mid)',

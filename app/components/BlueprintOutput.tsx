@@ -1,6 +1,6 @@
 'use client'
 
-import JsonSignalBlock from './JsonSignalBlock'
+import JsonPatternBlock from './JsonPatternBlock'
 
 export default function BlueprintOutput() {
   return (
@@ -79,7 +79,7 @@ export default function BlueprintOutput() {
             </div>
           </section>
 
-          <JsonSignalBlock />
+          <JsonPatternBlock />
         </div>
       </div>
     </div>

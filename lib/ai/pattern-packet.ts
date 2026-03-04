@@ -1,4 +1,4 @@
-export type SignalPacket = {
+export type PatternPacket = {
   tier: "GREEN" | "YELLOW" | "RED";              // internal only
   locale?: string;
   userContext?: {
@@ -18,12 +18,12 @@ export type SignalPacket = {
   };
 };
 
-export function buildSignalPacket(args: {
-  tier: SignalPacket["tier"];
+export function buildPatternPacket(args: {
+  tier: PatternPacket["tier"];
   timezone?: string;
   city?: string;
-  signals: SignalPacket["signals"];
-}): SignalPacket {
+  signals: PatternPacket["signals"];
+}): PatternPacket {
   return {
     tier: args.tier,
     userContext: { timezone: args.timezone, city: args.city },

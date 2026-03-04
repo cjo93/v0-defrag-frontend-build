@@ -84,7 +84,7 @@ export function filterDisclosure(response: ChatResponse): {
       return {
         safe: false,
         filtered: {
-          headline: 'Signal received',
+          headline: 'Pattern noticed',
           signal: 'medium',
           confidence: { overall: 50, data_confidence: 50, pattern_confidence: 50 },
           whats_happening: ['Your network is showing some tension right now. This is temporary.'],
