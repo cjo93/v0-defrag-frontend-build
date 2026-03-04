@@ -3,6 +3,7 @@ import { createServerClient, supabaseAdmin } from '@/lib/auth-server';
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/rate-limit';
 import { detectRelationalPattern } from '@/lib/relational-pattern';
 import { buildConversationMemory } from '@/lib/conversation-memory';
+import { updatePersonStateFromChat } from '@/lib/relationship-state';
 import OpenAI from 'openai';
 
 let _openai: OpenAI | null = null;
@@ -129,6 +130,17 @@ export async function POST(req: NextRequest) {
       role: 'assistant',
       content: aiResponse,
     });
+
+    // Update relationship state if chatting about a specific person
+    if (person_id) {
+      try {
+        const pattern = detectRelationalPattern(sanitisedMessage, personContext);
+        await updatePersonStateFromChat(supabaseAdmin, person_id, pattern);
+      } catch (err) {
+        // Non-critical — degrade silently
+        console.error('[DEFRAG_API] State update failed:', err);
+      }
+    }
 
     console.log('[DEFRAG_API] Chat response generated for conversation:', conversationId);
 

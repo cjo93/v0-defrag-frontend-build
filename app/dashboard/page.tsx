@@ -25,6 +25,7 @@ type Person = {
   birth_time: string | null;
   birth_place: string | null;
   privacy_level: string;
+  relationship_state: string | null;
   created_at: string;
 };
 
@@ -73,6 +74,22 @@ export default function DashboardPage() {
           .order('created_at', { ascending: false });
 
         setPeople(peopleData || []);
+
+        // Recompute relationship states in background (fire-and-forget)
+        if (peopleData && peopleData.length > 0) {
+          fetch('/api/people/recompute-states', { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+              if (data.states) {
+                // Update people with fresh states
+                setPeople(prev => prev.map(p => {
+                  const fresh = data.states.find((s: { id: string; state: string }) => s.id === p.id);
+                  return fresh ? { ...p, relationship_state: fresh.state } : p;
+                }));
+              }
+            })
+            .catch(() => { /* silent — states will be stale but functional */ });
+        }
 
         // Fetch pending invites
         const { data: inviteData } = await supabase
@@ -123,11 +140,16 @@ export default function DashboardPage() {
     );
   }
 
-  // Build relationship state list for Today panel
-  const relationshipStates = people.map((p) => ({
-    name: p.name,
-    state: ("unclear" as "stable" | "strained" | "cooling" | "improving" | "unclear"),
-  }));
+  // Build relationship state list for Today panel, sorted by urgency
+  const STATE_ORDER: Record<string, number> = {
+    strained: 0, cooling: 1, improving: 2, stable: 3, unclear: 4,
+  };
+  const relationshipStates = people
+    .map((p) => ({
+      name: p.name,
+      state: (p.relationship_state ?? 'unclear') as 'stable' | 'strained' | 'cooling' | 'improving' | 'unclear',
+    }))
+    .sort((a, b) => (STATE_ORDER[a.state] ?? 4) - (STATE_ORDER[b.state] ?? 4));
 
   return (
     <div className="min-h-screen bg-black text-white font-sans antialiased">
