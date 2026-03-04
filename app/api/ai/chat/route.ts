@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
 
     // Parse request
     const body = await req.json();
-    const { message, conversation_id } = body;
+    const { message, conversation_id, person_id } = body;
 
     if (!message || typeof message !== 'string') {
       return NextResponse.json({ message: 'Message required' }, { status: 400 });
@@ -74,8 +74,30 @@ export async function POST(req: NextRequest) {
       .eq('user_id', userId)
       .single();
 
+    // Get person context if person_id provided
+    let personContext = null;
+    if (person_id) {
+      const { data: person } = await supabaseAdmin
+        .from('people')
+        .select('*')
+        .eq('id', person_id)
+        .eq('owner_user_id', userId)
+        .single();
+
+      if (person) {
+        personContext = {
+          name: person.name,
+          relationship_label: person.relationship_label,
+          birth_date: person.birth_date,
+          birth_time: person.birth_time,
+          birth_place: person.birth_place,
+          privacy_level: person.privacy_level,
+        };
+      }
+    }
+
     // Generate AI response (placeholder - integrate with actual AI provider)
-    const aiResponse = await generateResponse(message, birthline);
+    const aiResponse = await generateResponse(message, birthline, personContext);
 
     // Store assistant message
     await supabaseAdmin.from('messages').insert({
@@ -99,7 +121,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function generateResponse(message: string, birthline: any): Promise<string> {
+async function generateResponse(message: string, birthline: any, personContext: any = null): Promise<string> {
   // TODO: Integrate with AI provider (Vercel AI Gateway, OpenAI, etc.)
   // SYSTEM PROMPT DIRECTIVE:
   // - Focus exclusively on relational dynamics. Never ask about internal thinking patterns.
@@ -110,6 +132,12 @@ async function generateResponse(message: string, birthline: any): Promise<string
   //   "Why does my mom react this way when I need space?"
   //   "Why does my partner think I'm distant?"
   //   "How do I say this to my dad without escalation?"
+  //
+  // PERSON CONTEXT INJECTION (when available):
+  // - User relationship: {personContext.relationship_label}
+  // - Person name: {personContext.name}
+  // - Natal data: available fields based on privacy level
+  // - Privacy level: {personContext.privacy_level}
   
   const lowerMessage = message.toLowerCase();
   
