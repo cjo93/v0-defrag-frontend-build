@@ -114,7 +114,7 @@ export default function SettingsPage() {
     <div className="min-h-screen text-white font-sans antialiased">
       <TopNav />
       <main className="px-6 pt-16 pb-24 flex flex-col items-center">
-        <div className="w-full max-w-[1100px] space-y-10">
+<div className="w-full max-w-[1100px] space-y-12">
 
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50 mb-4">Account</p>
@@ -123,7 +123,7 @@ export default function SettingsPage() {
 
           {/* Account */}
           <Panel title="ACCOUNT">
-            <div className="space-y-4">
+            <div className="space-y-6">
               {accountEmail && (
                 <div className="flex items-center justify-between">
                   <p className="text-[14px] text-white/65">{accountEmail}</p>
@@ -156,7 +156,7 @@ export default function SettingsPage() {
 
           {/* Update Birth Data */}
           <Panel title="BIRTH DATA">
-            <form onSubmit={handleUpdate} className="space-y-4">
+            <form onSubmit={handleUpdate} className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="space-y-1.5">
                   <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Date of birth</label>
@@ -179,7 +179,7 @@ export default function SettingsPage() {
 
           {/* Billing */}
           <Panel title="BILLING">
-            <div className="space-y-4">
+            <div className="space-y-6">
               <p className="text-[14px] text-white/55 leading-[1.6]">
                 {plan === 'circle'
                   ? 'You are on the Circle plan ($33/mo).'
@@ -219,7 +219,7 @@ export default function SettingsPage() {
 
           {/* Data */}
           <Panel title="YOUR DATA">
-            <div className="space-y-4">
+            <div className="space-y-6">
               <p className="text-[14px] text-white/55 leading-[1.6]">
                 Download all your data in a portable JSON format.
               </p>

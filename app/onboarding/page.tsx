@@ -71,6 +71,16 @@ export default function OnboardingPage() {
 
       if (error) throw error;
 
+      // Ensure profile row exists
+      await supabase
+        .from('profiles')
+        .upsert({
+          user_id: session.user.id,
+          email: session.user.email || '',
+        }, {
+          onConflict: 'user_id'
+        });
+
       toast({
         title: "Profile saved",
         description: "Your information has been saved.",

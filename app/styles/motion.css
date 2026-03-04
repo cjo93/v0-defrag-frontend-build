@@ -65,3 +65,12 @@
 .animate-strained-pulse {
   animation: strainedPulse 2.5s ease-in-out infinite;
 }
+
+@keyframes typingDot {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.3; }
+  30% { transform: translateY(-4px); opacity: 0.8; }
+}
+
+.animate-typing-dot {
+  animation: typingDot 1.4s ease-in-out infinite;
+}

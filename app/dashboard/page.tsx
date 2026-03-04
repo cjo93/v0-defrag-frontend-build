@@ -11,6 +11,8 @@ import { useToast } from "@/hooks/use-toast";
 import RelationshipField from "@/components/relationship-field";
 import Panel from "@/components/panel";
 import TodaySummary from "@/components/today-summary";
+import DailyInsight from "@/components/dashboard/daily-insight";
+import { computeDailyInsight, type DailyInsight as DailyInsightType } from "@/lib/daily-insight";
 
 type UserStatus = {
   plan: 'solo' | 'circle';
@@ -50,8 +52,19 @@ export default function DashboardPage() {
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
   const [dailyBriefing, setDailyBriefing] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [planActivated, setPlanActivated] = useState(false);
+  const [dailyInsight, setDailyInsight] = useState<DailyInsightType | null>(null);
 
   if (!supabase) return <ServiceUnavailable />;
+
+  useEffect(() => {
+    try {
+      if (localStorage.getItem('defrag_plan_activated')) {
+        setPlanActivated(true);
+        localStorage.removeItem('defrag_plan_activated');
+      }
+    } catch {}
+  }, []);
 
   useEffect(() => {
     async function loadStatus() {
@@ -77,6 +90,12 @@ export default function DashboardPage() {
 
         setPeople(peopleData || []);
 
+        // Compute daily insight from existing data
+        if (peopleData && peopleData.length > 0) {
+          const insight = computeDailyInsight({ people: peopleData });
+          setDailyInsight(insight);
+        }
+
         // Fetch daily briefing in background
         if (peopleData && peopleData.length > 0) {
           fetch('/api/daily-briefing')
@@ -94,10 +113,15 @@ export default function DashboardPage() {
             .then(data => {
               if (data.states) {
                 // Update people with fresh states
-                setPeople(prev => prev.map(p => {
-                  const fresh = data.states.find((s: { id: string; state: string }) => s.id === p.id);
-                  return fresh ? { ...p, relationship_state: fresh.state } : p;
-                }));
+                setPeople(prev => {
+                  const updated = prev.map(p => {
+                    const fresh = data.states.find((s: { id: string; state: string }) => s.id === p.id);
+                    return fresh ? { ...p, relationship_state: fresh.state } : p;
+                  });
+                  // Recompute insight with fresh states
+                  setDailyInsight(computeDailyInsight({ people: updated }));
+                  return updated;
+                });
               }
             })
             .catch(() => { /* silent — states will be stale but functional */ });
@@ -184,6 +208,19 @@ export default function DashboardPage() {
     <div className="min-h-screen text-white font-sans antialiased">
       <TopNav />
       <main className="max-w-[1100px] mx-auto px-6 pt-16 pb-24">
+
+        {/* Stripe confirmation banner */}
+        {planActivated && (
+          <div className="mb-8 flex items-center justify-between border border-green-400/15 bg-green-400/[0.04] px-5 py-3.5 rounded-sm animate-fade-in">
+            <p className="text-[14px] text-green-400/80">Your {status?.plan === 'circle' ? 'Circle' : 'Solo'} plan is active.</p>
+            <button onClick={() => setPlanActivated(false)} className="text-white/30 hover:text-white/60 transition-colors">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
+        <DailyInsight insight={dailyInsight} />
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
           {/* ─── Panel 1: Today Summary ─── */}
@@ -194,7 +231,7 @@ export default function DashboardPage() {
                   Today favors slower conversations. Add people to see relational state.
                 </p>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-6">
                   {dailyBriefing && (
                     <p className="text-[14px] text-white/55 leading-[1.7]">
                       {dailyBriefing}
@@ -252,7 +289,7 @@ export default function DashboardPage() {
                   </div>
                   <Link
                     href="/unlock"
-                    className="inline-flex items-center justify-center h-[40px] px-5 border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/35 active:scale-[0.98] transition-all duration-200"
+                    className="inline-flex items-center justify-center h-[42px] px-5 border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/35 active:scale-[0.98] transition-all duration-200"
                   >
                     Upgrade to Circle
                   </Link>
@@ -279,7 +316,7 @@ export default function DashboardPage() {
                       setAddMode("choose");
                       setShowAddModal(true);
                     }}
-                    className="inline-flex items-center justify-center h-[40px] px-5 border border-white/25 text-white/80 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/50 active:scale-[0.98] transition-all duration-200"
+                    className="inline-flex items-center justify-center h-[42px] px-5 border border-white/25 text-white/80 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/50 active:scale-[0.98] transition-all duration-200"
                   >
                     Add first person
                   </button>
@@ -352,8 +389,8 @@ export default function DashboardPage() {
           {/* ─── Panel 4: Ask DEFRAG ─── */}
           <div className="col-span-12 lg:col-span-7 animate-fade-in delay-150">
             <Panel title="ASK DEFRAG">
-              <div className="space-y-4">
-                <div className="grid sm:grid-cols-3 gap-3">
+              <div className="space-y-6">
+                  <div className="grid sm:grid-cols-3 gap-3">
                   {[
                     "Something feels tense",
                     "Conversation keeps repeating",
@@ -370,7 +407,7 @@ export default function DashboardPage() {
                 </div>
                 <Link
                   href="/chat"
-                  className="inline-flex items-center justify-center h-[40px] px-6 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:bg-white/90 active:scale-[0.98] transition-all duration-200"
+                  className="inline-flex items-center justify-center h-[42px] px-6 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:bg-white/90 active:scale-[0.98] transition-all duration-200"
                 >
                   Start Chat
                 </Link>
@@ -465,6 +502,7 @@ function AddPersonModal({
   const [submitting, setSubmitting] = useState(false);
   const [inviteLink, setInviteLink] = useState('');
   const [copied, setCopied] = useState(false);
+  const { toast } = useToast();
 
   const handleManualSubmit = async () => {
     if (!name.trim() || !birthDate) return;
@@ -473,6 +511,20 @@ function AddPersonModal({
     try {
       const session = await getSession();
       if (!session || !supabase) return;
+
+      // Check for duplicate person (name + relationship_label)
+      const { data: existing } = await supabase
+        .from('people')
+        .select('id')
+        .eq('owner_user_id', session.user.id)
+        .ilike('name', name.trim())
+        .limit(1);
+
+      if (existing && existing.length > 0) {
+        toast({ title: "Already exists", description: `${name.trim()} is already in your circle.`, variant: "destructive" });
+        setSubmitting(false);
+        return;
+      }
 
       const { data, error } = await supabase
         .from('people')
@@ -527,6 +579,7 @@ function AddPersonModal({
   const copyLink = () => {
     navigator.clipboard.writeText(inviteLink);
     setCopied(true);
+    toast({ title: "Link copied", description: "Invite link copied to clipboard." });
     setTimeout(() => setCopied(false), 2000);
   };
 

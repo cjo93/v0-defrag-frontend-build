@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { TopNav } from '@/components/top-nav';
 import { supabase } from '@/lib/supabase';
 
@@ -138,7 +139,22 @@ function ChatClient() {
             </div>
           )}
 
-          {messages.length === 0 ? (
+          {messages.length === 0 && !personContext ? (
+            <div className="min-h-[60vh] flex flex-col items-center justify-center animate-fade-in">
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50 mb-5">
+                Ask DEFRAG
+              </p>
+              <p className="text-[16px] text-white/45 leading-[1.6] mb-6">
+                Select someone from your circle to begin.
+              </p>
+              <Link
+                href="/relationships"
+                className="inline-flex items-center justify-center h-[42px] px-6 border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/30 transition-all duration-200"
+              >
+                Browse People
+              </Link>
+            </div>
+          ) : messages.length === 0 ? (
             <div className="min-h-[60vh] flex flex-col justify-center">
               <div className="text-center mb-12 animate-fade-in">
                 <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50 mb-5">
@@ -148,10 +164,7 @@ function ChatClient() {
                   What&apos;s on your mind?
                 </h1>
                 <p className="text-[14px] text-white/55 leading-[1.6]">
-                  {personContext 
-                    ? `Ask anything about your relationship with ${personContext.name}`
-                    : 'Explore relational dynamics and patterns'
-                  }
+                  Ask anything about your relationship with {personContext?.name}
                 </p>
               </div>
               
@@ -195,10 +208,10 @@ function ChatClient() {
               
               {isLoading && (
                 <div className="bg-white/[0.02] border border-white/10 p-5 rounded-sm animate-fade-in max-w-[720px]">
-                  <div className="flex gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-white/30 animate-pulse" />
-                    <span className="w-1.5 h-1.5 rounded-full bg-white/30 animate-pulse delay-100" />
-                    <span className="w-1.5 h-1.5 rounded-full bg-white/30 animate-pulse delay-200" />
+                  <div className="flex gap-1.5 items-center h-5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-white/50 animate-typing-dot" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-white/50 animate-typing-dot delay-150" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-white/50 animate-typing-dot delay-320" />
                   </div>
                 </div>
               )}
@@ -231,14 +244,14 @@ function ChatClient() {
                 placeholder={personContext ? `Ask about ${personContext.name}...` : "Ask about a relationship dynamic"}
                 disabled={isLoading}
                 aria-label="Message input"
-                className="w-full bg-transparent border border-white/10 rounded-sm h-[48px] px-5 text-[14px] text-white focus:border-white/30 focus:outline-none transition-all duration-200 ease-out placeholder:text-white/30"
+                className="w-full bg-transparent border border-white/10 rounded-sm h-[42px] px-5 text-[14px] text-white focus:border-white/30 focus:outline-none transition-all duration-200 ease-out placeholder:text-white/30"
               />
             </div>
             <button 
               type="submit" 
               disabled={isLoading || !input.trim()}
               aria-label="Send message"
-              className="inline-flex items-center justify-center h-[48px] px-7 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 active:scale-[0.98] transition-all duration-200 ease-out disabled:opacity-40"
+              className="inline-flex items-center justify-center h-[42px] px-7 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 active:scale-[0.98] transition-all duration-200 ease-out disabled:opacity-40"
             >
               Send
             </button>

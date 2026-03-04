@@ -17,6 +17,9 @@ function SuccessContent() {
       return;
     }
 
+    // Signal dashboard to show confirmation banner
+    try { localStorage.setItem('defrag_plan_activated', 'true'); } catch {}
+
     const timer = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
