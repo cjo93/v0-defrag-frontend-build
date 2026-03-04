@@ -48,6 +48,7 @@ export default function DashboardPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [addMode, setAddMode] = useState<'choose' | 'manual' | 'invite'>('choose');
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
+  const [dailyBriefing, setDailyBriefing] = useState<string | null>(null);
 
   if (!supabase) return <ServiceUnavailable />;
 
@@ -74,6 +75,16 @@ export default function DashboardPage() {
           .order('created_at', { ascending: false });
 
         setPeople(peopleData || []);
+
+        // Fetch daily briefing in background
+        if (peopleData && peopleData.length > 0) {
+          fetch('/api/daily-briefing')
+            .then(res => res.json())
+            .then(data => {
+              if (data.summary) setDailyBriefing(data.summary);
+            })
+            .catch(() => {});
+        }
 
         // Recompute relationship states in background (fire-and-forget)
         if (peopleData && peopleData.length > 0) {
@@ -165,7 +176,14 @@ export default function DashboardPage() {
                   Today favors slower conversations. Add people to see relational state.
                 </p>
               ) : (
-                <TodaySummary states={relationshipStates} />
+                <div className="space-y-4">
+                  {dailyBriefing && (
+                    <p className="text-[14px] text-white/55 leading-[1.7]">
+                      {dailyBriefing}
+                    </p>
+                  )}
+                  <TodaySummary states={relationshipStates} />
+                </div>
               )}
             </Panel>
           </div>

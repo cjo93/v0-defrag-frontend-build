@@ -7,6 +7,7 @@ import { updatePersonStateFromChat } from '@/lib/relationship-state';
 import { maybeUpdateRelationshipMemory, getExistingMemory } from '@/lib/relationship-memory';
 import { getUserRelationalProfile, updateUserRelationalProfile, inferRelationalStyles } from '@/lib/user-profile';
 import { getRelationshipAnchor, updateRelationshipAnchor } from '@/lib/relationship-anchor';
+import { updateRelationshipTiming, getTimingInsight } from '@/lib/relationship-timing';
 import OpenAI from 'openai';
 
 let _openai: OpenAI | null = null;
@@ -148,6 +149,9 @@ export async function POST(req: NextRequest) {
 
         // Update relationship anchor (track recurring patterns)
         updateRelationshipAnchor(supabaseAdmin, userId, person_id, pattern.pattern).catch(() => {});
+
+        // Update relationship timing (track pattern by day/hour)
+        updateRelationshipTiming(supabaseAdmin, userId, person_id, pattern.pattern).catch(() => {});
 
         // Maybe update relationship memory (LLM call every ~12 messages)
         maybeUpdateRelationshipMemory(supabaseAdmin, getOpenAI(), person_id, userId).catch(() => {});
@@ -396,6 +400,14 @@ Privacy level: ${personContext.privacy_level}`
     } catch (_) {}
   }
 
+  // 4e. Timing insight (behavioral pattern at current day/hour)
+  let timingInsight: { pattern: string; occurrence_count: number } | null = null;
+  if (personId) {
+    try {
+      timingInsight = await getTimingInsight(supabaseAdmin, userId, personId);
+    } catch (_) {}
+  }
+
   // 5. Build message stack
   const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
     { role: "system", content: SYSTEM_PROMPT },
@@ -437,6 +449,14 @@ Privacy level: ${personContext.privacy_level}`
     messages.push({
       role: "system",
       content: `Recurring dynamic observed in this relationship: ${anchor.anchor_pattern}. Observed ${anchor.occurrence_count} times.`,
+    });
+  }
+
+  // Inject timing insight (behavioral pattern at this time)
+  if (timingInsight && timingInsight.occurrence_count >= 2) {
+    messages.push({
+      role: "system",
+      content: `Interactions with this person often follow the pattern: ${timingInsight.pattern} during similar times. Observed ${timingInsight.occurrence_count} times at this day/hour.`,
     });
   }
 
