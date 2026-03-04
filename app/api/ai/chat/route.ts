@@ -50,6 +50,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Message required' }, { status: 400 });
     }
 
+    // Token protection — cap input length to prevent prompt injection / cost spikes
+    const sanitisedMessage = message.length > 2000 ? message.slice(0, 2000) : message;
+
     // Get or create conversation
     let conversationId = conversation_id;
     
@@ -75,7 +78,7 @@ export async function POST(req: NextRequest) {
     await supabaseAdmin.from('messages').insert({
       conversation_id: conversationId,
       role: 'user',
-      content: message,
+      content: sanitisedMessage,
     });
 
     // Get user's birthline for context
@@ -109,7 +112,7 @@ export async function POST(req: NextRequest) {
 
     // Generate AI response
     const aiResponse = await generateResponse(
-      message,
+      sanitisedMessage,
       birthline,
       personContext,
       conversationId
@@ -260,18 +263,42 @@ Privacy level: ${personContext.privacy_level}`
   // Current user message (always last)
   messages.push({ role: "user", content: message });
 
-  // 6. Call OpenAI
-  const completion = await getOpenAI().chat.completions.create({
-    model: "gpt-4.1",
-    temperature: 0.4,
-    messages,
-  });
+  // 6. Call OpenAI (with failure guard)
+  let response = "";
 
-  let response = completion.choices[0]?.message?.content || "";
+  try {
+    const completion = await getOpenAI().chat.completions.create({
+      model: "gpt-4.1",
+      temperature: 0.4,
+      messages,
+    });
+
+    response = completion.choices[0]?.message?.content || "";
+  } catch (err) {
+    console.error("[DEFRAG_API] AI failure:", err);
+    response =
+      "I'm having trouble generating insight right now. Please try again in a moment.";
+  }
 
   // 7. Safety guard — cap response length
   if (response.length > 2000) {
     response = response.slice(0, 2000);
+  }
+
+  // 8. Store pattern signals for analytics
+  try {
+    await supabaseAdmin
+      .from("messages")
+      .update({
+        relational_pattern: pattern.pattern,
+        tension_type: pattern.tensionType,
+      })
+      .eq("conversation_id", conversationId)
+      .eq("role", "user")
+      .order("created_at", { ascending: false })
+      .limit(1);
+  } catch (_) {
+    // Non-critical — degrade silently
   }
 
   return response;

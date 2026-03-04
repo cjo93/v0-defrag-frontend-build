@@ -8,6 +8,7 @@ import Link from "next/link";
 import { TopNav } from "@/components/top-nav";
 import { ServiceUnavailable } from "@/components/service-unavailable";
 import { useToast } from "@/hooks/use-toast";
+import RelationshipMap from "@/components/relationship-map";
 
 type UserStatus = {
   plan: 'solo' | 'plus';
@@ -148,13 +149,13 @@ export default function DashboardPage() {
             </div>
           </section>
 
-          {/* ─── PEOPLE ─── */}
+          {/* ─── RELATIONAL MAP ─── */}
           {isPlus ? (
             <section className="border border-white/10 bg-white/[0.02] rounded-xl p-6 md:p-8 space-y-5 hover:border-white/20 hover:bg-white/[0.04] hover:translate-y-[-1px] transition-all duration-200 ease-out animate-fade-in delay-50">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4 text-white/50" />
-                  <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">People</h2>
+                  <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">Relational Field</h2>
                 </div>
                 <button
                   onClick={() => { setAddMode('choose'); setShowAddModal(true); }}
@@ -180,51 +181,18 @@ export default function DashboardPage() {
                 </div>
               )}
 
-              {/* People cards */}
-              {people.length > 0 ? (
-                <div className="grid gap-3">
-                  {people.map((person) => (
-                    <button
-                      key={person.id}
-                      onClick={() => {
-                        setSelectedPerson(person);
-                        router.push(`/chat?person=${person.id}&prompt=Tell me about my dynamic with ${encodeURIComponent(person.name)}`);
-                      }}
-                      className="w-full flex items-center justify-between border border-white/[0.06] bg-white/[0.02] rounded-lg px-5 py-4 hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200 ease-out text-left"
-                    >
-                      <div className="flex items-center gap-4">
-                        <span className="text-[15px] text-white font-medium">{person.name}</span>
-                        {person.relationship_label && (
-                          <span className="font-mono text-[11px] text-white/40 uppercase tracking-[0.15em]">{person.relationship_label}</span>
-                        )}
-                      </div>
-                      <PrivacyBadge level={person.privacy_level} />
-                    </button>
-                  ))}
-                </div>
-              ) : pendingInvites.length === 0 ? (
-                <div className="space-y-4 text-center py-4">
-                  <p className="text-[15px] md:text-[16px] text-white/50 leading-[1.6]">
-                    No relationships added yet.
-                  </p>
-                  <p className="text-[13px] md:text-[14px] text-white/35 leading-[1.6]">
-                    Add someone to begin understanding your relational patterns.
-                  </p>
-                  <button
-                    onClick={() => { setAddMode('choose'); setShowAddModal(true); }}
-                    className="inline-flex items-center justify-center h-[44px] px-6 border border-white/25 text-white/80 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-xl hover:text-white hover:border-white/50 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] active:scale-[0.98] transition-all duration-200 ease-out"
-                  >
-                    Add someone
-                  </button>
-                </div>
-              ) : null}
+              {/* Relationship Map */}
+              <RelationshipMap
+                people={people}
+                onAddPerson={() => { setAddMode('choose'); setShowAddModal(true); }}
+              />
             </section>
           ) : (
             <section className="border border-white/[0.06] bg-white/[0.01] rounded-xl p-6 md:p-8 space-y-4 animate-fade-in delay-50">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4 text-white/30" />
-                  <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/30">People</h2>
+                  <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/30">Relational Field</h2>
                 </div>
                 <Lock className="w-4 h-4 text-white/30" />
               </div>

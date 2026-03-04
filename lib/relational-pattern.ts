@@ -9,7 +9,7 @@
 export interface RelationalSignal {
   relationshipType: string;
   tensionType: string;
-  escalationRisk: "low" | "moderate" | "high";
+  relationshipState: "stable" | "strained" | "cooling" | "improving" | "unclear";
   pattern: string;
   guidanceMode: string;
 }
@@ -100,10 +100,10 @@ const PATTERN_KEYWORDS: Record<string, string[]> = {
 
 function inferGuidanceMode(
   tensionType: string,
-  escalationRisk: string,
+  relationshipState: string,
   pattern: string
 ): string {
-  if (escalationRisk === "high") return "de_escalation";
+  if (relationshipState === "strained") return "de_escalation";
   if (tensionType === "boundary_setting") return "boundary_clarification";
   if (tensionType === "trust_repair") return "repair_pathway";
   if (tensionType === "approval_seeking") return "self_validation";
@@ -170,30 +170,44 @@ export function detectRelationalPattern(
   // Pattern
   const pattern = matchKeywords(text, PATTERN_KEYWORDS, "unknown");
 
-  // Escalation risk
-  let escalationRisk: "low" | "moderate" | "high" = "low";
-  const highEscalation = [
+  // Relationship state
+  let relationshipState: "stable" | "strained" | "cooling" | "improving" | "unclear" = "unclear";
+
+  const strainedKeywords = [
     "fight", "argument", "escalat", "yelling", "screaming",
     "blowing up", "out of control", "can't take it",
+    "frustrated", "angry", "resentment", "fed up", "had enough",
   ];
-  const moderateEscalation = [
-    "frustrated", "angry", "upset", "tension", "tense",
-    "annoyed", "resentment", "fed up", "had enough",
+  const coolingKeywords = [
+    "pulling away", "distant", "cold", "shut down", "silent treatment",
+    "avoiding", "not talking", "ghosting", "withdrawn",
+  ];
+  const improvingKeywords = [
+    "getting better", "improving", "working on it", "progress",
+    "reconnect", "healing", "opening up", "trying",
+  ];
+  const stableKeywords = [
+    "good", "fine", "stable", "normal", "solid", "comfortable",
+    "consistent", "balanced", "healthy",
   ];
 
-  if (highEscalation.some((kw) => text.includes(kw))) {
-    escalationRisk = "high";
-  } else if (moderateEscalation.some((kw) => text.includes(kw))) {
-    escalationRisk = "moderate";
+  if (strainedKeywords.some((kw) => text.includes(kw))) {
+    relationshipState = "strained";
+  } else if (coolingKeywords.some((kw) => text.includes(kw))) {
+    relationshipState = "cooling";
+  } else if (improvingKeywords.some((kw) => text.includes(kw))) {
+    relationshipState = "improving";
+  } else if (stableKeywords.some((kw) => text.includes(kw))) {
+    relationshipState = "stable";
   }
 
   // Guidance mode
-  const guidanceMode = inferGuidanceMode(tensionType, escalationRisk, pattern);
+  const guidanceMode = inferGuidanceMode(tensionType, relationshipState, pattern);
 
   return {
     relationshipType,
     tensionType,
-    escalationRisk,
+    relationshipState,
     pattern,
     guidanceMode,
   };
