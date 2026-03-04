@@ -20,8 +20,10 @@ function getOpenAI(): OpenAI {
 
 // ── Helpers ───────────────────────────────────────────────────
 
-function logNonCritical(err: unknown): void {
-  console.error('[DEFRAG_API] Non-critical:', err);
+function safeAsync(task: Promise<any>): void {
+  task.catch((err) => {
+    console.error('[DEFRAG_NONCRITICAL]', err);
+  });
 }
 
 // ── POST handler — intelligence pipeline ──────────────────────
@@ -64,7 +66,19 @@ export async function POST(req: NextRequest) {
     // Cap input to prevent prompt injection / cost spikes
     const sanitised = message.length > 2000 ? message.slice(0, 2000) : message;
 
-    // ── 4. Get or create conversation ─────────────────────────
+    // ── 2. Short message guard ─────────────────────────────────
+    if (sanitised.length < 8) {
+      const fallback = 'A bit more context will help surface the relational dynamic at play.';
+      if (conversation_id) {
+        await supabaseAdmin.from('messages').insert([
+          { conversation_id, role: 'user', content: sanitised },
+          { conversation_id, role: 'assistant', content: fallback },
+        ]);
+      }
+      return NextResponse.json({ conversation_id: conversation_id || null, response: fallback });
+    }
+
+    // ── Get or create conversation ────────────────────────────
     let conversationId = conversation_id;
 
     if (!conversationId) {
@@ -107,23 +121,26 @@ export async function POST(req: NextRequest) {
         .eq('owner_user_id', userId)
         .single();
 
-      personContext = person || null;
+      if (!person) {
+        return NextResponse.json({ ok: false, error: 'invalid_person' }, { status: 400 });
+      }
+      personContext = person;
     }
 
-    // ── 7. Pattern detection (single pass) ────────────────────
+    // ── 3. Detect relational pattern ──────────────────────────
     const pattern = detectRelationalPattern(sanitised, personContext);
 
-    // ── 8. Write phase ────────────────────────────────────────
-    // Updates happen BEFORE fetches so context reflects current state.
+    // ── 4. Record pattern signals ─────────────────────────────
+    // Writes happen BEFORE fetches so context reflects current state.
 
     if (pattern.pattern !== 'unknown') {
-      await updateUserRelationalProfile(supabaseAdmin, userId, pattern.pattern);
-      inferRelationalStyles(supabaseAdmin, userId).catch(logNonCritical);
+      safeAsync(updateUserRelationalProfile(supabaseAdmin, userId, pattern.pattern));
+      safeAsync(inferRelationalStyles(supabaseAdmin, userId));
 
       if (person_id) {
-        updateRelationshipAnchor(supabaseAdmin, userId, person_id, pattern.pattern).catch(logNonCritical);
-        updateRelationshipTiming(supabaseAdmin, userId, person_id, pattern.pattern).catch(logNonCritical);
-        updatePersonStateFromChat(supabaseAdmin, person_id, pattern).catch(logNonCritical);
+        safeAsync(updateRelationshipAnchor(supabaseAdmin, userId, person_id, pattern.pattern));
+        safeAsync(updateRelationshipTiming(supabaseAdmin, userId, person_id, pattern.pattern));
+        safeAsync(updatePersonStateFromChat(supabaseAdmin, person_id, pattern));
       }
     }
 
@@ -160,18 +177,7 @@ export async function POST(req: NextRequest) {
       buildConversationMemory(supabaseAdmin, conversationId, getOpenAI()),
     ]);
 
-    // ── 10. Short message guard ───────────────────────────────
-    if (sanitised.length < 8) {
-      const fallback = 'A bit more context will help surface the relational dynamic at play.';
-      await supabaseAdmin.from('messages').insert({
-        conversation_id: conversationId,
-        role: 'assistant',
-        content: fallback,
-      });
-      return NextResponse.json({ conversation_id: conversationId, response: fallback });
-    }
-
-    // ── 11. Construct message stack ───────────────────────────
+    // ── 6. Build prompt ────────────────────────────────────────
     const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
       { role: 'system', content: SYSTEM_PROMPT },
     ];
@@ -254,7 +260,18 @@ export async function POST(req: NextRequest) {
     // Current user message (always last)
     messages.push({ role: 'user', content: sanitised });
 
-    // ── 12. LLM call ──────────────────────────────────────────
+    // ── 7. Enforce prompt size ceiling ─────────────────────────
+    const MAX_PROMPT_CHARS = 8000;
+    let promptSize = messages.reduce((sum, m) => sum + (typeof m.content === 'string' ? m.content.length : 0), 0);
+    while (promptSize > MAX_PROMPT_CHARS && messages.length > 4) {
+      const dropIdx = messages.findIndex((m) => m.role === 'assistant' || m.role === 'user');
+      if (dropIdx === -1 || dropIdx === messages.length - 1) break;
+      const dropped = typeof messages[dropIdx].content === 'string' ? messages[dropIdx].content.length : 0;
+      messages.splice(dropIdx, 1);
+      promptSize -= dropped;
+    }
+
+    // ── 8. Call model with timeout ────────────────────────────
     let response = '';
 
     try {
@@ -275,9 +292,14 @@ export async function POST(req: NextRequest) {
       response = "I'm having trouble generating insight right now. Please try again in a moment.";
     }
 
-    // ── 13. Post-process: strip questions → structure → cap ───
-    response = stripQuestions(response);
+    // ── Empty response fallback ───────────────────────────────
+    if (!response || response.trim().length === 0) {
+      response = 'It sounds like this interaction has some repeating tension. A useful step is slowing the conversation and clarifying expectations before continuing.';
+    }
+
+    // ── 9. Structure response → 10. Strip questions → cap ─────
     response = ensureStructure(response);
+    response = stripQuestions(response);
 
     if (response.length > 1800) {
       response = response.slice(0, 1800);
@@ -292,17 +314,18 @@ export async function POST(req: NextRequest) {
 
     // ── 15. Store pattern metadata on user message ────────────
     if (userMsg?.id) {
-      supabaseAdmin
-        .from('messages')
-        .update({ relational_pattern: pattern.pattern, tension_type: pattern.tensionType })
-        .eq('id', userMsg.id)
-        .then(() => {})
-        .catch(logNonCritical);
+      safeAsync(
+        supabaseAdmin
+          .from('messages')
+          .update({ relational_pattern: pattern.pattern, tension_type: pattern.tensionType })
+          .eq('id', userMsg.id)
+          .then(() => {})
+      );
     }
 
     // ── 16. Fire-and-forget: relationship memory compression ──
     if (person_id) {
-      maybeUpdateRelationshipMemory(supabaseAdmin, getOpenAI(), person_id, userId).catch(logNonCritical);
+      safeAsync(maybeUpdateRelationshipMemory(supabaseAdmin, getOpenAI(), person_id, userId));
     }
 
     console.log('[DEFRAG_API] Chat response generated for conversation:', conversationId);
