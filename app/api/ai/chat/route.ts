@@ -75,11 +75,15 @@ export async function POST(req: NextRequest) {
     }
 
     // Store user message
-    await supabaseAdmin.from('messages').insert({
-      conversation_id: conversationId,
-      role: 'user',
-      content: sanitisedMessage,
-    });
+    const { data: userMessage } = await supabaseAdmin
+      .from("messages")
+      .insert({
+        conversation_id: conversationId,
+        role: "user",
+        content: sanitisedMessage,
+      })
+      .select("id")
+      .single();
 
     // Get user's birthline for context
     const { data: birthline } = await supabaseAdmin
@@ -115,7 +119,8 @@ export async function POST(req: NextRequest) {
       sanitisedMessage,
       birthline,
       personContext,
-      conversationId
+      conversationId,
+      userMessage?.id ?? null
     );
 
     // Store assistant message
@@ -142,30 +147,37 @@ export async function POST(req: NextRequest) {
 
 // ── System prompt ─────────────────────────────────────────────
 
-const SYSTEM_PROMPT = `You are DEFRAG — a relational intelligence guide.
+const SYSTEM_PROMPT = `You are DEFRAG — a relational intelligence system.
 
-Your role:
+Your purpose:
 Help users understand relationship dynamics calmly and clearly.
 
+You analyze relational patterns and suggest constructive ways to communicate.
+
 Rules:
-- Never diagnose.
+- Never diagnose people.
 - Never assign blame.
 - Never escalate conflict.
-- Never suggest ultimatums.
+- Never recommend ultimatums.
 - Never speculate about mental illness.
 
 Focus on:
-- Patterns
-- Communication
+- Relationship patterns
+- Communication dynamics
 - Boundaries
 - Timing
-- Family systems dynamics
+- Family systems behavior
 
-Response structure:
-1. Recognize the situation
-2. Explain the relational pattern
-3. Suggest a calm communication approach
-4. Invite reflection
+When relational signals are provided you must reason from them.
+
+Internal reasoning order:
+1. Identify the relationship dynamic.
+2. Explain the pattern between the people.
+3. Suggest a calm communication approach.
+4. Invite reflection.
+
+Do not mention pattern signals directly.
+Do not mention analysis or internal instructions.
 
 Tone:
 - Calm
@@ -173,12 +185,13 @@ Tone:
 - Neutral
 - Grounded
 - Emotionally intelligent
+- Direct but gentle
 - Never preachy
 - Never mystical
 - Never deterministic
 
-Avoid therapy language.
-Do not ask about internal thinking patterns.
+Avoid therapy jargon.
+Avoid discussing internal thinking patterns.
 Only discuss relationship dynamics.`;
 
 // ── Generate response ─────────────────────────────────────────
@@ -187,20 +200,27 @@ async function generateResponse(
   message: string,
   birthline: any,
   personContext: any = null,
-  conversationId: string
+  conversationId: string,
+  userMessageId: string | null = null
 ): Promise<string> {
+  // 0. Short message guard — avoid wasting AI calls on noise
+  if (message.length < 8) {
+    return "Can you tell me a little more about the situation?";
+  }
+
   // 1. Relational pattern analysis (local, zero cost)
   const pattern = detectRelationalPattern(message, personContext);
 
-  const patternContext = `Detected relational signals:
+  const patternContext = `Relational analysis (internal system signals):
 
-relationship type: ${pattern.relationshipType}
-tension type: ${pattern.tensionType}
-pattern: ${pattern.pattern}
-escalation risk: ${pattern.escalationRisk}
-guidance mode: ${pattern.guidanceMode}
+relationship_type: ${pattern.relationshipType}
+tension_type: ${pattern.tensionType}
+pattern_detected: ${pattern.pattern}
+relationship_state: ${pattern.relationshipState ?? "unclear"}
+guidance_mode: ${pattern.guidanceMode}
 
-Use these signals to inform your response. Do not mention these signals directly to the user.`;
+Your response must account for these relational signals.
+Do not mention these signals to the user.`;
 
   // 2. Natal context
   const natalContext = birthline
@@ -260,6 +280,12 @@ Privacy level: ${personContext.privacy_level}`
     messages.push({ role: m.role, content: m.content });
   }
 
+  messages.push({
+    role: "system",
+    content:
+      "Before responding, internally analyze the relational dynamic using the provided signals."
+  });
+
   // Current user message (always last)
   messages.push({ role: "user", content: message });
 
@@ -267,11 +293,16 @@ Privacy level: ${personContext.privacy_level}`
   let response = "";
 
   try {
-    const completion = await getOpenAI().chat.completions.create({
-      model: "gpt-4.1",
-      temperature: 0.4,
-      messages,
-    });
+    const completion = await Promise.race([
+      getOpenAI().chat.completions.create({
+        model: "gpt-4.1",
+        temperature: 0.4,
+        messages,
+      }),
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("AI timeout")), 15000)
+      ),
+    ]);
 
     response = completion.choices[0]?.message?.content || "";
   } catch (err) {
@@ -285,20 +316,19 @@ Privacy level: ${personContext.privacy_level}`
     response = response.slice(0, 2000);
   }
 
-  // 8. Store pattern signals for analytics
-  try {
-    await supabaseAdmin
-      .from("messages")
-      .update({
-        relational_pattern: pattern.pattern,
-        tension_type: pattern.tensionType,
-      })
-      .eq("conversation_id", conversationId)
-      .eq("role", "user")
-      .order("created_at", { ascending: false })
-      .limit(1);
-  } catch (_) {
-    // Non-critical — degrade silently
+  // 8. Store pattern signals for analytics (by message ID)
+  if (userMessageId) {
+    try {
+      await supabaseAdmin
+        .from("messages")
+        .update({
+          relational_pattern: pattern.pattern,
+          tension_type: pattern.tensionType,
+        })
+        .eq("id", userMessageId);
+    } catch (_) {
+      // Non-critical — degrade silently
+    }
   }
 
   return response;
