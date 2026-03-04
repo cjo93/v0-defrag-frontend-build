@@ -74,7 +74,7 @@ export default function ContactPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black font-sans antialiased flex flex-col items-center justify-center p-6">
+    <main className="min-h-screen font-sans antialiased flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-[560px]">
         <div className="mb-10">
           <Link
@@ -91,15 +91,15 @@ export default function ContactPage() {
         </div>
 
         {isSuccess ? (
-          <div className="border border-white/[0.08] bg-white/[0.03] rounded-xl p-7 md:p-8 space-y-4">
+          <div className="border border-white/10 bg-white/[0.02] rounded-sm p-7 md:p-8 space-y-4">
             <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">
               Message Received
             </h2>
-            <p className="text-[15px] md:text-[16px] text-white/65 leading-relaxed">
+            <p className="text-[14px] md:text-[16px] text-white/65 leading-relaxed">
               Thank you for reaching out. We will respond to your inquiry shortly.
             </p>
             <button
-              className="w-full h-[52px] border border-white/25 text-white/80 rounded-xl font-mono text-[13px] font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/50 transition-all duration-200 mt-4"
+              className="w-full h-[48px] border border-white/25 text-white/80 rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/50 transition-all duration-200 mt-4"
               onClick={() => {
                 setIsSuccess(false);
                 form.reset();
@@ -137,7 +137,7 @@ export default function ContactPage() {
                         <Input
                           placeholder="Your name"
                           {...field}
-                          className="bg-black border border-white/[0.08] rounded-xl text-white text-[15px] focus-visible:ring-0 focus-visible:border-white/25 placeholder:text-white/30 h-[48px] px-5 transition-colors duration-200"
+                          className="bg-transparent border border-white/10 rounded-sm text-white text-[14px] focus-visible:ring-0 focus-visible:border-white/25 placeholder:text-white/30 h-[48px] px-5 transition-colors duration-200"
                           disabled={isSubmitting}
                         />
                       </FormControl>
@@ -159,7 +159,7 @@ export default function ContactPage() {
                           type="email"
                           placeholder="hello@example.com"
                           {...field}
-                          className="bg-black border border-white/[0.08] rounded-xl text-white text-[15px] focus-visible:ring-0 focus-visible:border-white/25 placeholder:text-white/30 h-[48px] px-5 transition-colors duration-200"
+                          className="bg-transparent border border-white/10 rounded-sm text-white text-[14px] focus-visible:ring-0 focus-visible:border-white/25 placeholder:text-white/30 h-[48px] px-5 transition-colors duration-200"
                           disabled={isSubmitting}
                         />
                       </FormControl>
@@ -180,7 +180,7 @@ export default function ContactPage() {
                     <FormControl>
                       <Textarea
                         placeholder="How can we help?"
-                        className="bg-black border border-white/[0.08] rounded-xl text-white text-[15px] focus-visible:ring-0 focus-visible:border-white/25 placeholder:text-white/30 min-h-[160px] p-5 resize-none transition-colors duration-200"
+                        className="bg-transparent border border-white/10 rounded-sm text-white text-[14px] focus-visible:ring-0 focus-visible:border-white/25 placeholder:text-white/30 min-h-[160px] p-5 resize-none transition-colors duration-200"
                         {...field}
                         disabled={isSubmitting}
                       />
@@ -193,7 +193,7 @@ export default function ContactPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full h-[52px] bg-white text-black rounded-xl font-mono text-[13px] font-semibold uppercase tracking-[0.08em] hover:bg-white/90 transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center"
+                className="w-full h-[48px] bg-white text-black rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] hover:bg-white/90 transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center"
               >
                 {isSubmitting ? (
                   <>

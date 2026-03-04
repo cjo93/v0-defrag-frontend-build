@@ -94,7 +94,7 @@ function UnlockContent() {
 
   return (
     <div className="min-h-screen text-white font-sans antialiased flex flex-col items-center justify-center p-6">
-      <div className="mx-auto w-full max-w-[920px] px-6 md:px-8 space-y-10">
+      <div className="mx-auto w-full max-w-[1100px] px-6 md:px-8 space-y-10">
         <div className="text-center space-y-3">
           <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Select a plan</p>
           <h1 className="text-[26px] md:text-[34px] font-normal tracking-[-0.015em]">Choose your plan to continue</h1>

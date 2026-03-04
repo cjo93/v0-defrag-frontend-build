@@ -14,7 +14,7 @@ export function TopNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="w-full border-b border-white/[0.08]">
+    <nav className="w-full border-b border-white/10">
       <div className="mx-auto max-w-[1100px] px-6 h-14 flex items-center justify-between">
         <Link href="/dashboard" className="font-mono text-[13px] font-semibold tracking-[0.2em] text-white">
           DEFRAG

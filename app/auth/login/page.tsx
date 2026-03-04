@@ -74,7 +74,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen text-white font-sans antialiased flex items-center justify-center p-6">
-      <div className="w-full max-w-[440px] space-y-8 border border-white/[0.08] bg-white/[0.03] p-8 md:p-10 rounded-sm animate-fade-in">
+      <div className="w-full max-w-[440px] space-y-8 border border-white/10 bg-white/[0.02] p-8 md:p-10 rounded-sm animate-fade-in">
         <div className="text-center">
           <p className="font-mono text-[13px] font-semibold tracking-[0.2em] text-white mb-3">DEFRAG</p>
           <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Access your account</p>
@@ -92,7 +92,7 @@ export default function LoginPage() {
 
               <div className="relative py-4">
                 <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-white/[0.08]" />
+                  <span className="w-full border-t border-white/10" />
                 </div>
                 <div className="relative flex justify-center">
                   <span className="bg-[#0A0A0A] px-3 text-white/45 font-mono text-[11px] tracking-[0.2em] uppercase">Or email</span>
@@ -105,7 +105,7 @@ export default function LoginPage() {
             <input
               type="email"
               placeholder="Email address"
-              className="w-full bg-transparent border border-white/[0.08] px-5 py-3.5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-all duration-200 focus:outline-none rounded-sm"
+              className="w-full bg-transparent border border-white/10 px-5 py-3.5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-all duration-200 focus:outline-none rounded-sm"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -113,7 +113,7 @@ export default function LoginPage() {
             <input
               type="password"
               placeholder="Password"
-              className="w-full bg-transparent border border-white/[0.08] px-5 py-3.5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-all duration-200 focus:outline-none rounded-sm"
+              className="w-full bg-transparent border border-white/10 px-5 py-3.5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-all duration-200 focus:outline-none rounded-sm"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

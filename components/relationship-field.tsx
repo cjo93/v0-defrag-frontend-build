@@ -79,7 +79,7 @@ export default function RelationshipField({ people }: { people: Person[] }) {
         })}
 
         {/* Center node — user */}
-        <circle cx={CENTER} cy={CENTER} r={10} fill="white" />
+        <circle cx={CENTER} cy={CENTER} r={8} fill="white" />
 
         {/* Person nodes */}
         {visible.map((person, i) => {
@@ -100,11 +100,11 @@ export default function RelationshipField({ people }: { people: Person[] }) {
               <circle
                 cx={x}
                 cy={y}
-                r={isHovered ? 8 : 6}
-                fill="rgba(255,255,255,0.9)"
+                r={isHovered ? 7 : 5}
+                fill="white"
                 stroke={STATE_STROKE[state] ?? STATE_STROKE.unclear}
                 strokeWidth={1.5}
-                className="transition-all duration-200"
+                className={`transition-all duration-200${state === 'strained' ? ' animate-strained-pulse' : ''}`}
               />
               <text
                 x={x}

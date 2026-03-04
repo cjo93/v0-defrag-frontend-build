@@ -172,7 +172,7 @@ export default function GridClient() {
 
                   {/* Connection info */}
                   <div className="flex-1">
-                    <p className="text-[15px] text-white">{connection.name}</p>
+                    <p className="text-[14px] text-white">{connection.name}</p>
                     <p className="text-[10px] text-white/35 uppercase tracking-[0.35em] mt-1">
                       {connection.relationship_type}
                     </p>

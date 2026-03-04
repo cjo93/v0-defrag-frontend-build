@@ -56,3 +56,12 @@
 .animate-float {
   animation: float 8s ease-in-out infinite;
 }
+
+@keyframes strainedPulse {
+  0%, 100% { opacity: 0.75; }
+  50% { opacity: 0.35; }
+}
+
+.animate-strained-pulse {
+  animation: strainedPulse 2.5s ease-in-out infinite;
+}

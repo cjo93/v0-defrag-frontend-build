@@ -102,7 +102,7 @@ export default function InvitePage() {
           <h1 className="text-[22px] md:text-[26px] font-normal tracking-[-0.015em] text-white">
             Invite expired
           </h1>
-          <p className="text-[15px] text-white/50 leading-relaxed">
+          <p className="text-[14px] text-white/50 leading-relaxed">
             {errorMessage}
           </p>
         </div>
@@ -123,7 +123,7 @@ export default function InvitePage() {
           <h1 className="text-[22px] md:text-[26px] font-normal tracking-[-0.015em] text-white">
             Thank you
           </h1>
-          <p className="text-[15px] text-white/50 leading-relaxed">
+          <p className="text-[14px] text-white/50 leading-relaxed">
             Your information has been securely added.
           </p>
         </div>
@@ -170,7 +170,7 @@ export default function InvitePage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="First name"
-                className="w-full h-[48px] px-4 bg-white/[0.04] border border-white/10 rounded-xl text-[15px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors"
+                className="w-full h-[48px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors"
               />
             </div>
             <div className="space-y-2">
@@ -181,7 +181,7 @@ export default function InvitePage() {
                 type="date"
                 value={birthDate}
                 onChange={(e) => setBirthDate(e.target.value)}
-                className="w-full h-[48px] px-4 bg-white/[0.04] border border-white/10 rounded-xl text-[15px] text-white outline-none focus:border-white/30 transition-colors [color-scheme:dark]"
+                className="w-full h-[48px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white outline-none focus:border-white/30 transition-colors [color-scheme:dark]"
               />
             </div>
             <button
@@ -189,7 +189,7 @@ export default function InvitePage() {
                 if (name.trim() && birthDate) setStep(2);
               }}
               disabled={!name.trim() || !birthDate}
-              className="w-full h-[48px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-xl hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200"
+              className="w-full h-[48px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200"
             >
               Continue
             </button>
@@ -210,7 +210,7 @@ export default function InvitePage() {
                 type="time"
                 value={birthTime}
                 onChange={(e) => setBirthTime(e.target.value)}
-                className="w-full h-[48px] px-4 bg-white/[0.04] border border-white/10 rounded-xl text-[15px] text-white outline-none focus:border-white/30 transition-colors [color-scheme:dark]"
+                className="w-full h-[48px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white outline-none focus:border-white/30 transition-colors [color-scheme:dark]"
               />
             </div>
 
@@ -224,13 +224,13 @@ export default function InvitePage() {
             <div className="flex gap-3">
               <button
                 onClick={() => setStep(1)}
-                className="flex-1 h-[48px] border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-xl hover:text-white hover:border-white/30 transition-all duration-200"
+                className="flex-1 h-[48px] border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/30 transition-all duration-200"
               >
                 Back
               </button>
               <button
                 onClick={() => setStep(3)}
-                className="flex-1 h-[48px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-xl hover:bg-white/90 transition-all duration-200"
+                className="flex-1 h-[48px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 transition-all duration-200"
               >
                 Continue
               </button>
@@ -253,7 +253,7 @@ export default function InvitePage() {
                 value={birthPlace}
                 onChange={(e) => setBirthPlace(e.target.value)}
                 placeholder="e.g. Los Angeles, CA"
-                className="w-full h-[48px] px-4 bg-white/[0.04] border border-white/10 rounded-xl text-[15px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors"
+                className="w-full h-[48px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors"
               />
             </div>
 
@@ -267,14 +267,14 @@ export default function InvitePage() {
             <div className="flex gap-3">
               <button
                 onClick={() => setStep(2)}
-                className="flex-1 h-[48px] border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-xl hover:text-white hover:border-white/30 transition-all duration-200"
+                className="flex-1 h-[48px] border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/30 transition-all duration-200"
               >
                 Back
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={state === "submitting"}
-                className="flex-1 h-[48px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-xl hover:bg-white/90 disabled:opacity-50 transition-all duration-200"
+                className="flex-1 h-[48px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 disabled:opacity-50 transition-all duration-200"
               >
                 {state === "submitting" ? "Submitting…" : "Submit"}
               </button>
@@ -289,8 +289,8 @@ export default function InvitePage() {
 // ─── Shell ───
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-black text-white font-sans antialiased flex items-center justify-center p-6">
-      <div className="w-full max-w-[440px] border border-white/10 bg-white/[0.02] p-6 md:p-8 rounded-xl animate-fade-in">
+    <div className="min-h-screen bg-transparent text-white font-sans antialiased flex items-center justify-center p-6">
+      <div className="w-full max-w-[440px] border border-white/10 bg-white/[0.02] p-6 md:p-8 rounded-sm animate-fade-in">
         {children}
       </div>
     </div>

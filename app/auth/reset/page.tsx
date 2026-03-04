@@ -45,8 +45,8 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans antialiased flex items-center justify-center p-6">
-      <div className="w-full max-w-[440px] space-y-8 border border-white/[0.08] bg-white/[0.03] p-8 md:p-10 rounded-xl animate-fade-in">
+    <div className="min-h-screen text-white font-sans antialiased flex items-center justify-center p-6">
+      <div className="w-full max-w-[440px] space-y-8 border border-white/10 bg-white/[0.02] p-8 md:p-10 rounded-sm animate-fade-in">
         <div className="text-center">
           <p className="font-mono text-[13px] font-semibold tracking-[0.2em] text-white mb-3">DEFRAG</p>
           <p className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">Reset your password</p>
@@ -54,7 +54,7 @@ export default function ResetPasswordPage() {
 
         {sent ? (
           <div className="space-y-4 text-center">
-            <p className="text-[15px] text-white/65">Password reset email sent. Check your inbox.</p>
+            <p className="text-[14px] text-white/65">Password reset email sent. Check your inbox.</p>
             <Link
               href="/auth/login"
               className="inline-block font-mono text-[11px] uppercase tracking-[0.15em] text-white/45 hover:text-white/70 transition-colors duration-200"
@@ -68,7 +68,7 @@ export default function ResetPasswordPage() {
               <input
                 type="email"
                 placeholder="Email address"
-                className="w-full bg-black border border-white/[0.08] px-5 py-3.5 text-[15px] text-white placeholder:text-white/30 focus:border-white/30 focus:ring-1 focus:ring-white/20 transition-all duration-200 focus:outline-none rounded-xl"
+                className="w-full bg-transparent border border-white/10 px-5 py-3.5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-all duration-200 focus:outline-none rounded-sm"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -91,7 +91,7 @@ export default function ResetPasswordPage() {
 
               <button
                 type="submit"
-                className="w-full inline-flex items-center justify-center h-[52px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:bg-white/90 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] active:scale-[0.98] transition-all duration-200 ease-out disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:shadow-none rounded-xl"
+                className="w-full inline-flex items-center justify-center h-[48px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:bg-white/90 active:scale-[0.98] transition-all duration-200 ease-out disabled:opacity-40 disabled:cursor-not-allowed rounded-sm"
                 disabled={loading || (isTurnstileRequired && !turnstileToken)}
               >
                 {loading ? "Sending..." : "Send reset link"}

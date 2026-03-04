@@ -20,7 +20,7 @@ export default function ManualPlaceholderPage({ params }: { params: { session_id
   }, [])
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans antialiased flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-transparent text-white font-sans antialiased flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-[400px]">
         <p className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50 mb-6">
           Session: {params.session_id.split('-')[0]}***

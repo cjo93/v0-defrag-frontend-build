@@ -90,7 +90,7 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen text-white font-sans antialiased p-6">
+    <div className="flex flex-col items-center justify-center min-h-screen text-white font-sans antialiased pt-16 pb-24 px-6">
       <div className="mx-auto w-full max-w-[440px] space-y-8">
         <div className="text-center">
           <p className="font-mono text-[13px] font-semibold tracking-[0.2em] text-white mb-3">DEFRAG</p>
@@ -102,7 +102,7 @@ export default function OnboardingPage() {
           {[1, 2, 3].map((s) => (
             <div
               key={s}
-              className={`w-10 h-[2px] rounded-full ${s <= step ? 'bg-white' : 'bg-white/[0.08]'} transition-colors duration-200`}
+              className={`w-10 h-[2px] rounded-full ${s <= step ? 'bg-white' : 'bg-white/10'} transition-colors duration-200`}
             />
           ))}
         </div>
@@ -124,7 +124,7 @@ export default function OnboardingPage() {
                   value={dob}
                   onChange={(e) => setDob(e.target.value)}
                   required
-                  className="bg-transparent border-white/[0.08] rounded-sm focus-visible:border-white/30 h-[48px] px-5 text-[14px]"
+                  className="bg-transparent border-white/10 rounded-sm focus-visible:border-white/30 h-[48px] px-5 text-[14px]"
                 />
                 <p className="font-mono text-[11px] text-white/35 tracking-[0.1em]">Used to establish your baseline.</p>
               </div>
@@ -153,7 +153,7 @@ export default function OnboardingPage() {
                   value={unknownTime ? "12:00" : time}
                   onChange={(e) => setTime(e.target.value)}
                   disabled={unknownTime}
-                  className="bg-transparent border-white/[0.08] rounded-sm focus-visible:border-white/30 disabled:opacity-40 h-[48px] px-5 text-[14px]"
+                  className="bg-transparent border-white/10 rounded-sm focus-visible:border-white/30 disabled:opacity-40 h-[48px] px-5 text-[14px]"
                 />
                 <p className="font-mono text-[11px] text-white/35 tracking-[0.1em]">Optional. If unknown, we estimate using noon.</p>
               </div>
@@ -209,7 +209,7 @@ export default function OnboardingPage() {
                   value={birthCity}
                   onChange={(e) => setBirthCity(e.target.value)}
                   required
-                  className="bg-transparent border-white/[0.08] rounded-sm focus-visible:border-white/30 placeholder:text-white/30 h-[48px] px-5 text-[14px]"
+                  className="bg-transparent border-white/10 rounded-sm focus-visible:border-white/30 placeholder:text-white/30 h-[48px] px-5 text-[14px]"
                 />
                 <p className="font-mono text-[11px] text-white/35 tracking-[0.1em]">Provides geographic context for timing patterns.</p>
               </div>

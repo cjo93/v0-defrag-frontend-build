@@ -131,7 +131,7 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen text-white font-sans antialiased">
         <TopNav />
-        <main className="max-w-[1100px] mx-auto px-6 py-10">
+        <main className="max-w-[1100px] mx-auto px-6 pt-16 pb-24">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {[1, 2, 3, 4].map((i) => (
               <div
@@ -165,7 +165,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen text-white font-sans antialiased">
       <TopNav />
-      <main className="max-w-[1100px] mx-auto px-6 py-10">
+      <main className="max-w-[1100px] mx-auto px-6 pt-16 pb-24">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
           {/* ─── Panel 1: Today Summary ─── */}
@@ -339,7 +339,7 @@ export default function DashboardPage() {
                         Unlock relationship mapping, multi-person dynamics, and priority support.
                       </p>
                     </div>
-                    <span className="font-mono text-[15px] font-semibold text-white shrink-0 ml-6">
+                    <span className="font-mono text-[14px] font-semibold text-white shrink-0 ml-6">
                       $33/mo →
                     </span>
                   </div>
@@ -498,22 +498,22 @@ function AddPersonModal({
             <div className="space-y-3">
               <button
                 onClick={() => setMode('manual')}
-                className="w-full flex items-center gap-4 border border-white/[0.08] bg-white/[0.02] rounded-sm px-5 py-4 hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200 text-left"
+                className="w-full flex items-center gap-4 border border-white/10 bg-white/[0.02] rounded-sm px-5 py-4 hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200 text-left"
               >
                 <Edit3 className="w-5 h-5 text-white/40 shrink-0" />
                 <div>
-                  <p className="text-[15px] text-white font-medium">Add manually</p>
+                  <p className="text-[14px] text-white font-medium">Add manually</p>
                   <p className="text-[13px] text-white/35">Enter their birth details yourself</p>
                 </div>
               </button>
 
               <button
                 onClick={() => setMode('invite')}
-                className="w-full flex items-center gap-4 border border-white/[0.08] bg-white/[0.02] rounded-sm px-5 py-4 hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200 text-left"
+                className="w-full flex items-center gap-4 border border-white/10 bg-white/[0.02] rounded-sm px-5 py-4 hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200 text-left"
               >
                 <UserPlus className="w-5 h-5 text-white/40 shrink-0" />
                 <div>
-                  <p className="text-[15px] text-white font-medium">Send invite link</p>
+                  <p className="text-[14px] text-white font-medium">Send invite link</p>
                   <p className="text-[13px] text-white/35">They submit their own birth details privately</p>
                 </div>
               </button>
@@ -532,28 +532,28 @@ function AddPersonModal({
               <div className="space-y-1.5">
                 <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Name</label>
                 <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="First name"
-                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[15px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
+                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
               </div>
               <div className="space-y-1.5">
                 <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Relationship</label>
                 <input type="text" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="e.g. Father, Partner, Friend"
-                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[15px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
+                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
               </div>
               <div className="space-y-1.5">
                 <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Date of birth</label>
                 <input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)}
-                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[15px] text-white outline-none focus:border-white/30 transition-colors [color-scheme:dark]" />
+                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white outline-none focus:border-white/30 transition-colors [color-scheme:dark]" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Birth time</label>
                   <input type="time" value={birthTime} onChange={(e) => setBirthTime(e.target.value)}
-                    className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[15px] text-white outline-none focus:border-white/30 transition-colors [color-scheme:dark]" />
+                    className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white outline-none focus:border-white/30 transition-colors [color-scheme:dark]" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Birth place</label>
                   <input type="text" value={birthPlace} onChange={(e) => setBirthPlace(e.target.value)} placeholder="City"
-                    className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[15px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
+                    className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
                 </div>
               </div>
             </div>
@@ -583,17 +583,17 @@ function AddPersonModal({
               <div className="space-y-1.5">
                 <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Their name</label>
                 <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="First name"
-                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[15px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
+                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
               </div>
               <div className="space-y-1.5">
                 <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Relationship</label>
                 <input type="text" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="e.g. Father, Partner, Friend"
-                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[15px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
+                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
               </div>
               <div className="space-y-1.5">
                 <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Email (optional)</label>
                 <input type="email" value={contact} onChange={(e) => setContact(e.target.value)} placeholder="Their email address"
-                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[15px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
+                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
               </div>
             </div>
 

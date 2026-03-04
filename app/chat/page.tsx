@@ -98,8 +98,8 @@ function ChatClient() {
     <div className="min-h-screen text-white flex flex-col font-sans antialiased">
       <TopNav />
 
-      <div className="flex-1 overflow-y-auto px-6 md:px-8 py-8">
-        <div className="mx-auto w-full max-w-[800px] space-y-8">
+      <div className="flex-1 overflow-y-auto px-6 md:px-8 pt-20 pb-32">
+        <div className="mx-auto w-full max-w-[800px] space-y-6">
           {messages.length === 0 ? (
             <div className="min-h-[60vh] flex flex-col justify-center">
               <div className="text-center mb-12 animate-fade-in">
@@ -130,20 +130,20 @@ function ChatClient() {
               </div>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-6">
               {messages.map((message, i) => (
                 <div 
                   key={i}
                   className={`animate-fade-in ${message.role === 'user' ? 'ml-auto max-w-[80%]' : 'mr-auto max-w-full'}`}
                 >
                   {message.role === 'user' ? (
-                    <div className="bg-white/[0.06] px-4 py-3 rounded-sm">
+                    <div className="bg-white/[0.05] border border-white/15 p-5 rounded-sm">
                       <p className="text-[14px] text-white leading-[1.6]">
                         {message.content}
                       </p>
                     </div>
                   ) : (
-                    <div className="bg-white/[0.02] px-4 py-3 rounded-sm">
+                    <div className="bg-white/[0.02] border border-white/10 p-5 rounded-sm">
                       <div className="text-[14px] text-white/70 leading-[1.6] whitespace-pre-wrap">
                         {message.content}
                       </div>
@@ -153,7 +153,7 @@ function ChatClient() {
               ))}
               
               {isLoading && (
-                <div className="bg-white/[0.02] px-4 py-3 rounded-sm animate-fade-in">
+                <div className="bg-white/[0.02] border border-white/10 p-5 rounded-sm animate-fade-in">
                   <div className="flex gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-white/30 animate-pulse" />
                     <span className="w-1.5 h-1.5 rounded-full bg-white/30 animate-pulse delay-100" />
@@ -174,7 +174,7 @@ function ChatClient() {
         </div>
       </div>
 
-      <div className="border-t border-white/[0.08] bg-[#0A0A0A] px-6 md:px-8 py-5 safe-bottom">
+      <div className="fixed bottom-0 left-0 right-0 border-t border-white/10 bg-[#0A0A0A] px-6 md:px-8 py-5 safe-bottom">
         <div className="mx-auto w-full max-w-[800px]">
           <form onSubmit={handleSend} className="flex items-end gap-4">
             <div className="flex-1">
@@ -183,7 +183,7 @@ function ChatClient() {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about a relationship dynamic"
                 disabled={isLoading}
-                className="w-full bg-transparent border border-white/[0.08] rounded-sm h-[48px] px-5 text-[14px] text-white focus:border-white/30 focus:outline-none transition-all duration-200 ease-out placeholder:text-white/30"
+                className="w-full bg-transparent border border-white/10 rounded-sm h-[48px] px-5 text-[14px] text-white focus:border-white/30 focus:outline-none transition-all duration-200 ease-out placeholder:text-white/30"
               />
             </div>
             <button 
