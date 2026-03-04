@@ -87,24 +87,15 @@ function ChatClient() {
     setIsLoading(true);
     
     try {
-      // Mocking API call to use the updated schema for now
-      const response: ChatResponse = {
-        headline: 'System Overload',
-        signal: 'high',
-        confidence: {
-            overall: 85,
-            data_confidence: 90,
-            pattern_confidence: 80
-        },
-        whats_happening: [
-            'Escalation pattern detected.',
-            'Communication breakdown likely.'
-        ],
-        do_this_now: 'Step away from the screen. Take 3 slow breaths. Count to 10. Return when calmer.',
-        one_line_to_say: 'I need a moment before continuing this.',
-        repeat_pattern: 'Tendency to push for resolution when overwhelmed.'
-      };
+      const res = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userMessage })
+      });
       
+      if (!res.ok) throw new Error('API Error');
+
+      const response = await res.json();
       setMessages(prev => [...prev, { role: 'assistant', content: response }]);
     } catch (err: any) {
       setError(err.message || 'Failed to send message');
@@ -113,10 +104,10 @@ function ChatClient() {
     }
   };
 
-  // Helper function to render signal color in grayscale
+  // Helper function to render Pressure color in grayscale
 
   const getSensitivityLabel = (sensitivity: 'low' | 'medium' | 'high') => {
-      switch(signal) {
+      switch(pressure) {
           case 'low': return 'stable';
           case 'medium': return 'moderate';
           case 'high': return 'elevated';
@@ -125,7 +116,7 @@ function ChatClient() {
   };
 
   const getSensitivityColor = (sensitivity: 'low' | 'medium' | 'high') => {
-      switch(signal) {
+      switch(pressure) {
           case 'low': return 'text-white/40';
           case 'medium': return 'text-white/70';
           case 'high': return 'text-white';
@@ -164,10 +155,10 @@ function ChatClient() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[
-                  "Why doesn't my mom understand when I need space?",
-                  "Why does my dad push me so hard to succeed?",
-                  "Why do people expect me to carry the emotional weight in relationships?",
-                  "Why do I feel responsible for fixing other people's problems?"
+                  "Why doesn't my mom respect my boundaries?",
+                  "Why does my dad push me so hard?",
+                  "Why can't they see who I am?",
+                  "How do I say this without escalation?"
                 ].map((suggestion, i) => (
                   <button
                     key={i}
@@ -203,8 +194,8 @@ function ChatClient() {
                               <div className="flex items-center gap-4">
                                   <div className="flex flex-col items-end">
                                       <MicroLabel>Sensitivity</MicroLabel>
-                                      <span className={`font-mono text-[12px] uppercase ${getSensitivityColor(message.content.signal)}`}>
-                                          {getSensitivityLabel(message.content.signal)}
+                                      <span className={`font-mono text-[12px] uppercase ${getSensitivityColor(message.content.pressure)}`}>
+                                          {getSensitivityLabel(message.content.pressure)}
                                       </span>
                                   </div>
                                   <div className="flex flex-col items-end">
