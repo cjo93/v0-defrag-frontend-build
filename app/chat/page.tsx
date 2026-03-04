@@ -115,7 +115,7 @@ function ChatClient() {
 
   // Helper function to render signal color in grayscale
 
-  const getSignalLabel = (signal: 'low' | 'medium' | 'high') => {
+  const getSensitivityLabel = (sensitivity: 'low' | 'medium' | 'high') => {
       switch(signal) {
           case 'low': return 'stable';
           case 'medium': return 'moderate';
@@ -124,7 +124,7 @@ function ChatClient() {
       }
   };
 
-  const getSignalColor = (signal: 'low' | 'medium' | 'high') => {
+  const getSensitivityColor = (sensitivity: 'low' | 'medium' | 'high') => {
       switch(signal) {
           case 'low': return 'text-white/40';
           case 'medium': return 'text-white/70';
@@ -181,9 +181,9 @@ function ChatClient() {
                               </h2>
                               <div className="flex items-center gap-4">
                                   <div className="flex flex-col items-end">
-                                      <MicroLabel>Signal</MicroLabel>
-                                      <span className={`font-mono text-[12px] uppercase ${getSignalColor(message.content.signal)}`}>
-                                          {getSignalLabel(message.content.signal)}
+                                      <MicroLabel>Sensitivity</MicroLabel>
+                                      <span className={`font-mono text-[12px] uppercase ${getSensitivityColor(message.content.signal)}`}>
+                                          {getSensitivityLabel(message.content.signal)}
                                       </span>
                                   </div>
                                   <div className="flex flex-col items-end">
