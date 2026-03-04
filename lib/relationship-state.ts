@@ -31,7 +31,7 @@ interface StateInput {
 // ── Constants ─────────────────────────────────────────────────
 
 const LOOKBACK_DAYS = 14;
-const COOLING_THRESHOLD_DAYS = 5;  // Strained → cooling after 5 days silence
+const COOLING_THRESHOLD_DAYS = 7;  // Strained → cooling after 7 days silence
 const UNCLEAR_THRESHOLD_DAYS = 21; // Any state → unclear after 21 days silence
 
 const STRAINED_SIGNALS = new Set([
@@ -200,10 +200,13 @@ export async function updatePersonRelationshipState(
     previousState: (person?.relationship_state as RelationshipState) || null,
   });
 
-  // Persist
+  // Persist with timestamp for stale detection
   await admin
     .from('people')
-    .update({ relationship_state: newState })
+    .update({
+      relationship_state: newState,
+      relationship_state_updated_at: new Date().toISOString(),
+    })
     .eq('id', personId);
 
   return newState;
@@ -245,10 +248,13 @@ export async function updatePersonStateFromChat(
     previousState,
   });
 
-  // Persist
+  // Persist with timestamp for stale detection
   await admin
     .from('people')
-    .update({ relationship_state: newState })
+    .update({
+      relationship_state: newState,
+      relationship_state_updated_at: new Date().toISOString(),
+    })
     .eq('id', personId);
 
   return newState;

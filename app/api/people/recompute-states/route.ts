@@ -3,17 +3,19 @@ import { createServerClient, supabaseAdmin } from '@/lib/auth-server';
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/rate-limit';
 import { updatePersonRelationshipState } from '@/lib/relationship-state';
 
+const MAX_PEOPLE = 100;
+const STALE_THRESHOLD_MS = 6 * 60 * 60 * 1000; // 6 hours
+
 /**
  * POST /api/people/recompute-states
  *
- * Recompute relationship_state for all people owned by the authenticated user.
- * Used after migrations, first-time dashboard load, or manual refresh.
+ * Recompute relationship_state for stale people owned by the authenticated user.
+ * Only recomputes records whose state is older than 6 hours.
+ * Parallelized, capped at 100 people per invocation.
  *
  * Rate limited: 3 calls per minute per user.
  */
 export async function POST(req: NextRequest) {
-  console.log('[DEFRAG_API] POST /api/people/recompute-states');
-
   try {
     const supabase = await createServerClient();
     if (!supabase) {
@@ -39,10 +41,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Fetch all people for this user
+    // Fetch people with their state timestamp for stale detection
     const { data: people, error: peopleError } = await supabaseAdmin
       .from('people')
-      .select('id')
+      .select('id, relationship_state, relationship_state_updated_at, updated_at')
       .eq('owner_user_id', userId);
 
     if (peopleError || !people) {
@@ -50,18 +52,41 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Failed to fetch people' }, { status: 500 });
     }
 
-    // Compute state for each person
+    // Filter to stale records only (state older than 6 hours)
+    const now = Date.now();
+    const stalePeople = people.filter((p) => {
+      const lastUpdated = p.relationship_state_updated_at || p.updated_at;
+      if (!lastUpdated) return true; // Never computed → stale
+      return now - new Date(lastUpdated).getTime() > STALE_THRESHOLD_MS;
+    });
+
+    // Cap to prevent runaway in large accounts
+    const peopleToProcess = stalePeople.slice(0, MAX_PEOPLE);
+
+    // Parallelize computation
     const results: { id: string; state: string }[] = [];
 
-    for (const person of people) {
-      const state = await updatePersonRelationshipState(supabaseAdmin, person.id, userId);
-      results.push({ id: person.id, state });
-    }
+    const computed = await Promise.all(
+      peopleToProcess.map(async (person) => {
+        const state = await updatePersonRelationshipState(supabaseAdmin, person.id, userId);
+        return { id: person.id, state };
+      })
+    );
 
-    console.log(`[DEFRAG_API] Recomputed states for ${results.length} people (user: ${userId})`);
+    results.push(...computed);
+
+    console.log('[DEFRAG_API]', {
+      route: 'recompute-states',
+      user: userId,
+      total: people.length,
+      stale: stalePeople.length,
+      processed: results.length,
+    });
 
     return NextResponse.json({
       ok: true,
+      total: people.length,
+      stale: stalePeople.length,
       updated: results.length,
       states: results,
     });
