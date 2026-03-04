@@ -1,7 +1,7 @@
 /**
  * Relationship Timing — behavioral pattern tracking by time.
  *
- * Tracks when specific relational patterns occur (day of week + hour).
+ * Tracks when specific relational patterns occur (day of week + 2-hour bucket).
  * Allows the AI to reference temporal behavior patterns like:
  * "Interactions with this person tend to escalate in the evening."
  *
@@ -19,13 +19,16 @@ export async function updateRelationshipTiming(
   personId: string,
   pattern: string,
 ): Promise<void> {
+
   if (!pattern || pattern === 'unknown') return;
 
   const now = new Date();
-  const day = now.getDay();   // 0 = Sunday
-  const hour = now.getHours();
 
-  const { data } = await admin
+  // bucket into 2-hour windows to reduce fragmentation
+  const day = now.getDay();
+  const hour = Math.floor(now.getHours() / 2) * 2;
+
+  const { data, error } = await admin
     .from('relationship_timing')
     .select('id, occurrence_count')
     .eq('owner_user_id', userId)
@@ -35,6 +38,11 @@ export async function updateRelationshipTiming(
     .eq('pattern', pattern)
     .maybeSingle();
 
+  if (error) {
+    console.error('[DEFRAG_TIMING]', error);
+    return;
+  }
+
   if (data) {
     await admin
       .from('relationship_timing')
@@ -42,16 +50,22 @@ export async function updateRelationshipTiming(
         occurrence_count: data.occurrence_count + 1,
       })
       .eq('id', data.id);
+
   } else {
+
     await admin
       .from('relationship_timing')
-      .insert({
+      .upsert({
         owner_user_id: userId,
         person_id: personId,
         day_of_week: day,
         hour_of_day: hour,
         pattern,
+        occurrence_count: 1,
+      }, {
+        onConflict: 'owner_user_id,person_id,day_of_week,hour_of_day,pattern'
       });
+
   }
 }
 
@@ -64,11 +78,13 @@ export async function getTimingInsight(
   userId: string,
   personId: string,
 ): Promise<{ pattern: string; occurrence_count: number } | null> {
-  const now = new Date();
-  const day = now.getDay();
-  const hour = now.getHours();
 
-  const { data } = await admin
+  const now = new Date();
+
+  const day = now.getDay();
+  const hour = Math.floor(now.getHours() / 2) * 2;
+
+  const { data, error } = await admin
     .from('relationship_timing')
     .select('pattern, occurrence_count')
     .eq('owner_user_id', userId)
@@ -78,6 +94,11 @@ export async function getTimingInsight(
     .order('occurrence_count', { ascending: false })
     .limit(1)
     .maybeSingle();
+
+  if (error) {
+    console.error('[DEFRAG_TIMING]', error);
+    return null;
+  }
 
   return data || null;
 }

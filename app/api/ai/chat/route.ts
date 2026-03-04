@@ -18,11 +18,19 @@ function getOpenAI(): OpenAI {
   return _openai;
 }
 
+// ── Helpers ───────────────────────────────────────────────────
+
+function logNonCritical(err: unknown): void {
+  console.error('[DEFRAG_API] Non-critical:', err);
+}
+
+// ── POST handler — intelligence pipeline ──────────────────────
+
 export async function POST(req: NextRequest) {
   console.log('[DEFRAG_API] POST /api/ai/chat');
 
   try {
-    // Get authenticated user
+    // ── 1. Auth ───────────────────────────────────────────────
     const supabase = await createServerClient();
     if (!supabase) {
       console.error('[DEFRAG_API] Chat: missing SUPABASE env group');
@@ -31,23 +39,21 @@ export async function POST(req: NextRequest) {
     const { data: { session }, error: authError } = await supabase.auth.getSession();
 
     if (authError || !session?.user) {
-      console.log('[DEFRAG_API] Chat: Unauthorized');
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
     const userId = session.user.id;
 
-    // Rate limiting (10/min per user)
+    // ── 2. Rate limit ─────────────────────────────────────────
     const rateLimitResult = checkRateLimit(userId, '/api/ai/chat');
     if (!rateLimitResult.allowed) {
-      console.log('[DEFRAG_API] Chat: Rate limited for user:', userId);
       return NextResponse.json(
         { message: 'Too many requests. Please wait a moment.' },
         { status: 429, headers: getRateLimitHeaders(rateLimitResult) }
       );
     }
 
-    // Parse request
+    // ── 3. Parse + sanitise input ─────────────────────────────
     const body = await req.json();
     const { message, conversation_id, person_id } = body;
 
@@ -55,19 +61,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Message required' }, { status: 400 });
     }
 
-    // Token protection — cap input length to prevent prompt injection / cost spikes
-    const sanitisedMessage = message.length > 2000 ? message.slice(0, 2000) : message;
+    // Cap input to prevent prompt injection / cost spikes
+    const sanitised = message.length > 2000 ? message.slice(0, 2000) : message;
 
-    // Get or create conversation
+    // ── 4. Get or create conversation ─────────────────────────
     let conversationId = conversation_id;
-    
+
     if (!conversationId) {
       const { data: newConv, error: convError } = await supabaseAdmin
         .from('conversations')
-        .insert({
-          user_id: userId,
-          title: message.slice(0, 50),
-        })
+        .insert({ user_id: userId, title: sanitised.slice(0, 50) })
         .select('id')
         .single();
 
@@ -79,101 +82,234 @@ export async function POST(req: NextRequest) {
       conversationId = newConv.id;
     }
 
-    // Store user message
-    const { data: userMessage } = await supabaseAdmin
-      .from("messages")
-      .insert({
-        conversation_id: conversationId,
-        role: "user",
-        content: sanitisedMessage,
-      })
-      .select("id")
+    // ── 5. Store user message ─────────────────────────────────
+    const { data: userMsg } = await supabaseAdmin
+      .from('messages')
+      .insert({ conversation_id: conversationId, role: 'user', content: sanitised })
+      .select('id')
       .single();
 
-    // Get user's birthline for context
-    const { data: birthline } = await supabaseAdmin
-      .from('birthlines')
-      .select('*')
-      .eq('user_id', userId)
-      .single();
+    // ── 6. Fetch person context ───────────────────────────────
+    let personContext: {
+      name: string;
+      relationship_label: string;
+      birth_date: string | null;
+      birth_time: string | null;
+      birth_place: string | null;
+      privacy_level: string;
+    } | null = null;
 
-    // Get person context if person_id provided
-    let personContext = null;
     if (person_id) {
       const { data: person } = await supabaseAdmin
         .from('people')
-        .select('*')
+        .select('name, relationship_label, birth_date, birth_time, birth_place, privacy_level')
         .eq('id', person_id)
         .eq('owner_user_id', userId)
         .single();
 
-      if (person) {
-        personContext = {
-          name: person.name,
-          relationship_label: person.relationship_label,
-          birth_date: person.birth_date,
-          birth_time: person.birth_time,
-          birth_place: person.birth_place,
-          privacy_level: person.privacy_level,
-        };
+      personContext = person || null;
+    }
+
+    // ── 7. Pattern detection (single pass) ────────────────────
+    const pattern = detectRelationalPattern(sanitised, personContext);
+
+    // ── 8. Write phase ────────────────────────────────────────
+    // Updates happen BEFORE fetches so context reflects current state.
+
+    if (pattern.pattern !== 'unknown') {
+      await updateUserRelationalProfile(supabaseAdmin, userId, pattern.pattern);
+      inferRelationalStyles(supabaseAdmin, userId).catch(logNonCritical);
+
+      if (person_id) {
+        updateRelationshipAnchor(supabaseAdmin, userId, person_id, pattern.pattern).catch(logNonCritical);
+        updateRelationshipTiming(supabaseAdmin, userId, person_id, pattern.pattern).catch(logNonCritical);
+        updatePersonStateFromChat(supabaseAdmin, person_id, pattern).catch(logNonCritical);
       }
     }
 
-    // Generate AI response
-    const aiResponse = await generateResponse(
-      sanitisedMessage,
-      birthline,
-      personContext,
-      conversationId,
-      userMessage?.id ?? null,
-      userId,
-      person_id ?? null
-    );
+    // ── 9. Fetch phase (parallel) ─────────────────────────────
+    const [birthline, userProfile, anchor, timingInsight, relationshipMemory, memory] = await Promise.all([
+      // Natal context
+      supabaseAdmin
+        .from('birthlines')
+        .select('dob, birth_time, birth_city')
+        .eq('user_id', userId)
+        .single()
+        .then((r: { data: any }) => r.data)
+        .catch(() => null),
 
-    // Store assistant message
+      // User relational profile
+      getUserRelationalProfile(supabaseAdmin, userId).catch(() => null),
+
+      // Relationship anchor (per-person, most frequent pattern)
+      person_id
+        ? getRelationshipAnchor(supabaseAdmin, userId, person_id).catch(() => null)
+        : Promise.resolve(null),
+
+      // Timing insight (per-person at current day/hour)
+      person_id
+        ? getTimingInsight(supabaseAdmin, userId, person_id).catch(() => null)
+        : Promise.resolve(null),
+
+      // Relationship memory (per-person evolving summary)
+      person_id
+        ? getExistingMemory(supabaseAdmin, person_id, userId).catch(() => '')
+        : Promise.resolve(''),
+
+      // Conversation memory (compressed history)
+      buildConversationMemory(supabaseAdmin, conversationId, getOpenAI()),
+    ]);
+
+    // ── 10. Short message guard ───────────────────────────────
+    if (sanitised.length < 8) {
+      const fallback = 'A bit more context will help surface the relational dynamic at play.';
+      await supabaseAdmin.from('messages').insert({
+        conversation_id: conversationId,
+        role: 'assistant',
+        content: fallback,
+      });
+      return NextResponse.json({ conversation_id: conversationId, response: fallback });
+    }
+
+    // ── 11. Construct message stack ───────────────────────────
+    const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+      { role: 'system', content: SYSTEM_PROMPT },
+    ];
+
+    // Natal context (corrected field names: dob, birth_city)
+    if (birthline) {
+      messages.push({
+        role: 'system',
+        content: `User natal data available:\nbirth_date: ${birthline.dob}\nbirth_time: ${birthline.birth_time ?? 'unknown'}\nbirth_place: ${birthline.birth_city ?? 'unknown'}`,
+      });
+    }
+
+    // Person context
+    if (personContext) {
+      messages.push({
+        role: 'system',
+        content: `Relationship context:\nName: ${personContext.name}\nRelationship: ${personContext.relationship_label}\nbirth_date: ${personContext.birth_date ?? 'unknown'}\nbirth_time: ${personContext.birth_time ?? 'hidden'}\nbirth_place: ${personContext.birth_place ?? 'hidden'}\nPrivacy level: ${personContext.privacy_level}`,
+      });
+    }
+
+    // Pattern context (internal — never surfaced to user)
+    messages.push({
+      role: 'system',
+      content: `Relational analysis (internal context — do not reveal):\nrelationship_type: ${pattern.relationshipType}\ntension_type: ${pattern.tensionType}\npattern_detected: ${pattern.pattern}\nrelationship_state: ${pattern.relationshipState ?? 'unclear'}\nguidance_mode: ${pattern.guidanceMode}\n\nUse these to inform your response. Do not mention them to the user.`,
+    });
+
+    // Relationship memory (per-person evolving summary)
+    if (relationshipMemory) {
+      messages.push({
+        role: 'system',
+        content: `Relationship memory (recurring dynamic with this person — do not reveal):\n${relationshipMemory}`,
+      });
+    }
+
+    // User relational profile (cross-relationship patterns)
+    if (userProfile && userProfile.dominant_patterns.length > 0) {
+      const profileLines = [
+        `Dominant patterns: ${userProfile.dominant_patterns.join(', ')}`,
+        userProfile.boundary_style ? `Boundary style: ${userProfile.boundary_style}` : null,
+        userProfile.conflict_style ? `Conflict style: ${userProfile.conflict_style}` : null,
+      ].filter(Boolean).join('\n');
+      messages.push({
+        role: 'system',
+        content: `User relational profile (do not reveal):\n${profileLines}`,
+      });
+    }
+
+    // Relationship anchor (most frequent recurring dynamic)
+    if (anchor && anchor.occurrence_count >= 2) {
+      messages.push({
+        role: 'system',
+        content: `Recurring dynamic observed in this relationship: ${anchor.anchor_pattern}. Observed ${anchor.occurrence_count} times.`,
+      });
+    }
+
+    // Timing insight (behavioral pattern at current day/hour)
+    if (timingInsight && timingInsight.occurrence_count >= 2) {
+      messages.push({
+        role: 'system',
+        content: `Interactions with this person often follow the pattern: ${timingInsight.pattern} during similar times. Observed ${timingInsight.occurrence_count} times at this day/hour.`,
+      });
+    }
+
+    // Conversation summary (compressed older turns)
+    if (memory.summary) {
+      messages.push({
+        role: 'system',
+        content: `Conversation summary (earlier context):\n${memory.summary}`,
+      });
+    }
+
+    // Recent messages (verbatim window)
+    for (const m of memory.recentMessages) {
+      messages.push({ role: m.role, content: m.content });
+    }
+
+    // Format rules (placed before user message for enforcement)
+    messages.push({ role: 'system', content: FORMAT_RULES });
+
+    // Current user message (always last)
+    messages.push({ role: 'user', content: sanitised });
+
+    // ── 12. LLM call ──────────────────────────────────────────
+    let response = '';
+
+    try {
+      const completion = await Promise.race([
+        getOpenAI().chat.completions.create({
+          model: 'gpt-4.1',
+          temperature: 0.4,
+          messages,
+        }),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('AI timeout')), 15000)
+        ),
+      ]);
+
+      response = completion.choices[0]?.message?.content || '';
+    } catch (err) {
+      console.error('[DEFRAG_API] AI call failed:', err);
+      response = "I'm having trouble generating insight right now. Please try again in a moment.";
+    }
+
+    // ── 13. Post-process: strip questions → structure → cap ───
+    response = stripQuestions(response);
+    response = ensureStructure(response);
+
+    if (response.length > 1800) {
+      response = response.slice(0, 1800);
+    }
+
+    // ── 14. Save assistant message ────────────────────────────
     await supabaseAdmin.from('messages').insert({
       conversation_id: conversationId,
       role: 'assistant',
-      content: aiResponse,
+      content: response,
     });
 
-    // Update relationship state + relational memory if chatting about a specific person
+    // ── 15. Store pattern metadata on user message ────────────
+    if (userMsg?.id) {
+      supabaseAdmin
+        .from('messages')
+        .update({ relational_pattern: pattern.pattern, tension_type: pattern.tensionType })
+        .eq('id', userMsg.id)
+        .then(() => {})
+        .catch(logNonCritical);
+    }
+
+    // ── 16. Fire-and-forget: relationship memory compression ──
     if (person_id) {
-      try {
-        const pattern = detectRelationalPattern(sanitisedMessage, personContext);
-        await updatePersonStateFromChat(supabaseAdmin, person_id, pattern);
-
-        // Update user relational profile (cheap — no LLM)
-        await updateUserRelationalProfile(supabaseAdmin, userId, pattern.pattern);
-        inferRelationalStyles(supabaseAdmin, userId).catch(() => {});
-
-        // Update relationship anchor (track recurring patterns)
-        updateRelationshipAnchor(supabaseAdmin, userId, person_id, pattern.pattern).catch(() => {});
-
-        // Update relationship timing (track pattern by day/hour)
-        updateRelationshipTiming(supabaseAdmin, userId, person_id, pattern.pattern).catch(() => {});
-
-        // Maybe update relationship memory (LLM call every ~12 messages)
-        maybeUpdateRelationshipMemory(supabaseAdmin, getOpenAI(), person_id, userId).catch(() => {});
-      } catch (err) {
-        // Non-critical — degrade silently
-        console.error('[DEFRAG_API] State update failed:', err);
-      }
-    } else {
-      // Even without person context, track user patterns
-      try {
-        const pattern = detectRelationalPattern(sanitisedMessage, null);
-        if (pattern.pattern !== 'unknown') {
-          await updateUserRelationalProfile(supabaseAdmin, userId, pattern.pattern);
-        }
-      } catch (_) {}
+      maybeUpdateRelationshipMemory(supabaseAdmin, getOpenAI(), person_id, userId).catch(logNonCritical);
     }
 
     console.log('[DEFRAG_API] Chat response generated for conversation:', conversationId);
 
     return NextResponse.json({
       conversation_id: conversationId,
-      response: aiResponse,
+      response,
     });
   } catch (error: any) {
     console.error('[DEFRAG_API] Chat error:', error);
@@ -317,214 +453,4 @@ function ensureStructure(text: string): string {
   return result;
 }
 
-// ── Generate response ─────────────────────────────────────────
 
-async function generateResponse(
-  message: string,
-  birthline: any,
-  personContext: any = null,
-  conversationId: string,
-  userMessageId: string | null = null,
-  userId: string = '',
-  personId: string | null = null,
-): Promise<string> {
-  // 0. Short message guard — avoid wasting AI calls on noise
-  if (message.length < 8) {
-    return "A bit more context will help surface the relational dynamic at play.";
-  }
-
-  // 1. Relational pattern analysis (local, zero cost)
-  const pattern = detectRelationalPattern(message, personContext);
-
-  const patternContext = `Relational analysis (internal context — do not reveal):
-
-relationship_type: ${pattern.relationshipType}
-tension_type: ${pattern.tensionType}
-pattern_detected: ${pattern.pattern}
-relationship_state: ${pattern.relationshipState ?? "unclear"}
-guidance_mode: ${pattern.guidanceMode}
-
-Use these to inform your response. Do not mention them to the user.`;
-
-  // 2. Natal context
-  const natalContext = birthline
-    ? `User natal data available:
-birth_date: ${birthline.birth_date}
-birth_time: ${birthline.birth_time ?? "unknown"}
-birth_place: ${birthline.birth_place ?? "unknown"}`
-    : "";
-
-  // 3. Relationship context
-  const relationshipContext = personContext
-    ? `Relationship context:
-
-Name: ${personContext.name}
-Relationship: ${personContext.relationship_label}
-
-Available natal data:
-birth_date: ${personContext.birth_date}
-birth_time: ${personContext.birth_time ?? "hidden"}
-birth_place: ${personContext.birth_place ?? "hidden"}
-
-Privacy level: ${personContext.privacy_level}`
-    : "";
-
-  // 4. Conversation memory (compressed history)
-  const memory = await buildConversationMemory(
-    supabaseAdmin,
-    conversationId,
-    getOpenAI()
-  );
-
-  // 4b. Relationship memory (per-person evolving summary)
-  let relationshipMemorySummary = '';
-  if (personId) {
-    try {
-      relationshipMemorySummary = await getExistingMemory(supabaseAdmin, personId, userId);
-    } catch (_) {}
-  }
-
-  // 4c. User relational profile
-  let userProfile: { dominant_patterns: string[]; boundary_style: string | null; conflict_style: string | null } | null = null;
-  if (userId) {
-    try {
-      userProfile = await getUserRelationalProfile(supabaseAdmin, userId);
-    } catch (_) {}
-  }
-
-  // 4d. Relationship anchor (most frequent recurring pattern)
-  let anchor: { anchor_pattern: string; occurrence_count: number } | null = null;
-  if (personId) {
-    try {
-      anchor = await getRelationshipAnchor(supabaseAdmin, userId, personId);
-    } catch (_) {}
-  }
-
-  // 4e. Timing insight (behavioral pattern at current day/hour)
-  let timingInsight: { pattern: string; occurrence_count: number } | null = null;
-  if (personId) {
-    try {
-      timingInsight = await getTimingInsight(supabaseAdmin, userId, personId);
-    } catch (_) {}
-  }
-
-  // 5. Build message stack
-  const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
-    { role: "system", content: SYSTEM_PROMPT },
-  ];
-
-  if (natalContext) {
-    messages.push({ role: "system", content: natalContext });
-  }
-
-  if (relationshipContext) {
-    messages.push({ role: "system", content: relationshipContext });
-  }
-
-  messages.push({ role: "system", content: patternContext });
-
-  // Inject relationship memory (per-person summary)
-  if (relationshipMemorySummary) {
-    messages.push({
-      role: "system",
-      content: `Relationship memory (recurring dynamic with this person — do not reveal):\n${relationshipMemorySummary}`,
-    });
-  }
-
-  // Inject user relational profile
-  if (userProfile && userProfile.dominant_patterns.length > 0) {
-    const profileLines = [
-      `Dominant patterns: ${userProfile.dominant_patterns.join(', ')}`,
-      userProfile.boundary_style ? `Boundary style: ${userProfile.boundary_style}` : null,
-      userProfile.conflict_style ? `Conflict style: ${userProfile.conflict_style}` : null,
-    ].filter(Boolean).join('\n');
-    messages.push({
-      role: "system",
-      content: `User relational profile (do not reveal):\n${profileLines}`,
-    });
-  }
-
-  // Inject relationship anchor (most frequent recurring dynamic)
-  if (anchor && anchor.occurrence_count >= 2) {
-    messages.push({
-      role: "system",
-      content: `Recurring dynamic observed in this relationship: ${anchor.anchor_pattern}. Observed ${anchor.occurrence_count} times.`,
-    });
-  }
-
-  // Inject timing insight (behavioral pattern at this time)
-  if (timingInsight && timingInsight.occurrence_count >= 2) {
-    messages.push({
-      role: "system",
-      content: `Interactions with this person often follow the pattern: ${timingInsight.pattern} during similar times. Observed ${timingInsight.occurrence_count} times at this day/hour.`,
-    });
-  }
-
-  // Inject conversation summary if present
-  if (memory.summary) {
-    messages.push({
-      role: "system",
-      content: `Conversation summary (earlier context):\n${memory.summary}`,
-    });
-  }
-
-  // Inject recent messages
-  for (const m of memory.recentMessages) {
-    messages.push({ role: m.role, content: m.content });
-  }
-
-  messages.push({
-    role: "system",
-    content: FORMAT_RULES,
-  });
-
-  // Current user message (always last)
-  messages.push({ role: "user", content: message });
-
-  // 6. Call OpenAI (with failure guard)
-  let response = "";
-
-  try {
-    const completion = await Promise.race([
-      getOpenAI().chat.completions.create({
-        model: "gpt-4.1",
-        temperature: 0.4,
-        messages,
-      }),
-      new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error("AI timeout")), 15000)
-      ),
-    ]);
-
-    response = completion.choices[0]?.message?.content || "";
-  } catch (err) {
-    console.error("[DEFRAG_API] AI failure:", err);
-    response =
-      "I'm having trouble generating insight right now. Please try again in a moment.";
-  }
-
-  // 7. Response pipeline: strip questions → ensure structure → cap length
-  response = stripQuestions(response);
-  response = ensureStructure(response);
-
-  if (response.length > 1800) {
-    response = response.slice(0, 1800);
-  }
-
-  // 8. Store pattern signals for analytics (by message ID)
-  if (userMessageId) {
-    try {
-      await supabaseAdmin
-        .from("messages")
-        .update({
-          relational_pattern: pattern.pattern,
-          tension_type: pattern.tensionType,
-        })
-        .eq("id", userMessageId);
-    } catch (_) {
-      // Non-critical — degrade silently
-    }
-  }
-
-  return response;
-}

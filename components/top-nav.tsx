@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard' },
+  { href: '/dashboard', label: 'People' },
   { href: '/chat', label: 'Chat' },
   { href: '/settings', label: 'Settings' },
 ];
@@ -14,19 +15,19 @@ export function TopNav() {
 
   return (
     <nav className="w-full border-b border-white/[0.08]">
-      <div className="mx-auto max-w-[920px] px-6 h-14 flex items-center justify-between">
+      <div className="mx-auto max-w-[1100px] px-6 h-14 flex items-center justify-between">
         <Link href="/dashboard" className="font-mono text-[13px] font-semibold tracking-[0.2em] text-white">
           DEFRAG
         </Link>
         <div className="flex items-center gap-6">
           {navItems.map((item) => (
             <Link
-              key={item.href}
+              key={item.label}
               href={item.href}
-              className={`font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] transition-colors duration-200 ${
+              className={`text-[13px] tracking-normal transition-colors duration-200 ${
                 pathname === item.href
                   ? 'text-white'
-                  : 'text-white/50 hover:text-white/80'
+                  : 'text-white/60 hover:text-white'
               }`}
             >
               {item.label}

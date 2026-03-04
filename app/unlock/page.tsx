@@ -23,8 +23,8 @@ const plans = [
     cta: 'Start with Solo',
   },
   {
-    id: 'plus',
-    name: 'Plus',
+    id: 'circle',
+    name: 'Circle',
     price: '$33',
     period: '/month',
     description: 'Understand your relationships',
@@ -33,9 +33,8 @@ const plans = [
       'Add family & team members',
       'Relationship overlays',
       'Group dynamics insights',
-      'Daily audio briefings',
     ],
-    cta: 'Upgrade to Plus',
+    cta: 'Upgrade to Circle',
     highlighted: true,
   },
 ];
@@ -94,11 +93,11 @@ function UnlockContent() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans antialiased flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen text-white font-sans antialiased flex flex-col items-center justify-center p-6">
       <div className="mx-auto w-full max-w-[920px] px-6 md:px-8 space-y-10">
         <div className="text-center space-y-3">
-          <p className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">Select a plan</p>
-          <h1 className="text-[26px] md:text-[36px] font-normal tracking-[-0.015em]">Choose your plan to continue</h1>
+          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Select a plan</p>
+          <h1 className="text-[26px] md:text-[34px] font-normal tracking-[-0.015em]">Choose your plan to continue</h1>
           {canceled && (
             <p className="text-[14px] text-yellow-500/70">Checkout was canceled. Pick a plan when you&apos;re ready.</p>
           )}
@@ -108,7 +107,7 @@ function UnlockContent() {
           {plans.map((plan) => (
             <div
               key={plan.id}
-              className={`border p-6 md:p-8 space-y-6 transition-all duration-200 ease-out rounded-xl hover:translate-y-[-1px] hover:scale-[1.01] ${
+              className={`border p-6 md:p-8 space-y-6 transition-all duration-200 ease-out rounded-sm ${
                 plan.highlighted 
                   ? 'border-white/20 bg-white/[0.04] hover:border-white/35 hover:bg-white/[0.06]' 
                   : 'border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]'
@@ -116,17 +115,17 @@ function UnlockContent() {
             >
               <div>
                 <h2 className="text-[22px] md:text-[24px] font-normal tracking-[-0.015em]">{plan.name}</h2>
-                <p className="font-mono text-[11px] md:text-[12px] text-white/50 mt-1 uppercase tracking-[0.2em]">{plan.description}</p>
+                <p className="font-mono text-[11px] text-white/50 mt-1 uppercase tracking-[0.2em]">{plan.description}</p>
               </div>
 
               <div className="flex items-baseline gap-1">
-                <span className="text-[36px] md:text-[42px] font-normal tracking-[-0.02em]">{plan.price}</span>
-                <span className="text-white/45 text-[15px]">{plan.period}</span>
+                <span className="text-[34px] md:text-[38px] font-normal tracking-[-0.02em]">{plan.price}</span>
+                <span className="text-white/45 text-[14px]">{plan.period}</span>
               </div>
 
               <ul className="space-y-3">
                 {plan.features.map((feature, i) => (
-                  <li key={i} className="flex items-center gap-2.5 text-[15px] md:text-[16px] text-white/65">
+                  <li key={i} className="flex items-center gap-2.5 text-[14px] text-white/65">
                     <Check className="w-4 h-4 text-white/35 shrink-0" />
                     <span>{feature}</span>
                   </li>
@@ -136,10 +135,10 @@ function UnlockContent() {
               <button
                 onClick={() => handleCheckout(plan.id)}
                 disabled={loading !== null}
-                className={`w-full h-[52px] rounded-xl font-mono text-[13px] font-semibold uppercase tracking-[0.08em] transition-all duration-200 ease-out active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed ${
+                className={`w-full h-[48px] rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] transition-all duration-200 ease-out active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed ${
                   plan.highlighted
-                    ? 'bg-white text-black hover:bg-white/90 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)]'
-                    : 'border border-white/25 text-white/80 hover:text-white hover:border-white/50 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)]'
+                    ? 'bg-white text-black hover:bg-white/90'
+                    : 'border border-white/25 text-white/80 hover:text-white hover:border-white/50'
                 }`}
               >
                 {loading === plan.id ? 'Loading...' : plan.cta}
@@ -158,7 +157,7 @@ function UnlockContent() {
 
 export default function UnlockPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-black" />}>
+    <Suspense fallback={<div className="min-h-screen" />}>
       <UnlockContent />
     </Suspense>
   );

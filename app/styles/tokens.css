@@ -1,16 +1,17 @@
 :root {
-  --bg-black: #000000;
-  --panel-black: #050505;
+  --bg-black: #0A0A0A;
+  --panel-black: #0A0A0A;
   --text-primary: #ffffff;
-  --text-secondary: rgba(255,255,255,0.6);
-  --text-muted: rgba(255,255,255,0.3);
+  --text-secondary: rgba(255,255,255,0.7);
+  --text-muted: rgba(255,255,255,0.45);
+  --text-faint: rgba(255,255,255,0.4);
   --line-low: rgba(255,255,255,0.1);
   --line-mid: rgba(255,255,255,0.2);
   --accent-risk: #ffffff;
-  --radius-card: 12px;
-  --radius-button: 8px;
-  --radius-input: 8px;
-  --ambient-glow: radial-gradient(circle at 50% 10%, rgba(255,255,255,0.06), transparent 60%);
+  --radius-card: 2px;
+  --radius-button: 2px;
+  --radius-input: 2px;
+  --ambient-glow: radial-gradient(circle at 50% 10%, rgba(255,255,255,0.04), transparent 60%);
 }
 
 * {

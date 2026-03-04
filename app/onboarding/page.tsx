@@ -90,11 +90,11 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white font-sans antialiased p-6">
+    <div className="flex flex-col items-center justify-center min-h-screen text-white font-sans antialiased p-6">
       <div className="mx-auto w-full max-w-[440px] space-y-8">
         <div className="text-center">
           <p className="font-mono text-[13px] font-semibold tracking-[0.2em] text-white mb-3">DEFRAG</p>
-          <p className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">Tell us about yourself</p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Tell us about yourself</p>
         </div>
 
         {/* Progress indicator */}
@@ -107,7 +107,7 @@ export default function OnboardingPage() {
           ))}
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6 border border-white/10 bg-white/[0.02] p-6 md:p-8 rounded-xl animate-fade-in">
+        <form onSubmit={handleSubmit} className="space-y-6 border border-white/10 bg-white/[0.02] p-6 md:p-8 rounded-sm animate-fade-in">
           
           {/* Step 1: Date of Birth */}
           {step === 1 && (
@@ -124,14 +124,14 @@ export default function OnboardingPage() {
                   value={dob}
                   onChange={(e) => setDob(e.target.value)}
                   required
-                  className="bg-black border-white/[0.08] rounded-xl focus-visible:ring-1 focus-visible:ring-white/20 focus-visible:border-white/30 h-[48px] px-5 text-[15px]"
+                  className="bg-transparent border-white/[0.08] rounded-sm focus-visible:border-white/30 h-[48px] px-5 text-[14px]"
                 />
                 <p className="font-mono text-[11px] text-white/35 tracking-[0.1em]">Used to establish your baseline.</p>
               </div>
               <Button
                 type="button"
                 onClick={handleNext}
-                className="w-full h-[52px] bg-white text-black hover:bg-white/90 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] active:scale-[0.98] rounded-xl font-mono text-[13px] font-semibold uppercase tracking-[0.08em] transition-all duration-200 ease-out"
+                className="w-full h-[48px] bg-white text-black hover:bg-white/90 active:scale-[0.98] rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] transition-all duration-200 ease-out"
               >
                 Continue
               </Button>
@@ -153,7 +153,7 @@ export default function OnboardingPage() {
                   value={unknownTime ? "12:00" : time}
                   onChange={(e) => setTime(e.target.value)}
                   disabled={unknownTime}
-                  className="bg-black border-white/[0.08] rounded-xl focus-visible:ring-1 focus-visible:ring-white/20 focus-visible:border-white/30 disabled:opacity-40 h-[48px] px-5 text-[15px]"
+                  className="bg-transparent border-white/[0.08] rounded-sm focus-visible:border-white/30 disabled:opacity-40 h-[48px] px-5 text-[14px]"
                 />
                 <p className="font-mono text-[11px] text-white/35 tracking-[0.1em]">Optional. If unknown, we estimate using noon.</p>
               </div>
@@ -178,14 +178,14 @@ export default function OnboardingPage() {
                   type="button"
                   onClick={handleBack}
                   variant="outline"
-                  className="flex-1 h-[52px] border-white/25 text-white/80 hover:bg-white/[0.04] hover:border-white/50 active:scale-[0.98] rounded-xl font-mono text-[13px] tracking-[0.08em] uppercase transition-all duration-200 ease-out"
+                  className="flex-1 h-[48px] border-white/25 text-white/80 hover:bg-white/[0.04] hover:border-white/50 active:scale-[0.98] rounded-sm font-mono text-[13px] tracking-[0.08em] uppercase transition-all duration-200 ease-out"
                 >
                   Back
                 </Button>
                 <Button
                   type="button"
                   onClick={handleNext}
-                  className="flex-1 h-[52px] bg-white text-black hover:bg-white/90 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] active:scale-[0.98] rounded-xl font-mono text-[13px] font-semibold uppercase tracking-[0.08em] transition-all duration-200 ease-out"
+                  className="flex-1 h-[48px] bg-white text-black hover:bg-white/90 active:scale-[0.98] rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] transition-all duration-200 ease-out"
                 >
                   Continue
                 </Button>
@@ -209,7 +209,7 @@ export default function OnboardingPage() {
                   value={birthCity}
                   onChange={(e) => setBirthCity(e.target.value)}
                   required
-                  className="bg-black border-white/[0.08] rounded-xl focus-visible:ring-1 focus-visible:ring-white/20 focus-visible:border-white/30 placeholder:text-white/30 h-[48px] px-5 text-[15px]"
+                  className="bg-transparent border-white/[0.08] rounded-sm focus-visible:border-white/30 placeholder:text-white/30 h-[48px] px-5 text-[14px]"
                 />
                 <p className="font-mono text-[11px] text-white/35 tracking-[0.1em]">Provides geographic context for timing patterns.</p>
               </div>
@@ -218,13 +218,13 @@ export default function OnboardingPage() {
                   type="button"
                   onClick={handleBack}
                   variant="outline"
-                  className="flex-1 h-[52px] border-white/25 text-white/80 hover:bg-white/[0.04] hover:border-white/50 active:scale-[0.98] rounded-xl font-mono text-[13px] tracking-[0.08em] uppercase transition-all duration-200 ease-out"
+                  className="flex-1 h-[48px] border-white/25 text-white/80 hover:bg-white/[0.04] hover:border-white/50 active:scale-[0.98] rounded-sm font-mono text-[13px] tracking-[0.08em] uppercase transition-all duration-200 ease-out"
                 >
                   Back
                 </Button>
                 <Button
                   type="submit"
-                  className="flex-1 h-[52px] bg-white text-black hover:bg-white/90 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] active:scale-[0.98] rounded-xl font-mono text-[13px] font-semibold uppercase tracking-[0.08em] transition-all duration-200 ease-out"
+                  className="flex-1 h-[48px] bg-white text-black hover:bg-white/90 active:scale-[0.98] rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] transition-all duration-200 ease-out"
                   disabled={loading}
                 >
                   {loading ? "Saving..." : "Complete"}

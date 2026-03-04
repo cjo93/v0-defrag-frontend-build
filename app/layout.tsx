@@ -98,10 +98,12 @@ export default function RootLayout({
   const buildDate = buildTimestamp ? buildTimestamp.split('T')[0] : new Date().toISOString().split('T')[0];
 
   return (
-    <html lang="en" className={`${geist.variable} ${geistMono.variable} bg-black text-white`}>
-      <body className="min-h-[100dvh] bg-black text-white font-sans antialiased">
+    <html lang="en" className={`${geist.variable} ${geistMono.variable} bg-[#0A0A0A] text-white`}>
+      <body className="min-h-[100dvh] bg-[#0A0A0A] text-white font-sans antialiased">
         <AuthProvider>
-          {children}
+          <div className="min-h-screen bg-[#0A0A0A] text-white">
+            {children}
+          </div>
           <AddToHomePrompt />
         </AuthProvider>
         <Analytics />

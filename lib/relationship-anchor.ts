@@ -13,6 +13,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * Increment or create an anchor for a detected pattern.
+ * Uses select-then-upsert to prevent race conditions.
  */
 export async function updateRelationshipAnchor(
   admin: SupabaseClient,
@@ -22,30 +23,43 @@ export async function updateRelationshipAnchor(
 ): Promise<void> {
   if (!pattern || pattern === 'unknown') return;
 
-  const { data } = await admin
-    .from('relationship_anchor')
-    .select('id, occurrence_count')
-    .eq('owner_user_id', userId)
-    .eq('person_id', personId)
-    .eq('anchor_pattern', pattern)
-    .maybeSingle();
+  try {
+    const { data, error } = await admin
+      .from('relationship_anchor')
+      .select('id, occurrence_count')
+      .eq('owner_user_id', userId)
+      .eq('person_id', personId)
+      .eq('anchor_pattern', pattern)
+      .maybeSingle();
 
-  if (data) {
-    await admin
-      .from('relationship_anchor')
-      .update({
-        occurrence_count: data.occurrence_count + 1,
-        last_seen: new Date().toISOString(),
-      })
-      .eq('id', data.id);
-  } else {
-    await admin
-      .from('relationship_anchor')
-      .insert({
-        owner_user_id: userId,
-        person_id: personId,
-        anchor_pattern: pattern,
-      });
+    if (error) {
+      console.error('[DEFRAG_ANCHOR]', error);
+      return;
+    }
+
+    if (data) {
+      await admin
+        .from('relationship_anchor')
+        .update({
+          occurrence_count: data.occurrence_count + 1,
+          last_seen: new Date().toISOString(),
+        })
+        .eq('id', data.id);
+    } else {
+      await admin
+        .from('relationship_anchor')
+        .upsert({
+          owner_user_id: userId,
+          person_id: personId,
+          anchor_pattern: pattern,
+          occurrence_count: 1,
+          last_seen: new Date().toISOString(),
+        }, {
+          onConflict: 'owner_user_id,person_id,anchor_pattern',
+        });
+    }
+  } catch (err) {
+    console.error('[DEFRAG_ANCHOR]', err);
   }
 }
 

@@ -1,7 +1,7 @@
 import { createServerClient, supabaseAdmin } from './auth-server';
 import type { UserStatus, Plan, SubscriptionStatus } from './supabase/types';
 
-// Email allowlist for forced plus unlock
+// Email allowlist for forced circle unlock
 const ALLOWLIST_EMAILS = [
   'info@defrag.app',
   'chadowen93@gmail.com',
@@ -25,7 +25,7 @@ export async function getUserStatus(): Promise<UserStatus | null> {
     const userId = session.user.id;
     const userEmail = session.user.email || '';
 
-    // Check allowlist for forced plus unlock
+    // Check allowlist for forced circle unlock
     const isAllowlisted = ALLOWLIST_EMAILS.includes(userEmail.toLowerCase());
 
     // Fetch profile
@@ -54,15 +54,15 @@ export async function getUserStatus(): Promise<UserStatus | null> {
     // Determine unlock states
     const isActiveSubscription = ['active', 'trialing', 'unlocked'].includes(subscriptionStatus);
     const isSoloUnlocked = isAllowlisted || isActiveSubscription;
-    const isPlusUnlocked = isAllowlisted || (plan === 'plus' && isActiveSubscription);
+    const isCircleUnlocked = isAllowlisted || (plan === 'circle' && isActiveSubscription);
 
     return {
       profile_ready: !!profile,
       has_birthline: !!birthline,
       has_relationships: (connectionCount || 0) > 0,
       is_solo_unlocked: isSoloUnlocked,
-      is_plus_unlocked: isPlusUnlocked,
-      plan: isAllowlisted ? 'plus' : plan,
+      is_circle_unlocked: isCircleUnlocked,
+      plan: isAllowlisted ? 'circle' : plan,
       subscription_status: isAllowlisted ? 'unlocked' : subscriptionStatus,
     };
   } catch (error) {

@@ -8,12 +8,12 @@ import Link from "next/link";
 import { TopNav } from "@/components/top-nav";
 import { ServiceUnavailable } from "@/components/service-unavailable";
 import { useToast } from "@/hooks/use-toast";
-import RelationshipMap from "@/components/relationship-map";
+import RelationshipField from "@/components/relationship-field";
 import Panel from "@/components/panel";
 import TodaySummary from "@/components/today-summary";
 
 type UserStatus = {
-  plan: 'solo' | 'plus';
+  plan: 'solo' | 'circle';
   has_relationships: boolean;
 };
 
@@ -125,14 +125,14 @@ export default function DashboardPage() {
     loadStatus();
   }, [router]);
 
-  const isPlus = status?.plan === 'plus';
+  const isCircle = status?.plan === 'circle';
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black text-white font-sans antialiased">
+      <div className="min-h-screen text-white font-sans antialiased">
         <TopNav />
         <main className="max-w-[1100px] mx-auto px-6 py-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
@@ -163,10 +163,10 @@ export default function DashboardPage() {
     .sort((a, b) => (STATE_ORDER[a.state] ?? 4) - (STATE_ORDER[b.state] ?? 4));
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans antialiased">
+    <div className="min-h-screen text-white font-sans antialiased">
       <TopNav />
       <main className="max-w-[1100px] mx-auto px-6 py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
           {/* ─── Panel 1: Today Summary ─── */}
           <div className="col-span-12 lg:col-span-7 animate-fade-in">
@@ -190,7 +190,7 @@ export default function DashboardPage() {
 
           {/* ─── Panel 2: Relationship Map ─── */}
           <div className="col-span-12 lg:col-span-5 animate-fade-in delay-50">
-            {isPlus ? (
+            {isCircle ? (
               <Panel title="RELATIONSHIP FIELD">
                 {/* Pending invites */}
                 {pendingInvites.length > 0 && (
@@ -214,12 +214,13 @@ export default function DashboardPage() {
                   </div>
                 )}
 
-                <RelationshipMap
-                  people={people}
-                  onAddPerson={() => {
-                    setAddMode("choose");
-                    setShowAddModal(true);
-                  }}
+                <RelationshipField
+                  people={people.map(p => ({
+                    id: p.id,
+                    name: p.name,
+                    relationship_label: p.relationship_label ?? undefined,
+                    relationship_state: (p.relationship_state as any) ?? undefined,
+                  }))}
                 />
               </Panel>
             ) : (
@@ -235,7 +236,7 @@ export default function DashboardPage() {
                     href="/unlock"
                     className="inline-flex items-center justify-center h-[40px] px-5 border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/35 active:scale-[0.98] transition-all duration-200"
                   >
-                    Upgrade to Plus
+                    Upgrade to Circle
                   </Link>
                 </div>
               </Panel>
@@ -301,9 +302,9 @@ export default function DashboardPage() {
               <div className="space-y-4">
                 <div className="grid sm:grid-cols-3 gap-3">
                   {[
-                    "Why does my mom react this way?",
-                    "Why does my partner shut down during conflict?",
-                    "Why does my boss push me so hard?",
+                    "Something feels tense",
+                    "Conversation keeps repeating",
+                    "I'm unsure what to say next",
                   ].map((prompt) => (
                     <Link
                       key={prompt}
@@ -325,14 +326,14 @@ export default function DashboardPage() {
           </div>
 
           {/* ─── Upgrade CTA (Solo only) ─── */}
-          {!isPlus && (
+          {!isCircle && (
             <div className="col-span-12 animate-fade-in delay-200">
               <Link href="/unlock" className="block group">
                 <div className="border border-white/10 bg-white/[0.02] p-6 hover:border-white/20 hover:bg-white/[0.04] active:scale-[0.998] transition-all duration-200">
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="font-mono text-[11px] uppercase tracking-[0.28em] text-white/40 font-medium mb-2">
-                        Upgrade to Plus
+                        Upgrade to Circle
                       </div>
                       <p className="text-[14px] text-white/65 leading-[1.6]">
                         Unlock relationship mapping, multi-person dynamics, and priority support.
@@ -478,7 +479,7 @@ function AddPersonModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm animate-fade-in">
-      <div className="w-full max-w-[440px] border border-white/10 bg-[#0a0a0a] rounded-xl p-6 md:p-8 space-y-6 relative">
+      <div className="w-full max-w-[440px] border border-white/10 bg-[#0a0a0a] rounded-sm p-6 md:p-8 space-y-6 relative">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-white/30 hover:text-white/60 transition-colors"
@@ -497,7 +498,7 @@ function AddPersonModal({
             <div className="space-y-3">
               <button
                 onClick={() => setMode('manual')}
-                className="w-full flex items-center gap-4 border border-white/[0.08] bg-white/[0.02] rounded-xl px-5 py-4 hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200 text-left"
+                className="w-full flex items-center gap-4 border border-white/[0.08] bg-white/[0.02] rounded-sm px-5 py-4 hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200 text-left"
               >
                 <Edit3 className="w-5 h-5 text-white/40 shrink-0" />
                 <div>
@@ -508,7 +509,7 @@ function AddPersonModal({
 
               <button
                 onClick={() => setMode('invite')}
-                className="w-full flex items-center gap-4 border border-white/[0.08] bg-white/[0.02] rounded-xl px-5 py-4 hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200 text-left"
+                className="w-full flex items-center gap-4 border border-white/[0.08] bg-white/[0.02] rounded-sm px-5 py-4 hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200 text-left"
               >
                 <UserPlus className="w-5 h-5 text-white/40 shrink-0" />
                 <div>
@@ -531,39 +532,39 @@ function AddPersonModal({
               <div className="space-y-1.5">
                 <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Name</label>
                 <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="First name"
-                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-xl text-[15px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
+                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[15px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
               </div>
               <div className="space-y-1.5">
                 <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Relationship</label>
                 <input type="text" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="e.g. Father, Partner, Friend"
-                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-xl text-[15px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
+                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[15px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
               </div>
               <div className="space-y-1.5">
                 <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Date of birth</label>
                 <input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)}
-                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-xl text-[15px] text-white outline-none focus:border-white/30 transition-colors [color-scheme:dark]" />
+                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[15px] text-white outline-none focus:border-white/30 transition-colors [color-scheme:dark]" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Birth time</label>
                   <input type="time" value={birthTime} onChange={(e) => setBirthTime(e.target.value)}
-                    className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-xl text-[15px] text-white outline-none focus:border-white/30 transition-colors [color-scheme:dark]" />
+                    className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[15px] text-white outline-none focus:border-white/30 transition-colors [color-scheme:dark]" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Birth place</label>
                   <input type="text" value={birthPlace} onChange={(e) => setBirthPlace(e.target.value)} placeholder="City"
-                    className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-xl text-[15px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
+                    className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[15px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
                 </div>
               </div>
             </div>
 
             <div className="flex gap-3">
               <button onClick={() => setMode('choose')}
-                className="flex-1 h-[44px] border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-xl hover:text-white hover:border-white/30 transition-all duration-200">
+                className="flex-1 h-[44px] border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/30 transition-all duration-200">
                 Back
               </button>
               <button onClick={handleManualSubmit} disabled={!name.trim() || !birthDate || submitting}
-                className="flex-1 h-[44px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-xl hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200">
+                className="flex-1 h-[44px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200">
                 {submitting ? 'Adding…' : 'Add person'}
               </button>
             </div>
@@ -582,27 +583,27 @@ function AddPersonModal({
               <div className="space-y-1.5">
                 <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Their name</label>
                 <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="First name"
-                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-xl text-[15px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
+                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[15px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
               </div>
               <div className="space-y-1.5">
                 <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Relationship</label>
                 <input type="text" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="e.g. Father, Partner, Friend"
-                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-xl text-[15px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
+                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[15px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
               </div>
               <div className="space-y-1.5">
                 <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Email (optional)</label>
                 <input type="email" value={contact} onChange={(e) => setContact(e.target.value)} placeholder="Their email address"
-                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-xl text-[15px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
+                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[15px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
               </div>
             </div>
 
             <div className="flex gap-3">
               <button onClick={() => setMode('choose')}
-                className="flex-1 h-[44px] border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-xl hover:text-white hover:border-white/30 transition-all duration-200">
+                className="flex-1 h-[44px] border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/30 transition-all duration-200">
                 Back
               </button>
               <button onClick={handleInviteSubmit} disabled={!name.trim() || submitting}
-                className="flex-1 h-[44px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-xl hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200">
+                className="flex-1 h-[44px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200">
                 {submitting ? 'Creating…' : 'Create invite'}
               </button>
             </div>
@@ -625,18 +626,18 @@ function AddPersonModal({
                 type="text"
                 readOnly
                 value={inviteLink}
-                className="flex-1 h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-xl text-[13px] text-white/60 font-mono outline-none truncate"
+                className="flex-1 h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[13px] text-white/60 font-mono outline-none truncate"
               />
               <button
                 onClick={copyLink}
-                className="h-[44px] px-4 border border-white/15 rounded-xl text-white/60 hover:text-white hover:border-white/30 transition-all duration-200"
+                className="h-[44px] px-4 border border-white/15 rounded-sm text-white/60 hover:text-white hover:border-white/30 transition-all duration-200"
               >
                 {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
               </button>
             </div>
 
             <button onClick={onClose}
-              className="w-full h-[44px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-xl hover:bg-white/90 transition-all duration-200">
+              className="w-full h-[44px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 transition-all duration-200">
               Done
             </button>
           </div>

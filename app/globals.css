@@ -1,4 +1,16 @@
 @import 'tailwindcss';
+@import './styles/design-tokens.css';
 @import './styles/tokens.css';
+@import './styles/typography.css';
 @import './styles/motion.css';
 @import './styles/layout.css';
+
+body {
+  background:
+    radial-gradient(
+      circle at 50% 10%,
+      rgba(255,255,255,0.06),
+      transparent 45%
+    ),
+    #0A0A0A;
+}

@@ -1,0 +1,16 @@
+:root {
+
+  /* background */
+  --bg-primary: #0A0A0A;
+
+  /* text */
+  --text-primary: rgba(255,255,255,0.92);
+  --text-secondary: rgba(255,255,255,0.70);
+  --text-muted: rgba(255,255,255,0.45);
+
+  /* surfaces */
+  --panel-bg: rgba(255,255,255,0.02);
+  --panel-border: rgba(255,255,255,0.10);
+  --panel-border-hover: rgba(255,255,255,0.20);
+
+}
