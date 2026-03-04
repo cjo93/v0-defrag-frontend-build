@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
-import { getSession } from "@/lib/supabase";
+import { supabase, getSession, signOut } from "@/lib/supabase";
 import { TopNav } from "@/components/top-nav";
 
 export default function SettingsPage() {
@@ -14,6 +15,14 @@ export default function SettingsPage() {
   const [time, setTime] = useState("");
   const [location, setLocation] = useState("");
   const [loading, setLoading] = useState(false);
+  const [accountEmail, setAccountEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!supabase) return;
+    supabase.auth.getUser().then(({ data }) => {
+      setAccountEmail(data.user?.email ?? null);
+    });
+  }, []);
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,15 +83,29 @@ export default function SettingsPage() {
             </form>
           </section>
 
-          {/* Account Management */}
+          {/* Account */}
           <section className="border border-white/[0.08] bg-white/[0.03] rounded-xl p-7 md:p-8 space-y-5">
-            <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">Account Management</h2>
-            <form className="grid grid-cols-1 gap-4" onSubmit={(e) => e.preventDefault()}>
-              <input type="password" placeholder="New Password" className="bg-black border border-white/[0.08] px-5 py-3.5 text-[15px] text-white placeholder:text-white/30 focus:border-white/25 transition-colors duration-200 focus:outline-none rounded-xl" />
-              <button type="submit" className="inline-flex items-center justify-center h-[52px] px-9 border border-white/25 text-white/80 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-xl hover:text-white hover:border-white/50 transition-all duration-200">
+            <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">Account</h2>
+            {accountEmail && (
+              <p className="text-[15px] text-white/65">{accountEmail}</p>
+            )}
+            <div className="grid grid-cols-1 gap-4">
+              <Link
+                href="/auth/reset"
+                className="inline-flex items-center justify-center h-[52px] px-9 border border-white/25 text-white/80 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-xl hover:text-white hover:border-white/50 transition-all duration-200"
+              >
                 Reset Password
+              </Link>
+              <button
+                onClick={async () => {
+                  await signOut();
+                  router.push('/auth/login');
+                }}
+                className="inline-flex items-center justify-center h-[52px] px-9 border border-white/25 text-white/80 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-xl hover:text-white hover:border-white/50 transition-all duration-200"
+              >
+                Sign Out
               </button>
-            </form>
+            </div>
           </section>
 
           {/* Preferences */}

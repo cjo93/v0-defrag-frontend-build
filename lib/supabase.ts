@@ -20,21 +20,6 @@ export const supabase: SupabaseClient | null = isConfigured
   : null;
 
 // Auth helpers - with preview environment guards
-export async function sendMagicLink(email: string) {
-  if (!supabase) {
-    throw new Error('Authentication is not configured');
-  }
-  
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: {
-      emailRedirectTo: `${window.location.origin}/connect?step=context`,
-    },
-  });
-  
-  if (error) throw error;
-}
-
 export async function signOut() {
   if (!supabase) return;
   const { error } = await supabase.auth.signOut();

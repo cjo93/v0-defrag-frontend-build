@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { Turnstile } from "@/components/turnstile";
@@ -11,6 +12,7 @@ export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
@@ -18,69 +20,43 @@ export default function LoginPage() {
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://defrag.app';
   const isTurnstileRequired = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
-  const googleEnabled = process.env.NEXT_PUBLIC_ENABLE_GOOGLE_OAUTH === 'true';
   const appleEnabled = process.env.NEXT_PUBLIC_ENABLE_APPLE_OAUTH === 'true';
 
-  const handleMagicLink = async (e: React.FormEvent) => {
+  const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (isTurnstileRequired && !turnstileToken) {
       toast({ title: "Verification required", description: "Please complete the security check.", variant: "destructive" });
       return;
     }
-    
+
     setLoading(true);
 
-    if (!supabase) {
-      toast({ title: "Error", description: "Auth is disabled.", variant: "destructive" });
-      setLoading(false);
-      return;
-    }
-
     try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: `${siteUrl}/dashboard`,
-        },
-      });
-
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
-
-      toast({
-        title: "Magic Link Sent",
-        description: "Check your email for the login link.",
-      });
-      setEmail("");
+      router.push("/dashboard");
     } catch (err: any) {
-      toast({
-        title: "Error",
-        description: err.message,
-        variant: "destructive",
-      });
+      toast({ title: "Error", description: err.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleOAuth = async (provider: 'google' | 'apple') => {
+  const handleAppleOAuth = async () => {
     if (isTurnstileRequired && !turnstileToken) {
       toast({ title: "Verification required", description: "Please complete the security check.", variant: "destructive" });
       return;
     }
-    
-    if (!supabase) return;
 
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: {
-          redirectTo: `${siteUrl}/dashboard`
-        }
+        provider: 'apple',
+        options: { redirectTo: `${siteUrl}/dashboard` }
       });
       if (error) {
         if (error.message?.includes('provider is not enabled') || (error as any).error_code === 'validation_failed') {
-          toast({ title: "Not available yet", description: `${provider.charAt(0).toUpperCase() + provider.slice(1)} login isn't available yet. Use email for now.`, variant: "destructive" });
+          toast({ title: "Not available yet", description: "Apple sign-in isn't available yet. Use email + password.", variant: "destructive" });
           return;
         }
         throw error;
@@ -99,36 +75,27 @@ export default function LoginPage() {
         </div>
 
         <div className="space-y-4">
-          {googleEnabled && (
-            <button
-              onClick={() => handleOAuth('google')}
-              className="w-full inline-flex items-center justify-center h-[52px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:bg-white/90 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] active:scale-[0.98] transition-all duration-200 ease-out rounded-xl"
-            >
-              Continue with Google
-            </button>
-          )}
-
           {appleEnabled && (
-            <button
-              onClick={() => handleOAuth('apple')}
-              className="w-full inline-flex items-center justify-center h-[52px] border border-white/25 text-white/80 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/50 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] active:scale-[0.98] transition-all duration-200 ease-out rounded-xl"
-            >
-              Continue with Apple
-            </button>
+            <>
+              <button
+                onClick={handleAppleOAuth}
+                className="w-full inline-flex items-center justify-center h-[52px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:bg-white/90 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] active:scale-[0.98] transition-all duration-200 ease-out rounded-xl"
+              >
+                Continue with Apple
+              </button>
+
+              <div className="relative py-4">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-white/[0.08]" />
+                </div>
+                <div className="relative flex justify-center">
+                  <span className="bg-black px-3 text-white/45 font-mono text-[11px] tracking-[0.2em] uppercase">Or email</span>
+                </div>
+              </div>
+            </>
           )}
 
-          {(googleEnabled || appleEnabled) && (
-            <div className="relative py-4">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-white/[0.08]" />
-              </div>
-              <div className="relative flex justify-center">
-                <span className="bg-black px-3 text-white/45 font-mono text-[11px] tracking-[0.2em] uppercase">Or email</span>
-              </div>
-            </div>
-          )}
-
-          <form onSubmit={handleMagicLink} className="space-y-4">
+          <form onSubmit={handlePasswordLogin} className="space-y-4">
             <input
               type="email"
               placeholder="Email address"
@@ -137,9 +104,17 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            
+            <input
+              type="password"
+              placeholder="Password"
+              className="w-full bg-black border border-white/[0.08] px-5 py-3.5 text-[15px] text-white placeholder:text-white/30 focus:border-white/30 focus:ring-1 focus:ring-white/20 transition-all duration-200 focus:outline-none rounded-xl"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+
             <div className="space-y-2">
-              <Turnstile 
+              <Turnstile
                 onVerify={setTurnstileToken}
                 onExpire={() => setTurnstileToken(null)}
                 className="flex justify-center"
@@ -150,15 +125,30 @@ export default function LoginPage() {
                 </p>
               )}
             </div>
-            
+
             <button
               type="submit"
-              className="w-full inline-flex items-center justify-center h-[52px] border border-white/25 text-white/80 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/50 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] active:scale-[0.98] transition-all duration-200 ease-out disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:shadow-none rounded-xl"
+              className="w-full inline-flex items-center justify-center h-[52px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:bg-white/90 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] active:scale-[0.98] transition-all duration-200 ease-out disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:shadow-none rounded-xl"
               disabled={loading || (isTurnstileRequired && !turnstileToken)}
             >
-              {loading ? "Sending..." : "Send Magic Link"}
+              {loading ? "Signing in..." : "Sign in"}
             </button>
           </form>
+
+          <div className="flex items-center justify-between pt-2">
+            <Link
+              href="/auth/signup"
+              className="font-mono text-[11px] uppercase tracking-[0.15em] text-white/45 hover:text-white/70 transition-colors duration-200"
+            >
+              Create account
+            </Link>
+            <Link
+              href="/auth/reset"
+              className="font-mono text-[11px] uppercase tracking-[0.15em] text-white/45 hover:text-white/70 transition-colors duration-200"
+            >
+              Reset password
+            </Link>
+          </div>
         </div>
       </div>
     </div>

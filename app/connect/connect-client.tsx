@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { BuildStamp } from '@/components/build-stamp';
 import { saveUserContext, saveBaseline } from '@/lib/api';
-import { sendMagicLink } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 import {
   AppShell,
@@ -58,7 +58,14 @@ export default function ConnectClient() {
     setError('');
 
     try {
-      await sendMagicLink(email);
+      if (!supabase) throw new Error('Authentication is not configured');
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://defrag.app'}/connect?step=context`,
+        },
+      });
+      if (error) throw error;
       setStep('verify');
     } catch (err: any) {
       setError(err.message || 'Failed to send magic link. Please try again.');
