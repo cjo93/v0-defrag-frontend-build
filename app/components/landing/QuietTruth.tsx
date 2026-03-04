@@ -2,19 +2,7 @@
 
 export default function QuietTruth() {
   return (
-    <section
-      id="quiet-truth"
-      style={{
-        padding: '140px 24px',
-        maxWidth: 1440,
-        margin: '0 auto',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 64,
-        background: 'var(--bg-black)',
-        borderTop: '1px solid var(--line-mid)',
-      }}
-    >
+    <section id="quiet-truth" className="landing-section">
       <div style={{ maxWidth: '640px' }}>
         <h2
           style={{

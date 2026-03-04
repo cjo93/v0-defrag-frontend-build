@@ -9,17 +9,11 @@ export default function FinalCTA() {
 
   return (
     <section
+      className="landing-section"
       style={{
-        padding: '140px 24px',
-        maxWidth: 1440,
-        margin: '0 auto',
-        display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         textAlign: 'center',
-        background: 'var(--bg-black)',
-        borderTop: '1px solid var(--line-mid)',
       }}
     >
       <h2
