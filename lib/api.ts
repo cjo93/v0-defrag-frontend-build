@@ -9,7 +9,8 @@ import type {
   SubscriptionStatus 
 } from './types';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.defrag.app';
+const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.defrag.app';
+
 
 import { getSession } from './supabase';
 
