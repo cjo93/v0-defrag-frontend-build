@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase, getSession } from "@/lib/supabase";
-import { Lock, MessageCircle, Users, Calendar, Headphones, Sparkles } from "lucide-react";
+import { Lock, MessageCircle, Users, Calendar, Headphones } from "lucide-react";
 import Link from "next/link";
 import { TopNav } from "@/components/top-nav";
 
@@ -56,11 +56,11 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen bg-black text-white font-sans antialiased">
         <TopNav />
-        <main className="px-6 pt-12 pb-24 flex flex-col items-center">
+        <main className="px-6 md:px-8 pt-12 pb-24 flex flex-col items-center">
           <div className="w-full max-w-[920px]">
             <div className="animate-pulse space-y-6">
               {[1, 2, 3, 4].map(i => (
-                <div key={i} className="border border-white/[0.08] bg-white/[0.03] rounded-xl p-7 md:p-8 space-y-4">
+                <div key={i} className="border border-white/10 bg-white/[0.02] rounded-xl p-6 md:p-8 space-y-4">
                   <div className="h-3 w-24 bg-white/[0.06] rounded" />
                   <div className="h-5 w-2/3 bg-white/[0.04] rounded" />
                   <div className="h-4 w-full bg-white/[0.04] rounded" />
@@ -76,66 +76,87 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-black text-white font-sans antialiased">
       <TopNav />
-      <main className="px-6 pt-12 pb-24 flex flex-col items-center">
+      <main className="px-6 md:px-8 pt-12 pb-24 flex flex-col items-center">
         <div className="w-full max-w-[920px] space-y-6">
 
-          {/* Today Overview — primary panel */}
-          <section className="border border-white/[0.08] bg-white/[0.03] rounded-xl p-7 md:p-8 space-y-6 hover:border-white/20 hover:bg-white/[0.05] transition-all duration-200">
+          {/* ─── TODAY ─── */}
+          <section className="border border-white/10 bg-white/[0.02] rounded-xl p-6 md:p-8 space-y-6 hover:border-white/20 hover:bg-white/[0.04] hover:translate-y-[-1px] transition-all duration-200 ease-out animate-fade-in">
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4 text-white/50" />
-              <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">Today Overview</h2>
+              <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">Today</h2>
             </div>
 
             <p className="text-[17px] md:text-[20px] leading-[1.6] text-white/70">
-              Steady energy today. Good timing for difficult conversations after 2pm.
+              Today favors slower conversations. Pressure may rise if discussions become defensive.
             </p>
 
             <div className="grid grid-cols-3 gap-4">
               {[
-                { label: 'Pressure', value: 'Medium' },
-                { label: 'Timing', value: 'Favorable' },
-                { label: 'Best For', value: 'Conversations' },
+                { label: 'Pressure', value: 'Calm', color: 'text-green-400/80' },
+                { label: 'Timing', value: 'Favorable', color: 'text-white' },
+                { label: 'Best For', value: 'Listening', color: 'text-white' },
               ].map((item) => (
                 <div key={item.label} className="space-y-1">
                   <span className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/45">{item.label}</span>
-                  <p className="text-[15px] md:text-[16px] font-medium text-white">{item.value}</p>
+                  <p className={`text-[15px] md:text-[16px] font-medium ${item.color}`}>{item.value}</p>
                 </div>
               ))}
             </div>
           </section>
 
-          {/* Relationship Map */}
+          {/* ─── PEOPLE ─── */}
           {isPlus ? (
-            <section className="border border-white/[0.08] bg-white/[0.03] rounded-xl p-7 md:p-8 space-y-6 hover:border-white/20 hover:bg-white/[0.05] transition-all duration-200">
+            <section className="border border-white/10 bg-white/[0.02] rounded-xl p-6 md:p-8 space-y-5 hover:border-white/20 hover:bg-white/[0.04] hover:translate-y-[-1px] transition-all duration-200 ease-out animate-fade-in delay-50">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4 text-white/50" />
-                  <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">Relationship Map</h2>
+                  <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">People</h2>
                 </div>
-                <Link href="/relationships" className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50 hover:text-white/80 transition-colors">
+                <Link href="/relationships" className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50 hover:text-white/80 transition-colors duration-200">
                   View All →
                 </Link>
               </div>
 
-              <p className="text-[15px] md:text-[16px] text-white/65 leading-[1.6]">
-                {status?.has_relationships
-                  ? 'Your active connections and current dynamics.'
-                  : 'Add family and team members to map group dynamics.'}
-              </p>
-
-              <Link
-                href="/relationships"
-                className="inline-flex items-center justify-center h-[44px] px-6 border border-white/25 text-white/80 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-xl hover:text-white hover:border-white/50 transition-all duration-200"
-              >
-                {status?.has_relationships ? 'View Relationships' : 'Add Person'}
-              </Link>
+              {status?.has_relationships ? (
+                <div className="grid gap-3">
+                  {[
+                    { name: 'Mom', relationship: 'Mother', tension: 'Rising', tensionColor: 'text-yellow-400/80' },
+                    { name: 'Dad', relationship: 'Father', tension: 'Stable', tensionColor: 'text-green-400/80' },
+                    { name: 'Sister', relationship: 'Sibling', tension: 'Low', tensionColor: 'text-white/50' },
+                  ].map((person) => (
+                    <Link
+                      key={person.name}
+                      href={`/chat?prompt=Tell me about my dynamic with ${person.name}`}
+                      className="flex items-center justify-between border border-white/[0.06] bg-white/[0.02] rounded-lg px-5 py-4 hover:border-white/20 hover:bg-white/[0.04] transition-all duration-200 ease-out"
+                    >
+                      <div className="flex items-center gap-4">
+                        <span className="text-[15px] text-white font-medium">{person.name}</span>
+                        <span className="font-mono text-[11px] text-white/40 uppercase tracking-[0.15em]">{person.relationship}</span>
+                      </div>
+                      <span className={`font-mono text-[11px] uppercase tracking-[0.15em] ${person.tensionColor}`}>{person.tension}</span>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <p className="text-[15px] md:text-[16px] text-white/65 leading-[1.6]">
+                    Add family and team members to map group dynamics.
+                  </p>
+                  <Link
+                    href="/relationships"
+                    className="inline-flex items-center justify-center h-[44px] px-6 border border-white/25 text-white/80 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-xl hover:text-white hover:border-white/50 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] active:scale-[0.98] transition-all duration-200 ease-out"
+                  >
+                    Add Person
+                  </Link>
+                </div>
+              )}
             </section>
           ) : (
-            <section className="border border-white/[0.06] bg-white/[0.02] rounded-xl p-7 md:p-8 space-y-4">
+            <section className="border border-white/[0.06] bg-white/[0.01] rounded-xl p-6 md:p-8 space-y-4 animate-fade-in delay-50">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4 text-white/30" />
-                  <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/30">Relationship Map</h2>
+                  <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/30">People</h2>
                 </div>
                 <Lock className="w-4 h-4 text-white/30" />
               </div>
@@ -144,46 +165,16 @@ export default function DashboardPage() {
               </p>
               <Link
                 href="/unlock"
-                className="inline-flex items-center justify-center h-[44px] px-6 border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-xl hover:text-white hover:border-white/35 transition-all duration-200"
+                className="inline-flex items-center justify-center h-[44px] px-6 border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-xl hover:text-white hover:border-white/35 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] active:scale-[0.98] transition-all duration-200 ease-out"
               >
                 Upgrade to Plus
               </Link>
             </section>
           )}
 
-          {/* Daily Audio Brief */}
-          <section className="border border-white/[0.08] bg-white/[0.03] rounded-xl p-7 md:p-8 space-y-5 hover:border-white/20 hover:bg-white/[0.05] transition-all duration-200">
-            <div className="flex items-center gap-2">
-              <Headphones className="w-4 h-4 text-white/50" />
-              <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">Daily Audio Brief</h2>
-            </div>
-
-            <p className="text-[15px] md:text-[16px] text-white/65 leading-[1.6]">
-              Relationship insights, timing windows, and communication patterns for today.
-            </p>
-
-            <div className="border border-white/[0.06] bg-white/[0.02] rounded-lg px-5 py-4 flex items-center justify-center">
-              <span className="font-mono text-[11px] md:text-[12px] text-white/35 tracking-[0.2em] uppercase">Coming soon</span>
-            </div>
-          </section>
-
-          {/* Recent Insights */}
-          <section className="border border-white/[0.08] bg-white/[0.03] rounded-xl p-7 md:p-8 space-y-5 hover:border-white/20 hover:bg-white/[0.05] transition-all duration-200">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-white/50" />
-              <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">Recent Insights</h2>
-            </div>
-            <p className="text-[15px] md:text-[16px] text-white/65 leading-[1.6]">
-              Patterns and observations from your recent conversations.
-            </p>
-            <div className="border border-white/[0.06] bg-white/[0.02] rounded-lg px-5 py-4 flex items-center justify-center">
-              <span className="font-mono text-[11px] md:text-[12px] text-white/35 tracking-[0.2em] uppercase">Start a chat to generate insights</span>
-            </div>
-          </section>
-
-          {/* Ask DEFRAG — chat entry */}
+          {/* ─── ASK DEFRAG ─── */}
           <Link href="/chat" className="block group">
-            <section className="border border-white/[0.08] bg-white/[0.03] rounded-xl p-7 md:p-8 space-y-5 group-hover:border-white/20 group-hover:bg-white/[0.05] transition-all duration-200">
+            <section className="border border-white/10 bg-white/[0.02] rounded-xl p-6 md:p-8 space-y-5 group-hover:border-white/20 group-hover:bg-white/[0.04] group-hover:translate-y-[-1px] transition-all duration-200 ease-out animate-fade-in delay-100">
               <div className="flex items-center gap-2">
                 <MessageCircle className="w-4 h-4 text-white/50" />
                 <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">Ask DEFRAG</h2>
@@ -191,8 +182,8 @@ export default function DashboardPage() {
 
               <div className="grid sm:grid-cols-3 gap-3">
                 {[
-                  "Why doesn't my mom respect my boundaries?",
                   "Why does my dad push so hard?",
+                  "Why can't my sister see my perspective?",
                   "How do I say this without escalation?",
                 ].map((prompt, i) => (
                   <div key={i} className="border border-white/[0.06] bg-white/[0.02] rounded-lg px-4 py-3 text-[14px] md:text-[15px] text-white/55 hover:border-white/20 hover:text-white/70 transition-all duration-200">
@@ -207,10 +198,26 @@ export default function DashboardPage() {
             </section>
           </Link>
 
-          {/* Upgrade card (Solo users only) */}
+          {/* ─── DAILY BRIEF ─── */}
+          <section className="border border-white/10 bg-white/[0.02] rounded-xl p-6 md:p-8 space-y-5 hover:border-white/20 hover:bg-white/[0.04] hover:translate-y-[-1px] transition-all duration-200 ease-out animate-fade-in delay-150">
+            <div className="flex items-center gap-2">
+              <Headphones className="w-4 h-4 text-white/50" />
+              <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">Daily Brief</h2>
+            </div>
+
+            <p className="text-[15px] md:text-[16px] text-white/65 leading-[1.6]">
+              Daily overview of relational dynamics, timing windows, and communication patterns.
+            </p>
+
+            <div className="border border-white/[0.06] bg-white/[0.02] rounded-lg px-5 py-4 flex items-center justify-center">
+              <span className="font-mono text-[11px] md:text-[12px] text-white/35 tracking-[0.2em] uppercase">Coming soon</span>
+            </div>
+          </section>
+
+          {/* ─── UPGRADE (Solo only) ─── */}
           {!isPlus && (
             <Link href="/unlock" className="block group">
-              <section className="border border-white/[0.08] bg-white/[0.03] rounded-xl p-7 md:p-8 group-hover:border-white/20 group-hover:bg-white/[0.05] transition-all duration-200">
+              <section className="border border-white/10 bg-white/[0.02] rounded-xl p-6 md:p-8 group-hover:border-white/20 group-hover:bg-white/[0.04] group-hover:translate-y-[-1px] transition-all duration-200 ease-out animate-fade-in delay-200">
                 <div className="flex items-center justify-between">
                   <div>
                     <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50 mb-3">Upgrade to Plus</h2>

@@ -98,11 +98,11 @@ function ChatClient() {
     <div className="min-h-screen bg-black text-white flex flex-col font-sans antialiased">
       <TopNav />
 
-      <div className="flex-1 overflow-y-auto px-6 py-8">
+      <div className="flex-1 overflow-y-auto px-6 md:px-8 py-8">
         <div className="mx-auto w-full max-w-[920px] space-y-8">
           {messages.length === 0 ? (
             <div className="min-h-[60vh] flex flex-col justify-center">
-              <div className="text-center mb-12">
+              <div className="text-center mb-12 animate-fade-in">
                 <p className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50 mb-5">
                   Ask DEFRAG
                 </p>
@@ -119,7 +119,8 @@ function ChatClient() {
                   <button
                     key={i}
                     onClick={() => handlePromptClick(prompt)}
-                    className="text-left px-5 py-4 border border-white/[0.08] bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.05] transition-all duration-200 rounded-xl"
+                    className="text-left px-5 py-4 border border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04] hover:translate-y-[-1px] hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 ease-out rounded-xl animate-fade-in"
+                    style={{ animationDelay: `${i * 50 + 100}ms` }}
                   >
                     <span className="text-[15px] md:text-[16px] text-white/65 leading-[1.6]">
                       {prompt}
@@ -133,10 +134,10 @@ function ChatClient() {
               {messages.map((message, i) => (
                 <div 
                   key={i}
-                  className={`${message.role === 'user' ? 'ml-auto max-w-[80%]' : 'mr-auto max-w-full'}`}
+                  className={`animate-fade-in ${message.role === 'user' ? 'ml-auto max-w-[80%]' : 'mr-auto max-w-full'}`}
                 >
                   {message.role === 'user' ? (
-                    <div className="border border-white/20 rounded-xl p-7">
+                    <div className="border border-white/20 rounded-xl p-6 md:p-7">
                       <span className="font-mono text-[11px] md:text-[12px] text-white/45 uppercase tracking-[0.2em] block mb-3">
                         You
                       </span>
@@ -145,7 +146,7 @@ function ChatClient() {
                       </p>
                     </div>
                   ) : (
-                    <div className="border border-white/[0.08] bg-white/[0.03] rounded-xl p-7">
+                    <div className="border border-white/10 bg-white/[0.02] rounded-xl p-6 md:p-7">
                       <span className="font-mono text-[11px] md:text-[12px] text-white/45 uppercase tracking-[0.2em] block mb-3">
                         DEFRAG
                       </span>
@@ -158,10 +159,15 @@ function ChatClient() {
               ))}
               
               {isLoading && (
-                <div className="border border-white/[0.08] bg-white/[0.03] rounded-xl p-7 flex justify-center">
-                  <span className="font-mono text-[11px] md:text-[12px] text-white/45 uppercase tracking-[0.2em]">
-                    Processing...
+                <div className="border border-white/10 bg-white/[0.02] rounded-xl p-6 md:p-7 animate-fade-in">
+                  <span className="font-mono text-[11px] md:text-[12px] text-white/45 uppercase tracking-[0.2em] block mb-3">
+                    DEFRAG
                   </span>
+                  <div className="flex gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-white/30 animate-pulse" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-white/30 animate-pulse delay-100" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-white/30 animate-pulse delay-200" />
+                  </div>
                 </div>
               )}
               
@@ -177,7 +183,7 @@ function ChatClient() {
         </div>
       </div>
 
-      <div className="border-t border-white/[0.08] bg-black px-6 py-5 safe-bottom">
+      <div className="border-t border-white/[0.08] bg-black px-6 md:px-8 py-5 safe-bottom">
         <div className="mx-auto w-full max-w-[920px]">
           <form onSubmit={handleSend} className="flex items-end gap-4">
             <div className="flex-1">
@@ -186,13 +192,13 @@ function ChatClient() {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about a relationship dynamic in your life"
                 disabled={isLoading}
-                className="w-full bg-transparent border border-white/[0.08] rounded-xl h-[52px] px-5 text-[15px] md:text-[16px] text-white focus:border-white/25 focus:outline-none transition-colors duration-200 placeholder:text-white/30"
+                className="w-full bg-transparent border border-white/[0.08] rounded-xl h-[52px] px-5 text-[15px] md:text-[16px] text-white focus:border-white/30 focus:ring-1 focus:ring-white/20 focus:outline-none transition-all duration-200 ease-out placeholder:text-white/30"
               />
             </div>
             <button 
               type="submit" 
               disabled={isLoading || !input.trim()}
-              className="inline-flex items-center justify-center h-[52px] px-7 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-xl hover:bg-white/90 transition-colors duration-200 disabled:opacity-40"
+              className="inline-flex items-center justify-center h-[52px] px-7 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-xl hover:bg-white/90 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] active:scale-[0.98] transition-all duration-200 ease-out disabled:opacity-40 disabled:hover:shadow-none"
             >
               Send
             </button>

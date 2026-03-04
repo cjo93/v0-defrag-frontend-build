@@ -97,46 +97,78 @@ export async function POST(req: NextRequest) {
 
 async function generateResponse(message: string, birthline: any): Promise<string> {
   // TODO: Integrate with AI provider (Vercel AI Gateway, OpenAI, etc.)
-  // For now, return a contextual placeholder response
+  // Response structure: Recognize → Clarify → Suggest → Invite
+  // Safety: Never diagnose. Never blame. Never escalate. Never suggest ultimatums.
+  // Vocabulary: patterns, pressure, boundaries, timing, communication
   
   const lowerMessage = message.toLowerCase();
   
   if (lowerMessage.includes('mom') || lowerMessage.includes('mother')) {
-    return `I hear you're navigating a challenging dynamic with your mother. Based on your profile, you may experience maternal relationships as both nurturing and sometimes overwhelming. The key is finding ways to maintain connection while honoring your own boundaries.
+    return `It sounds like you're trying to maintain connection with your mother while protecting your own space.
 
-Consider: When you feel pressure building, pause before responding. A simple "I need a moment to think about that" can create space without creating distance.
+She may interpret distance as rejection rather than independence. When you pull back, her instinct may be to move closer — which can feel like pressure from your side.
 
-What specific situation is coming up for you right now?`;
+You might try naming what you need without over-explaining: "I need some quiet tonight — it's not about you." Short, clear statements tend to land better than long justifications.
+
+Does that pattern — where space gets read as rejection — feel familiar in this relationship?`;
   }
   
   if (lowerMessage.includes('dad') || lowerMessage.includes('father')) {
-    return `Father relationships often carry expectations and pressure around achievement or direction in life. Your profile suggests you may feel this pressure more intensely during certain periods.
+    return `It sounds like you're trying to be seen by your father without triggering his default mode of pushing harder.
 
-The push you feel may come from a place of care, even if it doesn't land that way. Finding a way to acknowledge intent while redirecting approach can help.
+Your father may interpret pressure as motivation — while you experience it as control. These two readings of the same behavior often create a loop: he pushes, you withdraw, he pushes harder.
 
-Try: "I know you want the best for me. Can we talk about what that looks like from my perspective?"`;
+You might try framing the boundary around what helps you stay engaged: "I do better when I have space to figure it out first." This redirects without rejecting.
+
+Does that dynamic — where his care shows up as pressure — feel like a recurring pattern?`;
   }
   
-  if (lowerMessage.includes('boundaries') || lowerMessage.includes('space')) {
-    return `Boundaries are often difficult to communicate without triggering defensiveness. Your profile suggests you may tend toward accommodating others at your own expense.
+  if (lowerMessage.includes('sister') || lowerMessage.includes('sibling') || lowerMessage.includes('brother')) {
+    return `It sounds like you're navigating a dynamic where you and your sibling see the same situation very differently.
 
-A boundary isn't a wall—it's a doorway that you control. The goal isn't to keep people out, but to choose how and when you let them in.
+Siblings often develop complementary roles in a family system. If one person became the mediator, the other may have become the challenger — and those roles can persist long after they're useful.
 
-Simple approach: State what you need without over-explaining. "I need some quiet time this evening" is complete on its own.`;
+You might try approaching the next conversation with curiosity rather than correction: "I see it differently — can you walk me through your side?" This tends to lower defensiveness.
+
+Has this pattern of seeing things from opposite angles been present for a long time?`;
   }
   
-  if (lowerMessage.includes('escalat') || lowerMessage.includes('fight') || lowerMessage.includes('argue')) {
-    return `De-escalation starts before the conversation heats up. Once you're in reactive mode, it's much harder to redirect.
+  if (lowerMessage.includes('boundaries') || lowerMessage.includes('boundary') || lowerMessage.includes('space')) {
+    return `It sounds like you're trying to create a boundary without it being received as a wall.
 
-Based on typical relational patterns, try leading with curiosity instead of defense: "Help me understand what you're feeling right now."
+People who care about you may interpret boundaries as rejection — especially if the relationship has historically had few limits. The shift can feel sudden to them even when it's been building for you.
 
-If things are already escalating, a physical reset can help: "I want to continue this conversation, but I need to step out for five minutes first."`;
+A boundary doesn't need justification to be valid. Try stating what you need simply: "I need some time this evening" is complete on its own. Over-explaining often invites negotiation.
+
+Does this tension around boundaries tend to show up with the same people?`;
+  }
+  
+  if (lowerMessage.includes('escalat') || lowerMessage.includes('fight') || lowerMessage.includes('argue') || lowerMessage.includes('conflict')) {
+    return `It sounds like you're trying to find a way to communicate without the conversation spiraling.
+
+Escalation usually happens when both people feel unheard. The instinct is to speak louder or more forcefully — but that tends to trigger defense rather than understanding.
+
+You might try leading with curiosity before making your point: "Help me understand what you're feeling right now." This creates a pause that can redirect the energy. If things are already heated, a simple "I want to continue this — can we take five minutes?" is a reset, not a retreat.
+
+Is there a specific moment where these conversations tend to tip over?`;
+  }
+
+  if (lowerMessage.includes('perspective') || lowerMessage.includes('understand') || lowerMessage.includes('see my')) {
+    return `It sounds like you're trying to be understood by someone who keeps interpreting things differently.
+
+When two people have different communication styles, the same words can carry very different weights. What feels like a reasonable request to you may land as a demand or criticism to them — and vice versa.
+
+You might try reflecting their view back before sharing yours: "It sounds like you see it as... For me, it feels more like..." This signals that you're listening, which tends to lower resistance.
+
+Has this gap in how things are interpreted been consistent, or does it shift depending on the topic?`;
   }
   
   // Default response
-  return `Thank you for sharing that. Relational dynamics are complex, and the patterns we experience often have deep roots.
+  return `It sounds like you're working through something that matters to you.
 
-Based on what you've described, it sounds like there may be underlying expectations or communication styles that aren't aligned.
+Relational patterns often have deep roots — they repeat not because people don't care, but because the underlying dynamics haven't shifted yet. Recognizing the pattern is the first step toward choosing a different response.
 
-Can you tell me more about what typically happens in these situations? Understanding the pattern can help us find a different approach.`;
+Can you tell me more about what typically happens in these situations? Understanding the specific sequence — who says what, and when it turns — can help us find a different approach.
+
+What part of this dynamic feels most stuck right now?`;
 }

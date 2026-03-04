@@ -92,7 +92,7 @@ function UnlockContent() {
 
   return (
     <div className="min-h-screen bg-black text-white font-sans antialiased flex flex-col items-center justify-center p-6">
-      <div className="w-full max-w-[920px] space-y-10">
+      <div className="mx-auto w-full max-w-[920px] px-6 md:px-8 space-y-10">
         <div className="text-center space-y-3">
           <p className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">Select a plan</p>
           <h1 className="text-[26px] md:text-[36px] font-normal tracking-[-0.015em]">Choose your plan to continue</h1>
@@ -101,14 +101,14 @@ function UnlockContent() {
           )}
         </div>
 
-        <div className="grid md:grid-cols-2 gap-5">
+        <div className="grid md:grid-cols-2 gap-8">
           {plans.map((plan) => (
             <div
               key={plan.id}
-              className={`border p-7 md:p-8 space-y-6 transition-all duration-200 rounded-xl ${
+              className={`border p-6 md:p-8 space-y-6 transition-all duration-200 ease-out rounded-xl hover:translate-y-[-1px] hover:scale-[1.01] ${
                 plan.highlighted 
-                  ? 'border-white/20 bg-white/[0.05] hover:border-white/35' 
-                  : 'border-white/[0.08] bg-white/[0.03] hover:border-white/20'
+                  ? 'border-white/20 bg-white/[0.04] hover:border-white/35 hover:bg-white/[0.06]' 
+                  : 'border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]'
               }`}
             >
               <div>
@@ -133,10 +133,10 @@ function UnlockContent() {
               <button
                 onClick={() => handleCheckout(plan.id)}
                 disabled={loading !== null}
-                className={`w-full h-[52px] rounded-xl font-mono text-[13px] font-semibold uppercase tracking-[0.08em] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed ${
+                className={`w-full h-[52px] rounded-xl font-mono text-[13px] font-semibold uppercase tracking-[0.08em] transition-all duration-200 ease-out active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed ${
                   plan.highlighted
-                    ? 'bg-white text-black hover:bg-white/90'
-                    : 'border border-white/25 text-white/80 hover:text-white hover:border-white/50'
+                    ? 'bg-white text-black hover:bg-white/90 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)]'
+                    : 'border border-white/25 text-white/80 hover:text-white hover:border-white/50 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)]'
                 }`}
               >
                 {loading === plan.id ? 'Loading...' : plan.cta}

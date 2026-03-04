@@ -10,6 +10,7 @@
   --radius-card: 12px;
   --radius-button: 8px;
   --radius-input: 8px;
+  --ambient-glow: radial-gradient(circle at 50% 10%, rgba(255,255,255,0.06), transparent 60%);
 }
 
 * {
@@ -18,6 +19,9 @@
 
 body {
   background-color: var(--bg-black);
+  background-image: var(--ambient-glow);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   color: var(--text-primary);
   margin: 0;
   font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
