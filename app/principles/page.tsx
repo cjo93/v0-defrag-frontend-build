@@ -4,69 +4,18 @@ import Link from 'next/link'
 
 export default function PrinciplesPage() {
   return (
-    <main
-      style={{
-        background: 'var(--bg-black)',
-        minHeight: '100vh',
-        color: 'var(--text-primary)',
-        fontFamily: 'var(--font-sans)',
-        padding: '160px 24px',
-      }}
-    >
-      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-        <h1
-          style={{
-            fontFamily: 'var(--font-sans)',
-            fontSize: 'clamp(48px, 6vw, 100px)',
-            lineHeight: 1.02,
-            letterSpacing: '-0.03em',
-            margin: '0 0 24px',
-            color: 'var(--text-primary)',
-            fontWeight: 500,
-          }}
-        >
+    <main className="min-h-screen bg-black text-white font-sans antialiased flex flex-col items-center justify-center p-6">
+      <div className="w-full max-w-[920px]">
+        <p className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50 mb-4">Philosophy</p>
+        <h1 className="text-[36px] md:text-[56px] font-normal tracking-[-0.025em] leading-[1.02] mb-5">
           Principles
         </h1>
-        <p
-          style={{
-            fontFamily: 'var(--font-sans)',
-            fontSize: 'clamp(20px, 2.5vw, 28px)',
-            lineHeight: 1.4,
-            color: 'var(--text-secondary)',
-            margin: '0 0 48px',
-          }}
-        >
+        <p className="text-[17px] md:text-[20px] text-white/70 leading-[1.6] mb-12 max-w-[640px]">
           The deeper logic of DEFRAG. Coming soon.
         </p>
         <Link
           href="/"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: 56,
-            padding: '0 32px',
-            background: 'transparent',
-            color: 'var(--text-secondary)',
-            border: '1px solid var(--line-mid)',
-            fontFamily: 'var(--font-mono)',
-            fontSize: 13,
-            letterSpacing: '0.05em',
-            textTransform: 'uppercase',
-            textDecoration: 'none',
-            fontWeight: 600,
-            transition: 'all 0.2s',
-          }}
-          onMouseEnter={(e) => {
-            const el = e.currentTarget as HTMLAnchorElement
-            el.style.color = '#ffffff'
-            el.style.borderColor = '#ffffff'
-          }}
-          onMouseLeave={(e) => {
-            const el = e.currentTarget as HTMLAnchorElement
-            el.style.color = 'var(--text-secondary)'
-            el.style.borderColor = 'var(--line-mid)'
-          }}
+          className="inline-flex items-center justify-center h-[52px] px-9 border border-white/25 text-white/80 rounded-xl font-mono text-[13px] font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/50 transition-all duration-200"
         >
           Return Home
         </Link>

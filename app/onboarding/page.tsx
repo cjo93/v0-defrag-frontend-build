@@ -87,11 +87,11 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white p-4 font-mono">
-      <div className="w-full max-w-md space-y-8">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white font-sans antialiased p-6">
+      <div className="w-full max-w-[440px] space-y-8">
         <div className="text-center">
-          <h1 className="text-2xl font-bold tracking-[0.2em]">DEFRAG</h1>
-          <p className="font-mono text-[12px] text-white/40 mt-2 tracking-widest">Tell us about yourself</p>
+          <p className="font-mono text-[13px] font-semibold tracking-[0.2em] text-white mb-3">DEFRAG</p>
+          <p className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">Tell us about yourself</p>
         </div>
 
         {/* Progress indicator */}
@@ -99,90 +99,90 @@ export default function OnboardingPage() {
           {[1, 2, 3].map((s) => (
             <div
               key={s}
-              className={`w-8 h-1 rounded-full ${s <= step ? 'bg-white' : 'bg-white/10'} transition-colors duration-200`}
+              className={`w-10 h-[2px] rounded-full ${s <= step ? 'bg-white' : 'bg-white/[0.08]'} transition-colors duration-200`}
             />
           ))}
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6 bg-white/[0.02] p-6 border border-white/10 rounded-xl">
+        <form onSubmit={handleSubmit} className="space-y-6 border border-white/[0.08] bg-white/[0.03] p-7 md:p-8 rounded-xl">
           
           {/* Step 1: Date of Birth */}
           {step === 1 && (
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div className="text-center mb-6">
-                <h2 className="text-lg font-semibold">When were you born?</h2>
-                <p className="font-mono text-[11px] text-white/30 mt-1 tracking-wider">Step 1 of 3</p>
+                <h2 className="text-[20px] md:text-[22px] font-normal tracking-[-0.015em] text-white">When were you born?</h2>
+                <p className="font-mono text-[11px] text-white/45 mt-2 tracking-[0.2em] uppercase">Step 1 of 3</p>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="dob">Date of Birth</Label>
+                <Label htmlFor="dob" className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Date of Birth</Label>
                 <Input
                   id="dob"
                   type="date"
                   value={dob}
                   onChange={(e) => setDob(e.target.value)}
                   required
-                  className="bg-black border-white/10 rounded-lg focus-visible:ring-1 focus-visible:ring-white/30"
+                  className="bg-black border-white/[0.08] rounded-xl focus-visible:ring-1 focus-visible:ring-white/25 h-[48px] px-5 text-[15px]"
                 />
               </div>
               <Button
                 type="button"
                 onClick={handleNext}
-                className="w-full bg-white text-black hover:bg-white/90 rounded-lg font-mono text-[13px] font-bold tracking-widest"
+                className="w-full h-[52px] bg-white text-black hover:bg-white/90 rounded-xl font-mono text-[13px] font-semibold uppercase tracking-[0.08em]"
               >
-                CONTINUE
+                Continue
               </Button>
             </div>
           )}
 
           {/* Step 2: Time of Birth */}
           {step === 2 && (
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div className="text-center mb-6">
-                <h2 className="text-lg font-semibold">What time were you born?</h2>
-                <p className="font-mono text-[11px] text-white/30 mt-1 tracking-wider">Step 2 of 3</p>
+                <h2 className="text-[20px] md:text-[22px] font-normal tracking-[-0.015em] text-white">What time were you born?</h2>
+                <p className="font-mono text-[11px] text-white/45 mt-2 tracking-[0.2em] uppercase">Step 2 of 3</p>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="time">Time of Birth</Label>
+                <Label htmlFor="time" className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Time of Birth</Label>
                 <Input
                   id="time"
                   type="time"
                   value={unknownTime ? "12:00" : time}
                   onChange={(e) => setTime(e.target.value)}
                   disabled={unknownTime}
-                  className="bg-black border-white/10 rounded-lg focus-visible:ring-1 focus-visible:ring-white/30 disabled:opacity-40"
+                  className="bg-black border-white/[0.08] rounded-xl focus-visible:ring-1 focus-visible:ring-white/25 disabled:opacity-40 h-[48px] px-5 text-[15px]"
                 />
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2.5">
                 <Checkbox
                   id="unknownTime"
                   checked={unknownTime}
                   onCheckedChange={(c) => setUnknownTime(c === true)}
                   className="rounded border-white/25 data-[state=checked]:bg-white data-[state=checked]:text-black"
                 />
-                <Label htmlFor="unknownTime" className="text-[13px] cursor-pointer text-white/70">
-                  I don't know my birth time
+                <Label htmlFor="unknownTime" className="text-[14px] cursor-pointer text-white/65">
+                  I don&apos;t know my birth time
                 </Label>
               </div>
               {unknownTime && (
-                <p className="text-[12px] text-white/30 mt-1 leading-relaxed">
-                  We'll use 12:00 PM (noon). A noon chart still produces accurate results. <a href="https://support.defrag.app/birth-time" target="_blank" rel="noopener" className="underline hover:text-white/50 transition-colors">How to find your birth time</a>
+                <p className="text-[13px] text-white/45 mt-1 leading-relaxed">
+                  We&apos;ll use 12:00 PM (noon). A noon chart still produces accurate results. <a href="https://support.defrag.app/birth-time" target="_blank" rel="noopener" className="underline hover:text-white/60 transition-colors">How to find your birth time</a>
                 </p>
               )}
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <Button
                   type="button"
                   onClick={handleBack}
                   variant="outline"
-                  className="flex-1 border-white/10 text-white hover:bg-white/[0.04] hover:border-white/20 rounded-lg font-mono text-[13px] tracking-wider"
+                  className="flex-1 h-[52px] border-white/25 text-white/80 hover:bg-white/[0.04] hover:border-white/50 rounded-xl font-mono text-[13px] tracking-[0.08em] uppercase"
                 >
-                  BACK
+                  Back
                 </Button>
                 <Button
                   type="button"
                   onClick={handleNext}
-                  className="flex-1 bg-white text-black hover:bg-white/90 rounded-lg font-mono text-[13px] font-bold tracking-widest"
+                  className="flex-1 h-[52px] bg-white text-black hover:bg-white/90 rounded-xl font-mono text-[13px] font-semibold uppercase tracking-[0.08em]"
                 >
-                  CONTINUE
+                  Continue
                 </Button>
               </div>
             </div>
@@ -190,13 +190,13 @@ export default function OnboardingPage() {
 
           {/* Step 3: Birth City */}
           {step === 3 && (
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div className="text-center mb-6">
-                <h2 className="text-lg font-semibold">Where were you born?</h2>
-                <p className="font-mono text-[11px] text-white/30 mt-1 tracking-wider">Step 3 of 3</p>
+                <h2 className="text-[20px] md:text-[22px] font-normal tracking-[-0.015em] text-white">Where were you born?</h2>
+                <p className="font-mono text-[11px] text-white/45 mt-2 tracking-[0.2em] uppercase">Step 3 of 3</p>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="birthCity">Birth City</Label>
+                <Label htmlFor="birthCity" className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Birth City</Label>
                 <Input
                   id="birthCity"
                   type="text"
@@ -204,24 +204,24 @@ export default function OnboardingPage() {
                   value={birthCity}
                   onChange={(e) => setBirthCity(e.target.value)}
                   required
-                  className="bg-black border-white/10 rounded-lg focus-visible:ring-1 focus-visible:ring-white/30 placeholder:text-white/25"
+                  className="bg-black border-white/[0.08] rounded-xl focus-visible:ring-1 focus-visible:ring-white/25 placeholder:text-white/30 h-[48px] px-5 text-[15px]"
                 />
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <Button
                   type="button"
                   onClick={handleBack}
                   variant="outline"
-                  className="flex-1 border-white/10 text-white hover:bg-white/[0.04] hover:border-white/20 rounded-lg font-mono text-[13px] tracking-wider"
+                  className="flex-1 h-[52px] border-white/25 text-white/80 hover:bg-white/[0.04] hover:border-white/50 rounded-xl font-mono text-[13px] tracking-[0.08em] uppercase"
                 >
-                  BACK
+                  Back
                 </Button>
                 <Button
                   type="submit"
-                  className="flex-1 bg-white text-black hover:bg-white/90 rounded-lg font-mono text-[13px] font-bold tracking-widest"
+                  className="flex-1 h-[52px] bg-white text-black hover:bg-white/90 rounded-xl font-mono text-[13px] font-semibold uppercase tracking-[0.08em]"
                   disabled={loading}
                 >
-                  {loading ? "SAVING..." : "COMPLETE"}
+                  {loading ? "Saving..." : "Complete"}
                 </Button>
               </div>
             </div>

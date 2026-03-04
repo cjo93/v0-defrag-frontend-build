@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { BuildStamp } from '@/components/build-stamp';
 import { TopNav } from '@/components/top-nav';
 
 interface Message {
@@ -95,23 +94,22 @@ function ChatClient() {
     setInput(prompt);
   };
 
-  const handleBack = () => {
-    router.push('/dashboard');
-  };
-
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col font-sans">
+    <div className="min-h-screen bg-black text-white flex flex-col font-sans antialiased">
       <TopNav />
 
       <div className="flex-1 overflow-y-auto px-6 py-8">
-        <div className="mx-auto w-full max-w-[760px] space-y-8">
+        <div className="mx-auto w-full max-w-[920px] space-y-8">
           {messages.length === 0 ? (
             <div className="min-h-[60vh] flex flex-col justify-center">
               <div className="text-center mb-12">
-                <h1 className="font-serif text-[32px] md:text-[42px] font-light tracking-[-0.02em] text-white mb-4">
+                <p className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50 mb-5">
+                  Ask DEFRAG
+                </p>
+                <h1 className="text-[26px] md:text-[36px] font-normal tracking-[-0.015em] text-white mb-4">
                   What&apos;s on your mind?
                 </h1>
-                <p className="font-sans text-[16px] text-white/50 tracking-[0.02em]">
+                <p className="text-[15px] md:text-[16px] text-white/65 leading-[1.6]">
                   Explore relational dynamics and patterns
                 </p>
               </div>
@@ -121,9 +119,9 @@ function ChatClient() {
                   <button
                     key={i}
                     onClick={() => handlePromptClick(prompt)}
-                    className="text-left px-6 py-4 border border-white/10 hover:border-white/30 hover:bg-white/5 transition-all duration-200 rounded-xl"
+                    className="text-left px-5 py-4 border border-white/[0.08] bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.05] transition-all duration-200 rounded-xl"
                   >
-                    <span className="font-sans text-[15px] text-white/70 leading-relaxed">
+                    <span className="text-[15px] md:text-[16px] text-white/65 leading-[1.6]">
                       {prompt}
                     </span>
                   </button>
@@ -138,20 +136,20 @@ function ChatClient() {
                   className={`${message.role === 'user' ? 'ml-auto max-w-[80%]' : 'mr-auto max-w-full'}`}
                 >
                   {message.role === 'user' ? (
-                    <div className="border border-white/20 rounded-xl p-6">
-                      <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest block mb-3">
+                    <div className="border border-white/20 rounded-xl p-7">
+                      <span className="font-mono text-[11px] md:text-[12px] text-white/45 uppercase tracking-[0.2em] block mb-3">
                         You
                       </span>
-                      <p className="font-sans text-[16px] text-white leading-relaxed">
+                      <p className="text-[17px] md:text-[20px] text-white leading-[1.6]">
                         {message.content}
                       </p>
                     </div>
                   ) : (
-                    <div className="border border-white/10 rounded-xl p-6 bg-white/[0.02]">
-                      <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest block mb-3">
-                        Response
+                    <div className="border border-white/[0.08] bg-white/[0.03] rounded-xl p-7">
+                      <span className="font-mono text-[11px] md:text-[12px] text-white/45 uppercase tracking-[0.2em] block mb-3">
+                        DEFRAG
                       </span>
-                      <div className="font-sans text-[16px] text-white/80 leading-relaxed whitespace-pre-wrap">
+                      <div className="text-[17px] md:text-[20px] text-white/70 leading-[1.6] whitespace-pre-wrap">
                         {message.content}
                       </div>
                     </div>
@@ -160,8 +158,8 @@ function ChatClient() {
               ))}
               
               {isLoading && (
-                <div className="border border-white/10 rounded-xl p-6 flex justify-center">
-                  <span className="font-mono text-[12px] text-white/50 uppercase tracking-widest">
+                <div className="border border-white/[0.08] bg-white/[0.03] rounded-xl p-7 flex justify-center">
+                  <span className="font-mono text-[11px] md:text-[12px] text-white/45 uppercase tracking-[0.2em]">
                     Processing...
                   </span>
                 </div>
@@ -173,14 +171,14 @@ function ChatClient() {
           
           {error && (
             <div className="text-center py-4">
-              <span className="font-sans text-[14px] text-red-400">{error}</span>
+              <span className="text-[14px] text-red-400">{error}</span>
             </div>
           )}
         </div>
       </div>
 
-      <div className="border-t border-white/20 bg-black px-6 py-6 safe-bottom">
-        <div className="mx-auto w-full max-w-[760px]">
+      <div className="border-t border-white/[0.08] bg-black px-6 py-5 safe-bottom">
+        <div className="mx-auto w-full max-w-[920px]">
           <form onSubmit={handleSend} className="flex items-end gap-4">
             <div className="flex-1">
               <input
@@ -188,21 +186,19 @@ function ChatClient() {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about a relationship dynamic in your life"
                 disabled={isLoading}
-                className="w-full bg-transparent border-b border-white/20 py-4 text-[16px] tracking-[0.02em] font-sans focus:border-white focus:outline-none transition-none placeholder:text-white/25"
+                className="w-full bg-transparent border border-white/[0.08] rounded-xl h-[52px] px-5 text-[15px] md:text-[16px] text-white focus:border-white/25 focus:outline-none transition-colors duration-200 placeholder:text-white/30"
               />
             </div>
             <button 
               type="submit" 
               disabled={isLoading || !input.trim()}
-              className="font-mono text-[14px] tracking-[0.1em] uppercase text-white/70 hover:text-white disabled:opacity-40 pb-4 border-b border-transparent hover:border-white transition-colors duration-200"
+              className="inline-flex items-center justify-center h-[52px] px-7 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-xl hover:bg-white/90 transition-colors duration-200 disabled:opacity-40"
             >
               Send
             </button>
           </form>
         </div>
       </div>
-      
-      <BuildStamp />
     </div>
   );
 }
@@ -210,8 +206,8 @@ function ChatClient() {
 export default function ChatPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-black text-white flex items-center justify-center font-sans">
-        <span className="font-mono text-[12px] text-white/50 uppercase tracking-widest">Initializing...</span>
+      <div className="min-h-screen bg-black text-white flex items-center justify-center font-sans antialiased">
+        <span className="font-mono text-[11px] md:text-[12px] text-white/45 uppercase tracking-[0.2em]">Initializing...</span>
       </div>
     }>
       <ChatClient />

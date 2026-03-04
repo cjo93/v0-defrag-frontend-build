@@ -2,7 +2,6 @@
 
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { getSession } from "@/lib/supabase";
 import { Check } from "lucide-react";
@@ -92,62 +91,62 @@ function UnlockContent() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white font-mono flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-3xl space-y-8">
-        <div className="text-center space-y-2">
-          <h1 className="font-serif text-[32px] font-light tracking-[-0.02em]">DEFRAG</h1>
-          <p className="font-mono text-[12px] text-white/40 tracking-widest">Choose your plan to continue</p>
+    <div className="min-h-screen bg-black text-white font-sans antialiased flex flex-col items-center justify-center p-6">
+      <div className="w-full max-w-[920px] space-y-10">
+        <div className="text-center space-y-3">
+          <p className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">Select a plan</p>
+          <h1 className="text-[26px] md:text-[36px] font-normal tracking-[-0.015em]">Choose your plan to continue</h1>
           {canceled && (
-            <p className="text-[13px] text-yellow-500/80">Checkout was canceled. Pick a plan when you're ready.</p>
+            <p className="text-[14px] text-yellow-500/70">Checkout was canceled. Pick a plan when you&apos;re ready.</p>
           )}
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 gap-5">
           {plans.map((plan) => (
             <div
               key={plan.id}
-              className={`border p-6 space-y-6 transition-colors duration-200 rounded-xl ${
+              className={`border p-7 md:p-8 space-y-6 transition-all duration-200 rounded-xl ${
                 plan.highlighted 
-                  ? 'border-white/25 bg-white/[0.03] hover:border-white/40' 
-                  : 'border-white/10 bg-white/[0.02] hover:border-white/20'
+                  ? 'border-white/20 bg-white/[0.05] hover:border-white/35' 
+                  : 'border-white/[0.08] bg-white/[0.03] hover:border-white/20'
               }`}
             >
               <div>
-                <h2 className="text-xl font-bold">{plan.name}</h2>
-                <p className="font-mono text-[12px] text-white/40 mt-1">{plan.description}</p>
+                <h2 className="text-[22px] md:text-[24px] font-normal tracking-[-0.015em]">{plan.name}</h2>
+                <p className="font-mono text-[11px] md:text-[12px] text-white/50 mt-1 uppercase tracking-[0.2em]">{plan.description}</p>
               </div>
 
               <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-bold">{plan.price}</span>
-                <span className="text-white/30">{plan.period}</span>
+                <span className="text-[36px] md:text-[42px] font-normal tracking-[-0.02em]">{plan.price}</span>
+                <span className="text-white/45 text-[15px]">{plan.period}</span>
               </div>
 
               <ul className="space-y-3">
                 {plan.features.map((feature, i) => (
-                  <li key={i} className="flex items-center gap-2 text-[14px] text-white/70">
-                    <Check className="w-4 h-4 text-white/30" />
+                  <li key={i} className="flex items-center gap-2.5 text-[15px] md:text-[16px] text-white/65">
+                    <Check className="w-4 h-4 text-white/35 shrink-0" />
                     <span>{feature}</span>
                   </li>
                 ))}
               </ul>
 
-              <Button
+              <button
                 onClick={() => handleCheckout(plan.id)}
                 disabled={loading !== null}
-                className={`w-full rounded-lg font-mono text-[13px] font-bold tracking-widest ${
+                className={`w-full h-[52px] rounded-xl font-mono text-[13px] font-semibold uppercase tracking-[0.08em] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed ${
                   plan.highlighted
                     ? 'bg-white text-black hover:bg-white/90'
-                    : 'bg-white/[0.02] text-white hover:bg-white/[0.06] border border-white/10 hover:border-white/20'
-                } transition-all duration-200 disabled:opacity-40`}
+                    : 'border border-white/25 text-white/80 hover:text-white hover:border-white/50'
+                }`}
               >
-                {loading === plan.id ? 'LOADING...' : plan.cta.toUpperCase()}
-              </Button>
+                {loading === plan.id ? 'Loading...' : plan.cta}
+              </button>
             </div>
           ))}
         </div>
 
-        <p className="text-center text-[11px] text-white/20 font-mono tracking-wider">
-          Cancel anytime. No commitment required.
+        <p className="text-center font-mono text-[11px] text-white/30 tracking-[0.2em] uppercase">
+          Cancel anytime · No commitment required
         </p>
       </div>
     </div>

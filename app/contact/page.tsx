@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -75,46 +74,43 @@ export default function ContactPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black flex flex-col items-center justify-center p-4 sm:p-8">
-      <div className="w-full max-w-lg bg-black">
-        <div className="mb-12">
+    <main className="min-h-screen bg-black font-sans antialiased flex flex-col items-center justify-center p-6">
+      <div className="w-full max-w-[560px]">
+        <div className="mb-10">
           <Link
             href="/"
-            className="inline-flex items-center text-[10px] text-white/50 hover:text-white mb-8 uppercase tracking-widest font-mono transition-colors"
+            className="inline-flex items-center font-mono text-[11px] text-white/50 hover:text-white uppercase tracking-[0.2em] transition-colors duration-200 mb-8"
           >
             <ArrowLeft className="mr-2 h-3 w-3" />
-            BACK
+            Back
           </Link>
-          <h1 className="text-4xl font-normal uppercase tracking-tight text-white mb-2 font-sans">
+          <p className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50 mb-3">Get in touch</p>
+          <h1 className="text-[26px] md:text-[36px] font-normal tracking-[-0.015em] text-white">
             Contact
           </h1>
-          <p className="text-sm font-mono text-white/50">
-            Send us a message and we&apos;ll get back to you.
-          </p>
         </div>
 
         {isSuccess ? (
-          <div className="border border-white/20 p-8 bg-black">
-            <h2 className="text-white font-mono text-sm uppercase tracking-wider mb-4">
+          <div className="border border-white/[0.08] bg-white/[0.03] rounded-xl p-7 md:p-8 space-y-4">
+            <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">
               Message Received
             </h2>
-            <p className="text-white/50 text-sm font-mono mb-8">
+            <p className="text-[15px] md:text-[16px] text-white/65 leading-relaxed">
               Thank you for reaching out. We will respond to your inquiry shortly.
             </p>
-            <Button
-              variant="outline"
-              className="w-full rounded-none border-white/20 text-white hover:bg-white hover:text-black font-mono uppercase tracking-widest text-xs h-12"
+            <button
+              className="w-full h-[52px] border border-white/25 text-white/80 rounded-xl font-mono text-[13px] font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/50 transition-all duration-200 mt-4"
               onClick={() => {
                 setIsSuccess(false);
                 form.reset();
               }}
             >
-              SEND ANOTHER MESSAGE
-            </Button>
+              Send Another Message
+            </button>
           </div>
         ) : (
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {/* Honeypot field (hidden) */}
               <FormField
                 control={form.control}
@@ -128,24 +124,24 @@ export default function ContactPage() {
                 )}
               />
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <FormField
                   control={form.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[10px] uppercase tracking-widest text-white/50 font-mono block mb-2">
-                        NAME
+                      <FormLabel className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50 block mb-2">
+                        Name
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="YOUR NAME"
+                          placeholder="Your name"
                           {...field}
-                          className="rounded-none bg-black border-0 border-b border-white/20 text-white focus-visible:ring-0 focus-visible:border-white placeholder:text-white/20 h-10 font-mono text-sm px-0 transition-colors"
+                          className="bg-black border border-white/[0.08] rounded-xl text-white text-[15px] focus-visible:ring-0 focus-visible:border-white/25 placeholder:text-white/30 h-[48px] px-5 transition-colors duration-200"
                           disabled={isSubmitting}
                         />
                       </FormControl>
-                      <FormMessage className="text-red-500 font-mono text-[10px] mt-2 uppercase" />
+                      <FormMessage className="text-red-400/80 font-mono text-[10px] mt-2 uppercase tracking-[0.1em]" />
                     </FormItem>
                   )}
                 />
@@ -155,19 +151,19 @@ export default function ContactPage() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[10px] uppercase tracking-widest text-white/50 font-mono block mb-2">
-                        EMAIL
+                      <FormLabel className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50 block mb-2">
+                        Email
                       </FormLabel>
                       <FormControl>
                         <Input
                           type="email"
-                          placeholder="HELLO@EXAMPLE.COM"
+                          placeholder="hello@example.com"
                           {...field}
-                          className="rounded-none bg-black border-0 border-b border-white/20 text-white focus-visible:ring-0 focus-visible:border-white placeholder:text-white/20 h-10 font-mono text-sm px-0 transition-colors"
+                          className="bg-black border border-white/[0.08] rounded-xl text-white text-[15px] focus-visible:ring-0 focus-visible:border-white/25 placeholder:text-white/30 h-[48px] px-5 transition-colors duration-200"
                           disabled={isSubmitting}
                         />
                       </FormControl>
-                      <FormMessage className="text-red-500 font-mono text-[10px] mt-2 uppercase" />
+                      <FormMessage className="text-red-400/80 font-mono text-[10px] mt-2 uppercase tracking-[0.1em]" />
                     </FormItem>
                   )}
                 />
@@ -178,36 +174,36 @@ export default function ContactPage() {
                 name="message"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[10px] uppercase tracking-widest text-white/50 font-mono block mb-2">
-                      MESSAGE
+                    <FormLabel className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50 block mb-2">
+                      Message
                     </FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="HOW CAN WE HELP?"
-                        className="rounded-none bg-black border-0 border-b border-white/20 text-white focus-visible:ring-0 focus-visible:border-white placeholder:text-white/20 min-h-[160px] font-mono text-sm px-0 resize-none transition-colors"
+                        placeholder="How can we help?"
+                        className="bg-black border border-white/[0.08] rounded-xl text-white text-[15px] focus-visible:ring-0 focus-visible:border-white/25 placeholder:text-white/30 min-h-[160px] p-5 resize-none transition-colors duration-200"
                         {...field}
                         disabled={isSubmitting}
                       />
                     </FormControl>
-                    <FormMessage className="text-red-500 font-mono text-[10px] mt-2 uppercase" />
+                    <FormMessage className="text-red-400/80 font-mono text-[10px] mt-2 uppercase tracking-[0.1em]" />
                   </FormItem>
                 )}
               />
 
-              <Button
+              <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full rounded-none bg-white text-black hover:bg-white/90 h-14 font-mono uppercase tracking-widest text-xs mt-4 transition-colors"
+                className="w-full h-[52px] bg-white text-black rounded-xl font-mono text-[13px] font-semibold uppercase tracking-[0.08em] hover:bg-white/90 transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center"
               >
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    PROCESSING
+                    Sending
                   </>
                 ) : (
-                  "TRANSMIT"
+                  "Send Message"
                 )}
-              </Button>
+              </button>
             </form>
           </Form>
         )}
