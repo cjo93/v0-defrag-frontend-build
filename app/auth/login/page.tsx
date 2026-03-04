@@ -18,6 +18,8 @@ export default function LoginPage() {
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://defrag.app';
   const isTurnstileRequired = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  const googleEnabled = process.env.NEXT_PUBLIC_ENABLE_GOOGLE_OAUTH === 'true';
+  const appleEnabled = process.env.NEXT_PUBLIC_ENABLE_APPLE_OAUTH === 'true';
 
   const handleMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,7 +78,13 @@ export default function LoginPage() {
           redirectTo: `${siteUrl}/dashboard`
         }
       });
-      if (error) throw error;
+      if (error) {
+        if (error.message?.includes('provider is not enabled') || (error as any).error_code === 'validation_failed') {
+          toast({ title: "Not available yet", description: `${provider.charAt(0).toUpperCase() + provider.slice(1)} login isn't available yet. Use email for now.`, variant: "destructive" });
+          return;
+        }
+        throw error;
+      }
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
     }
@@ -91,28 +99,34 @@ export default function LoginPage() {
         </div>
 
         <div className="space-y-4">
-          <button
-            onClick={() => handleOAuth('google')}
-            className="w-full inline-flex items-center justify-center h-[52px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:bg-white/90 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] active:scale-[0.98] transition-all duration-200 ease-out rounded-xl"
-          >
-            Continue with Google
-          </button>
+          {googleEnabled && (
+            <button
+              onClick={() => handleOAuth('google')}
+              className="w-full inline-flex items-center justify-center h-[52px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:bg-white/90 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] active:scale-[0.98] transition-all duration-200 ease-out rounded-xl"
+            >
+              Continue with Google
+            </button>
+          )}
 
-          <button
-            onClick={() => handleOAuth('apple')}
-            className="w-full inline-flex items-center justify-center h-[52px] border border-white/25 text-white/80 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/50 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] active:scale-[0.98] transition-all duration-200 ease-out rounded-xl"
-          >
-            Continue with Apple
-          </button>
+          {appleEnabled && (
+            <button
+              onClick={() => handleOAuth('apple')}
+              className="w-full inline-flex items-center justify-center h-[52px] border border-white/25 text-white/80 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/50 hover:shadow-[0_0_12px_rgba(255,255,255,0.08)] active:scale-[0.98] transition-all duration-200 ease-out rounded-xl"
+            >
+              Continue with Apple
+            </button>
+          )}
 
-          <div className="relative py-4">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-white/[0.08]" />
+          {(googleEnabled || appleEnabled) && (
+            <div className="relative py-4">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-white/[0.08]" />
+              </div>
+              <div className="relative flex justify-center">
+                <span className="bg-black px-3 text-white/45 font-mono text-[11px] tracking-[0.2em] uppercase">Or email</span>
+              </div>
             </div>
-            <div className="relative flex justify-center">
-              <span className="bg-black px-3 text-white/45 font-mono text-[11px] tracking-[0.2em] uppercase">Or email</span>
-            </div>
-          </div>
+          )}
 
           <form onSubmit={handleMagicLink} className="space-y-4">
             <input
