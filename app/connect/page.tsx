@@ -1,10 +1,5 @@
-import { Suspense } from 'react';
-import ConnectClient from './connect-client';
+import { redirect } from 'next/navigation';
 
 export default function ConnectPage() {
-  return (
-    <Suspense fallback={null}>
-      <ConnectClient />
-    </Suspense>
-  );
+  redirect('/dashboard');
 }

@@ -9,32 +9,45 @@ import { ServiceUnavailable } from "@/components/service-unavailable";
 
 const plans = [
   {
+    id: 'free',
+    name: 'Free',
+    price: '$0',
+    period: 'forever',
+    description: 'See what DEFRAG can do',
+    features: [
+      'Personal natal chart',
+      'Limited relationship chat',
+      'Basic daily insight',
+    ],
+    cta: 'Continue free',
+  },
+  {
     id: 'solo',
     name: 'Solo',
     price: '$19',
     period: '/month',
-    description: 'Your personal insights',
+    description: 'Full personal clarity',
     features: [
-      'Personal chart',
-      'AI relationship questions',
-      'Daily insights',
+      'Unlimited relationship chat',
+      'Full daily briefings',
+      'Saved conversation history',
       'Timing recommendations',
     ],
-    cta: 'Start with Solo',
+    cta: 'Start Solo',
   },
   {
     id: 'team',
     name: 'Team',
     price: '$33',
     period: '/month',
-    description: 'Understand your relationships',
+    description: 'For family + close groups',
     features: [
       'Everything in Solo',
-      'Add family & team members',
-      'Relationship overlays',
-      'Group dynamics insights',
+      'Add people + invite links',
+      'Full relationship map',
+      'Group dynamics + deeper context',
     ],
-    cta: 'Upgrade to Team',
+    cta: 'Start Team',
     highlighted: true,
   },
 ];
@@ -50,6 +63,24 @@ function UnlockContent() {
   const canceled = searchParams.get('canceled');
 
   const handleCheckout = async (planId: string) => {
+    // Free tier — skip checkout, go straight to dashboard
+    if (planId === 'free') {
+      try {
+        const session = await getSession();
+        if (!session) { router.push('/auth/login'); return; }
+        if (supabase) {
+          await supabase.from('profiles').upsert({
+            user_id: session.user.id,
+            plan: 'free',
+          }, { onConflict: 'user_id' });
+        }
+        router.push('/dashboard');
+      } catch {
+        router.push('/dashboard');
+      }
+      return;
+    }
+
     setLoading(planId);
 
     try {
@@ -93,40 +124,56 @@ function UnlockContent() {
   };
 
   return (
-    <div className="min-h-screen text-white font-sans antialiased flex flex-col items-center justify-center p-6">
-      <div className="mx-auto w-full max-w-[1100px] px-6 md:px-8 space-y-10">
+    <div className="min-h-screen bg-[#09090b] text-white font-sans antialiased flex flex-col items-center justify-center p-6 relative overflow-hidden">
+      {/* Ambient glow */}
+      <div
+        className="absolute top-[-5%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 20%, rgba(255,255,255,0.04), transparent 70%)' }}
+      />
+
+      <div className="relative mx-auto w-full max-w-[1100px] px-6 md:px-8 space-y-10">
         <div className="text-center space-y-3">
-          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Select a plan</p>
-          <h1 className="text-[26px] md:text-[34px] font-normal tracking-[-0.015em]">Choose your plan to continue</h1>
+          <p className="text-[11px] uppercase tracking-[0.2em] text-white/35 font-medium">Select a plan</p>
+          <h1 className="text-[28px] md:text-[36px] font-bold tracking-[-0.025em]">Choose how you want to use DEFRAG</h1>
+          <p className="text-[15px] text-white/35 max-w-md mx-auto">Start free. Upgrade when you feel the value.</p>
           {canceled && (
-            <p className="text-[14px] text-yellow-500/70">Checkout was canceled. Pick a plan when you&apos;re ready.</p>
+            <p className="text-[14px] text-white/50 mt-2">Checkout was canceled. Pick a plan when you&apos;re ready.</p>
           )}
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-3 gap-5">
           {plans.map((plan) => (
             <div
               key={plan.id}
-              className={`border p-6 md:p-8 space-y-6 transition-all duration-200 ease-out rounded-sm ${
+              className={`border p-6 md:p-8 space-y-6 transition-all duration-300 ease-out rounded-2xl ${
                 plan.highlighted 
-                  ? 'border-white/20 bg-white/[0.04] hover:border-white/20 hover:bg-white/[0.06]' 
-                  : 'border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]'
+                  ? 'border-white/[0.12] bg-white/[0.04] hover:border-white/[0.18] hover:bg-white/[0.06] shadow-[0_0_60px_rgba(255,255,255,0.02)]' 
+                  : 'border-white/[0.06] bg-white/[0.02] hover:border-white/[0.10] hover:bg-white/[0.035]'
               }`}
             >
+              {plan.highlighted && (
+                <div className="flex justify-end -mt-2 -mr-2">
+                  <span className="inline-block text-[9px] uppercase tracking-[0.15em] px-3 py-1 rounded-full font-bold text-black bg-white shadow-[0_0_16px_rgba(255,255,255,0.15)]">
+                    Best value
+                  </span>
+                </div>
+              )}
               <div>
-                <h2 className="text-[22px] md:text-[24px] font-normal tracking-[-0.015em]">{plan.name}</h2>
-                <p className="font-mono text-[11px] text-white/50 mt-1 uppercase tracking-[0.2em]">{plan.description}</p>
+                <h2 className="text-[20px] font-semibold text-white/90">{plan.name}</h2>
+                <p className="text-[13px] text-white/35 mt-1">{plan.description}</p>
               </div>
 
               <div className="flex items-baseline gap-1">
-                <span className="text-[34px] md:text-[38px] font-normal tracking-[-0.02em]">{plan.price}</span>
-                <span className="text-white/45 text-[14px]">{plan.period}</span>
+                <span className="text-[36px] font-bold text-white tracking-tight">{plan.price}</span>
+                <span className="text-white/25 text-[14px]">{plan.period}</span>
               </div>
 
-              <ul className="space-y-3">
+              <div className="h-px w-full bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+
+              <ul className="space-y-3.5">
                 {plan.features.map((feature, i) => (
-                  <li key={i} className="flex items-center gap-2.5 text-[14px] text-white/65">
-                    <Check className="w-4 h-4 text-white/35 shrink-0" />
+                  <li key={i} className="flex items-center gap-3 text-[14px] text-white/50">
+                    <Check className="w-4 h-4 text-white/25 shrink-0" />
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -135,10 +182,10 @@ function UnlockContent() {
               <button
                 onClick={() => handleCheckout(plan.id)}
                 disabled={loading !== null}
-                className={`w-full h-12 rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] transition-all duration-200 ease-out active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed ${
+                className={`w-full h-12 rounded-xl text-[13px] font-bold uppercase tracking-[0.08em] transition-all duration-200 ease-out active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed ${
                   plan.highlighted
-                    ? 'bg-white text-black hover:bg-white/90'
-                    : 'border border-white/10 text-white/80 hover:text-white hover:border-white/20'
+                    ? 'bg-white text-[#09090b] hover:bg-white/90 shadow-[0_0_24px_rgba(255,255,255,0.08)]'
+                    : 'border border-white/[0.08] text-white/55 hover:text-white hover:border-white/15 hover:bg-white/[0.04]'
                 }`}
               >
                 {loading === plan.id ? 'Loading...' : plan.cta}
@@ -147,8 +194,8 @@ function UnlockContent() {
           ))}
         </div>
 
-        <p className="text-center font-mono text-[11px] text-white/30 tracking-[0.2em] uppercase">
-          Cancel anytime · No commitment required
+        <p className="text-center text-[12px] text-white/20 tracking-[0.1em]">
+          No credit card required for free tier. Cancel paid plans anytime.
         </p>
       </div>
     </div>

@@ -101,11 +101,17 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen text-white font-sans antialiased pt-16 pb-24 px-6">
-      <div className="mx-auto w-full max-w-[440px] space-y-8">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-[#09090b] text-white font-sans antialiased pt-16 pb-24 px-6 relative overflow-hidden">
+      {/* Ambient glow */}
+      <div
+        className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[700px] h-[500px] pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 30%, rgba(255,255,255,0.04), transparent 70%)' }}
+      />
+
+      <div className="relative mx-auto w-full max-w-[440px] space-y-8">
         <div className="text-center">
-          <p className="font-mono text-[13px] font-semibold tracking-[0.2em] text-white mb-3">DEFRAG</p>
-          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Tell us about yourself</p>
+          <p className="text-[14px] font-bold tracking-[0.2em] text-white/90 uppercase mb-3">DEFRAG</p>
+          <p className="text-[12px] uppercase tracking-[0.18em] text-white/40">Tell us about yourself</p>
         </div>
 
         {/* Progress indicator */}
@@ -113,36 +119,36 @@ export default function OnboardingPage() {
           {[1, 2, 3].map((s) => (
             <div
               key={s}
-              className={`w-10 h-[2px] rounded-full ${s <= step ? 'bg-white' : 'bg-white/10'} transition-colors duration-200`}
+              className={`w-10 h-[2px] rounded-full ${s <= step ? 'bg-white' : 'bg-white/[0.08]'} transition-colors duration-200`}
             />
           ))}
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6 border border-white/10 bg-white/[0.02] p-6 md:p-8 rounded-sm animate-fade-in">
+        <form onSubmit={handleSubmit} className="space-y-6 border border-white/[0.08] bg-white/[0.02] p-6 md:p-8 rounded-2xl animate-fade-in">
           
           {/* Step 1: Date of Birth */}
           {step === 1 && (
             <div className="space-y-5">
               <div className="text-center mb-6">
-                <h2 className="text-[20px] md:text-[22px] font-normal tracking-[-0.015em] text-white">When were you born?</h2>
-                <p className="font-mono text-[11px] text-white/45 mt-2 tracking-[0.2em] uppercase">Step 1 of 3</p>
+                <h2 className="text-[20px] md:text-[22px] font-semibold tracking-[-0.015em] text-white">When were you born?</h2>
+                <p className="text-[11px] text-white/35 mt-2 tracking-[0.18em] uppercase">Step 1 of 3</p>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="dob" className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Date of Birth</Label>
+                <Label htmlFor="dob" className="text-[11px] uppercase tracking-[0.18em] text-white/40 font-medium">Date of Birth</Label>
                 <Input
                   id="dob"
                   type="date"
                   value={dob}
                   onChange={(e) => setDob(e.target.value)}
                   required
-                  className="bg-transparent border-white/10 rounded-sm focus-visible:border-white/30 h-12 px-5 text-[14px]"
+                  className="bg-transparent border-white/[0.08] rounded-xl focus-visible:border-white/25 h-12 px-5 text-[14px]"
                 />
-                <p className="font-mono text-[11px] text-white/35 tracking-[0.1em]">Used to establish your baseline.</p>
+                <p className="text-[11px] text-white/30 tracking-[0.06em]">Used to establish your baseline.</p>
               </div>
               <Button
                 type="button"
                 onClick={handleNext}
-                className="w-full h-12 bg-white text-black hover:bg-white/90 active:scale-[0.98] rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] transition-all duration-200 ease-out"
+                className="w-full h-12 bg-white text-[#09090b] hover:bg-white/90 active:scale-[0.98] rounded-xl text-[13px] font-bold uppercase tracking-[0.08em] transition-all duration-200 ease-out"
               >
                 Continue
               </Button>
@@ -153,35 +159,35 @@ export default function OnboardingPage() {
           {step === 2 && (
             <div className="space-y-5">
               <div className="text-center mb-6">
-                <h2 className="text-[20px] md:text-[22px] font-normal tracking-[-0.015em] text-white">What time were you born?</h2>
-                <p className="font-mono text-[11px] text-white/45 mt-2 tracking-[0.2em] uppercase">Step 2 of 3</p>
+                <h2 className="text-[20px] md:text-[22px] font-semibold tracking-[-0.015em] text-white">What time were you born?</h2>
+                <p className="text-[11px] text-white/35 mt-2 tracking-[0.18em] uppercase">Step 2 of 3</p>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="time" className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Time of Birth</Label>
+                <Label htmlFor="time" className="text-[11px] uppercase tracking-[0.18em] text-white/40 font-medium">Time of Birth</Label>
                 <Input
                   id="time"
                   type="time"
                   value={unknownTime ? "12:00" : time}
                   onChange={(e) => setTime(e.target.value)}
                   disabled={unknownTime}
-                  className="bg-transparent border-white/10 rounded-sm focus-visible:border-white/30 disabled:opacity-40 h-12 px-5 text-[14px]"
+                  className="bg-transparent border-white/[0.08] rounded-xl focus-visible:border-white/25 disabled:opacity-40 h-12 px-5 text-[14px]"
                 />
-                <p className="font-mono text-[11px] text-white/35 tracking-[0.1em]">Optional. If unknown, we estimate using noon.</p>
+                <p className="text-[11px] text-white/30 tracking-[0.06em]">Optional. If unknown, we estimate using noon.</p>
               </div>
               <div className="flex items-center space-x-2.5">
                 <Checkbox
                   id="unknownTime"
                   checked={unknownTime}
                   onCheckedChange={(c) => setUnknownTime(c === true)}
-                  className="rounded border-white/10 data-[state=checked]:bg-white data-[state=checked]:text-black"
+                  className="rounded border-white/[0.08] data-[state=checked]:bg-white data-[state=checked]:text-black"
                 />
-                <Label htmlFor="unknownTime" className="text-[14px] cursor-pointer text-white/65">
+                <Label htmlFor="unknownTime" className="text-[14px] cursor-pointer text-white/55">
                   I don&apos;t know my birth time
                 </Label>
               </div>
               {unknownTime && (
-                <p className="text-[13px] text-white/45 mt-1 leading-relaxed">
-                  We&apos;ll use 12:00 PM (noon). A noon chart still produces accurate results. <a href="https://support.defrag.app/birth-time" target="_blank" rel="noopener" className="underline hover:text-white/60 transition-colors">How to find your birth time</a>
+                <p className="text-[13px] text-white/40 mt-1 leading-relaxed">
+                  We&apos;ll use 12:00 PM (noon). A noon chart still produces accurate results. <a href="https://support.defrag.app/birth-time" target="_blank" rel="noopener" className="underline hover:text-white/55 transition-colors">How to find your birth time</a>
                 </p>
               )}
               <div className="flex gap-3">
@@ -189,14 +195,14 @@ export default function OnboardingPage() {
                   type="button"
                   onClick={handleBack}
                   variant="outline"
-                  className="flex-1 h-12 border-white/10 text-white/80 hover:bg-white/[0.04] hover:border-white/20 active:scale-[0.98] rounded-sm font-mono text-[13px] tracking-[0.08em] uppercase transition-all duration-200 ease-out"
+                  className="flex-1 h-12 border-white/[0.08] text-white/65 hover:bg-white/[0.04] hover:border-white/15 active:scale-[0.98] rounded-xl text-[13px] tracking-[0.08em] uppercase font-bold transition-all duration-200 ease-out"
                 >
                   Back
                 </Button>
                 <Button
                   type="button"
                   onClick={handleNext}
-                  className="flex-1 h-12 bg-white text-black hover:bg-white/90 active:scale-[0.98] rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] transition-all duration-200 ease-out"
+                  className="flex-1 h-12 bg-white text-[#09090b] hover:bg-white/90 active:scale-[0.98] rounded-xl text-[13px] font-bold uppercase tracking-[0.08em] transition-all duration-200 ease-out"
                 >
                   Continue
                 </Button>
@@ -208,11 +214,11 @@ export default function OnboardingPage() {
           {step === 3 && (
             <div className="space-y-5">
               <div className="text-center mb-6">
-                <h2 className="text-[20px] md:text-[22px] font-normal tracking-[-0.015em] text-white">Where were you born?</h2>
-                <p className="font-mono text-[11px] text-white/45 mt-2 tracking-[0.2em] uppercase">Step 3 of 3</p>
+                <h2 className="text-[20px] md:text-[22px] font-semibold tracking-[-0.015em] text-white">Where were you born?</h2>
+                <p className="text-[11px] text-white/35 mt-2 tracking-[0.18em] uppercase">Step 3 of 3</p>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="birthCity" className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Birth City</Label>
+                <Label htmlFor="birthCity" className="text-[11px] uppercase tracking-[0.18em] text-white/40 font-medium">Birth City</Label>
                 <Input
                   id="birthCity"
                   type="text"
@@ -220,22 +226,22 @@ export default function OnboardingPage() {
                   value={birthCity}
                   onChange={(e) => setBirthCity(e.target.value)}
                   required
-                  className="bg-transparent border-white/10 rounded-sm focus-visible:border-white/30 placeholder:text-white/30 h-12 px-5 text-[14px]"
+                  className="bg-transparent border-white/[0.08] rounded-xl focus-visible:border-white/25 placeholder:text-white/25 h-12 px-5 text-[14px]"
                 />
-                <p className="font-mono text-[11px] text-white/35 tracking-[0.1em]">Provides geographic context for timing patterns.</p>
+                <p className="text-[11px] text-white/30 tracking-[0.06em]">Provides geographic context for timing patterns.</p>
               </div>
               <div className="flex gap-3">
                 <Button
                   type="button"
                   onClick={handleBack}
                   variant="outline"
-                  className="flex-1 h-12 border-white/10 text-white/80 hover:bg-white/[0.04] hover:border-white/20 active:scale-[0.98] rounded-sm font-mono text-[13px] tracking-[0.08em] uppercase transition-all duration-200 ease-out"
+                  className="flex-1 h-12 border-white/[0.08] text-white/65 hover:bg-white/[0.04] hover:border-white/15 active:scale-[0.98] rounded-xl text-[13px] tracking-[0.08em] uppercase font-bold transition-all duration-200 ease-out"
                 >
                   Back
                 </Button>
                 <Button
                   type="submit"
-                  className="flex-1 h-12 bg-white text-black hover:bg-white/90 active:scale-[0.98] rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] transition-all duration-200 ease-out"
+                  className="flex-1 h-12 bg-white text-[#09090b] hover:bg-white/90 active:scale-[0.98] rounded-xl text-[13px] font-bold uppercase tracking-[0.08em] transition-all duration-200 ease-out"
                   disabled={loading}
                 >
                   {loading ? "Saving..." : "Complete"}

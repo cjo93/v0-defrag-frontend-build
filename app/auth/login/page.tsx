@@ -75,11 +75,17 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen text-white font-sans antialiased flex items-center justify-center p-6">
-      <div className="w-full max-w-[440px] space-y-8 border border-white/10 bg-white/[0.02] p-8 md:p-10 rounded-sm animate-fade-in">
+    <div className="min-h-screen bg-[#09090b] text-white font-sans antialiased flex items-center justify-center p-6 relative overflow-hidden">
+      {/* Ambient glow */}
+      <div
+        className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[700px] h-[500px] pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 30%, rgba(255,255,255,0.04), transparent 70%)' }}
+      />
+
+      <div className="relative w-full max-w-[440px] space-y-8 border border-white/[0.08] bg-white/[0.02] p-8 md:p-10 rounded-2xl animate-fade-in">
         <div className="text-center">
-          <p className="font-mono text-[13px] font-semibold tracking-[0.2em] text-white mb-3">DEFRAG</p>
-          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Access your account</p>
+          <p className="text-[14px] font-bold tracking-[0.2em] text-white/90 uppercase mb-3">DEFRAG</p>
+          <p className="text-[12px] uppercase tracking-[0.18em] text-white/40">Access your account</p>
         </div>
 
         <div className="space-y-4">
@@ -87,17 +93,17 @@ export default function LoginPage() {
             <>
               <button
                 onClick={handleAppleOAuth}
-                className="w-full inline-flex items-center justify-center h-12 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:bg-white/90 active:scale-[0.98] transition-all duration-200 rounded-sm"
+                className="w-full inline-flex items-center justify-center h-12 bg-white text-[#09090b] text-[13px] font-bold uppercase tracking-[0.08em] hover:bg-white/90 active:scale-[0.98] transition-all duration-200 rounded-xl"
               >
                 Continue with Apple
               </button>
 
               <div className="relative py-4">
                 <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-white/10" />
+                  <span className="w-full border-t border-white/[0.06]" />
                 </div>
                 <div className="relative flex justify-center">
-                  <span className="bg-black px-3 text-white/45 font-mono text-[11px] tracking-[0.2em] uppercase">Or email</span>
+                  <span className="bg-[#09090b] px-3 text-white/35 text-[11px] tracking-[0.18em] uppercase">Or email</span>
                 </div>
               </div>
             </>
@@ -107,7 +113,7 @@ export default function LoginPage() {
             <input
               type="email"
               placeholder="Email address"
-              className="w-full bg-transparent border border-white/10 h-12 px-5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-colors duration-200 focus:outline-none rounded-sm"
+              className="w-full bg-transparent border border-white/[0.08] h-12 px-5 text-[14px] text-white placeholder:text-white/25 focus:border-white/25 transition-colors duration-200 focus:outline-none rounded-xl"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -115,7 +121,7 @@ export default function LoginPage() {
             <input
               type="password"
               placeholder="Password"
-              className="w-full bg-transparent border border-white/10 h-12 px-5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-colors duration-200 focus:outline-none rounded-sm"
+              className="w-full bg-transparent border border-white/[0.08] h-12 px-5 text-[14px] text-white placeholder:text-white/25 focus:border-white/25 transition-colors duration-200 focus:outline-none rounded-xl"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -130,7 +136,7 @@ export default function LoginPage() {
                 />
               )}
               {turnstileToken && (
-                <p className="text-center font-mono text-[11px] text-white/40 tracking-[0.15em] uppercase animate-fade-in-soft">
+                <p className="text-center text-[11px] text-white/35 tracking-[0.12em] uppercase animate-fade-in-soft">
                   Security check complete
                 </p>
               )}
@@ -138,7 +144,7 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className="w-full inline-flex items-center justify-center gap-2 h-12 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:bg-white/90 active:scale-[0.98] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed rounded-sm"
+              className="w-full inline-flex items-center justify-center gap-2 h-12 bg-white text-[#09090b] text-[13px] font-bold uppercase tracking-[0.08em] hover:bg-white/90 active:scale-[0.98] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl"
               disabled={loading || (isTurnstileRequired && !turnstileToken)}
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
@@ -149,13 +155,13 @@ export default function LoginPage() {
           <div className="flex items-center justify-between pt-2">
             <Link
               href="/auth/signup"
-              className="font-mono text-[11px] uppercase tracking-[0.15em] text-white/45 hover:text-white/70 transition-colors duration-200 py-2"
+              className="text-[12px] uppercase tracking-[0.12em] text-white/35 hover:text-white/60 transition-colors duration-200 py-2"
             >
               Create account
             </Link>
             <Link
               href="/auth/reset"
-              className="font-mono text-[11px] uppercase tracking-[0.15em] text-white/45 hover:text-white/70 transition-colors duration-200 py-2"
+              className="text-[12px] uppercase tracking-[0.12em] text-white/35 hover:text-white/60 transition-colors duration-200 py-2"
             >
               Reset password
             </Link>

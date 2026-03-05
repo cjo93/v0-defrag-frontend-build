@@ -77,9 +77,10 @@ export async function POST(req: NextRequest) {
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://defrag.app';
 
     // Create Stripe Checkout Session (Stripe-hosted)
+    // Omitting payment_method_types allows Stripe to auto-show
+    // Card, Apple Pay, Google Pay, and Link based on device/region
     const checkoutSession = await stripe.checkout.sessions.create({
       mode: 'subscription',
-      payment_method_types: ['card'],
       line_items: [
         {
           price: priceId,

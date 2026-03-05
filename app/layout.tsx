@@ -98,10 +98,10 @@ export default function RootLayout({
   const buildDate = buildTimestamp ? buildTimestamp.split('T')[0] : new Date().toISOString().split('T')[0];
 
   return (
-    <html lang="en" className={`${geist.variable} ${geistMono.variable} bg-black text-white`}>
-      <body className="min-h-[100dvh] bg-black text-white font-sans antialiased">
+    <html lang="en" className={`${geist.variable} ${geistMono.variable} bg-[#09090b] text-white`}>
+      <body className="min-h-[100dvh] bg-[#09090b] text-white font-sans antialiased [touch-action:manipulation] [-webkit-tap-highlight-color:transparent]">
         <AuthProvider>
-          <div className="min-h-screen bg-black text-white">
+          <div className="min-h-screen bg-[#09090b] text-white">
             {children}
           </div>
           <AddToHomePrompt />

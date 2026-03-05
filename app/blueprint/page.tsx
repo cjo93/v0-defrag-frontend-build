@@ -1,9 +1,5 @@
-import BlueprintOutput from '../components/BlueprintOutput'
+import { redirect } from 'next/navigation';
 
 export default function BlueprintPage() {
-  return (
-    <main>
-      <BlueprintOutput />
-    </main>
-  )
+  redirect('/dashboard');
 }
