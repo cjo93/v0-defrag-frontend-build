@@ -83,6 +83,85 @@ function FadeIn({ children, className = '', delay = 0 }: { children: React.React
   );
 }
 
+function MapVisualization() {
+  const nodes = [
+    { label: 'You', x: 50, y: 46, size: 12, delay: 0 },
+    { label: 'Mom', x: 20, y: 22, size: 7.5, delay: 0.4 },
+    { label: 'Partner', x: 80, y: 28, size: 8, delay: 0.9 },
+    { label: 'Sister', x: 26, y: 76, size: 7, delay: 1.4 },
+    { label: 'Friend', x: 76, y: 74, size: 6, delay: 1.8 },
+  ];
+
+  const edges = [
+    { x1: 50, y1: 46, x2: 20, y2: 22, opacity: 0.12 },
+    { x1: 50, y1: 46, x2: 80, y2: 28, opacity: 0.16 },
+    { x1: 50, y1: 46, x2: 26, y2: 76, opacity: 0.09 },
+    { x1: 50, y1: 46, x2: 76, y2: 74, opacity: 0.07 },
+    { x1: 20, y1: 22, x2: 26, y2: 76, opacity: 0.05 },
+  ];
+
+  return (
+    <div className="relative w-full h-[260px] md:h-[300px]">
+      {/* Center glow */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[220px] h-[220px] pointer-events-none"
+        style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.05), transparent 70%)' }}
+      />
+      {/* Edges */}
+      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+        {edges.map((edge, i) => (
+          <motion.line
+            key={i}
+            x1={edge.x1}
+            y1={edge.y1}
+            x2={edge.x2}
+            y2={edge.y2}
+            stroke="white"
+            strokeWidth="0.25"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: edge.opacity }}
+            transition={{ duration: 1.5, delay: 0.6 + i * 0.2 }}
+          />
+        ))}
+      </svg>
+      {/* Nodes */}
+      {nodes.map((node, i) => (
+        <motion.div
+          key={node.label}
+          className="absolute flex flex-col items-center gap-1.5"
+          style={{ left: `${node.x}%`, top: `${node.y}%` }}
+          initial={{ opacity: 0, scale: 0.5, x: '-50%', y: '-50%' }}
+          animate={{ opacity: 1, scale: 1, x: '-50%', y: '-50%' }}
+          transition={{ duration: 0.8, delay: 0.3 + i * 0.15, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <motion.div
+            className="rounded-full"
+            style={{
+              width: node.size * 2,
+              height: node.size * 2,
+              background: i === 0
+                ? 'radial-gradient(circle, rgba(255,255,255,0.85), rgba(255,255,255,0.3))'
+                : 'radial-gradient(circle, rgba(255,255,255,0.5), rgba(255,255,255,0.15))',
+              boxShadow: i === 0
+                ? '0 0 24px rgba(255,255,255,0.18), 0 0 48px rgba(255,255,255,0.06)'
+                : '0 0 14px rgba(255,255,255,0.08)',
+            }}
+            animate={{ scale: [1, 1.12, 1], opacity: [1, 0.85, 1] }}
+            transition={{ duration: 3.5 + i * 0.4, repeat: Infinity, ease: 'easeInOut', delay: node.delay }}
+          />
+          <motion.span
+            className={`font-mono text-[10px] tracking-wide whitespace-nowrap ${i === 0 ? 'text-white/70 font-semibold' : 'text-white/35'}`}
+            animate={{ y: [0, -2, 0] }}
+            transition={{ duration: 4 + i * 0.5, repeat: Infinity, ease: 'easeInOut', delay: node.delay }}
+          >
+            {node.label}
+          </motion.span>
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
 /* ─── Page ────────────────────────────────────────────────────── */
 
 export default function LandingPage() {
@@ -132,10 +211,12 @@ export default function LandingPage() {
 
       {/* ── HERO ── */}
       <section className="relative pt-36 md:pt-48 pb-24 md:pb-36 overflow-hidden">
-        {/* Subtle radial glow */}
-        <div
+        {/* Subtle radial glow — breathing */}
+        <motion.div
           className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[600px] pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse 100% 80% at 50% 0%, rgba(255,255,255,0.04), rgba(255,255,255,0.01) 50%, transparent 80%)' }}
+          style={{ background: 'radial-gradient(ellipse 100% 80% at 50% 0%, rgba(255,255,255,0.05), rgba(255,255,255,0.015) 50%, transparent 80%)' }}
+          animate={{ opacity: [0.7, 1, 0.7] }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
         />
 
         <div className="relative mx-auto max-w-[1200px] px-6 md:px-10 text-center">
@@ -167,7 +248,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={mounted ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[18px] md:text-[20px] text-white/45 leading-[1.6] mb-10 max-w-lg mx-auto"
+            className="text-[18px] md:text-[20px] text-white/55 leading-[1.6] mb-10 max-w-lg mx-auto"
           >
             See patterns. Understand timing. Choose a calmer next step.
           </motion.p>
@@ -214,15 +295,15 @@ export default function LandingPage() {
             {/* Relationship Map (dark card) */}
             <FadeIn>
               <div className="relative bg-[#111113] border border-white/[0.06] rounded-2xl p-8 md:p-10 h-full flex flex-col overflow-hidden">
-                <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/20 mb-5">Relationship map</span>
+                <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-white/30 mb-5">Relationship map</span>
                 <h2 className="text-[40px] md:text-[48px] font-bold tracking-[-0.03em] leading-none text-white mb-4">
                   See the full picture.
                 </h2>
-                <p className="text-[15px] text-white/40 leading-[1.7] mb-8 max-w-sm">
+                <p className="text-[15px] text-white/55 leading-[1.7] mb-6 max-w-sm">
                   Every relationship and its current state, visible at a glance. Watch dynamics shift over time.
                 </p>
-                <div className="mt-auto pt-4 border-t border-white/[0.04]">
-                  <p className="text-[12px] text-white/20 font-mono tracking-wide">Updated continuously</p>
+                <div className="mt-auto">
+                  <MapVisualization />
                 </div>
               </div>
             </FadeIn>
@@ -230,28 +311,38 @@ export default function LandingPage() {
             {/* Chat (light card) */}
             <FadeIn delay={0.1}>
               <div className="relative bg-[#f0eeeb] border border-white/[0.06] rounded-2xl p-8 md:p-10 h-full flex flex-col overflow-hidden">
-                <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-black/25 mb-5">Relationship chat</span>
+                <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-black/35 mb-5">Relationship chat</span>
                 <h2 className="text-[40px] md:text-[48px] font-bold tracking-[-0.03em] leading-none text-[#09090b] mb-4">
                   Ask anything.
                 </h2>
-                <p className="text-[15px] text-black/45 leading-[1.7] mb-8 max-w-sm">
+                <p className="text-[15px] text-black/60 leading-[1.7] mb-8 max-w-sm">
                   Get structured answers about what&rsquo;s happening, why it keeps repeating, and what might actually help.
                 </p>
-                <div className="mt-auto space-y-3">
+                <motion.div
+                  className="mt-auto space-y-3"
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, margin: '-40px' }}
+                  variants={{ visible: { transition: { staggerChildren: 0.12 } } }}
+                >
                   {EXAMPLE_ANSWER.map((block, i) => (
-                    <div
+                    <motion.div
                       key={block.heading}
+                      variants={{
+                        hidden: { opacity: 0, y: 14 },
+                        visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] } },
+                      }}
                       className={`rounded-xl p-5 ${i === 0 ? 'bg-[#e8e5e0] text-[#09090b]' : 'bg-[#09090b] text-white'}`}
                     >
-                      <span className={`font-mono text-[9px] uppercase tracking-[0.2em] ${i === 0 ? 'text-black/25' : 'text-white/20'} block mb-2`}>
+                      <span className={`font-mono text-[11px] uppercase tracking-[0.2em] ${i === 0 ? 'text-black/40' : 'text-white/35'} block mb-2`}>
                         {block.heading.replace('\u2019', "'")}
                       </span>
-                      <p className={`text-[13px] leading-[1.6] ${i === 0 ? 'text-[#09090b]/80' : 'text-white/70'}`}>
+                      <p className={`text-[14px] leading-[1.65] ${i === 0 ? 'text-[#09090b]/85' : 'text-white/80'}`}>
                         &ldquo;{block.body}&rdquo;
                       </p>
-                    </div>
+                    </motion.div>
                   ))}
-                </div>
+                </motion.div>
               </div>
             </FadeIn>
           </div>
@@ -277,11 +368,11 @@ export default function LandingPage() {
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                     style={{ background: 'radial-gradient(circle at 50% 0%, rgba(255,255,255,0.03), transparent 60%)' }}
                   />
-                  <span className="relative inline-block font-mono text-[32px] font-extralight text-white/[0.06] mb-5 leading-none">
+                  <span className="relative inline-block font-mono text-[32px] font-extralight text-white/[0.08] mb-5 leading-none">
                     {card.step}
                   </span>
                   <h3 className="relative text-[17px] font-semibold text-white/90 mb-3">{card.title}</h3>
-                  <p className="relative text-[14px] text-white/40 leading-[1.7]">{card.body}</p>
+                  <p className="relative text-[15px] text-white/50 leading-[1.7]">{card.body}</p>
                 </div>
               </FadeIn>
             ))}
@@ -301,9 +392,9 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {OUTCOMES.map((item, i) => (
               <FadeIn key={item} delay={i * 0.06}>
-                <div className="flex items-start gap-3.5 border border-white/[0.06] bg-white/[0.02] p-6 rounded-2xl">
-                  <Check className="w-4 h-4 mt-1 shrink-0 text-white/25" />
-                  <p className="text-[15px] text-white/50 leading-[1.6]">{item}</p>
+                <div className="group flex items-start gap-3.5 border border-white/[0.06] bg-white/[0.02] p-6 rounded-2xl hover:border-white/[0.10] hover:bg-white/[0.03] transition-all duration-300">
+                  <Check className="w-4 h-4 mt-1 shrink-0 text-white/30" />
+                  <p className="text-[15px] text-white/55 leading-[1.6]">{item}</p>
                 </div>
               </FadeIn>
             ))}
@@ -339,10 +430,10 @@ export default function LandingPage() {
                     $19<span className="text-[14px] font-normal text-white/25 ml-1.5">/ month</span>
                   </p>
                 </div>
-                <ul className="space-y-3.5 text-[14px] text-white/40 leading-relaxed flex-1 mb-8">
+                <ul className="space-y-3.5 text-[14px] text-white/50 leading-relaxed flex-1 mb-8">
                   {SOLO_FEATURES.map((f) => (
                     <li key={f} className="flex items-center gap-3">
-                      <Check className="w-4 h-4 shrink-0 text-white/20" />
+                      <Check className="w-4 h-4 shrink-0 text-white/30" />
                       {f}
                     </li>
                   ))}
@@ -378,10 +469,10 @@ export default function LandingPage() {
                     $33<span className="text-[14px] font-normal text-white/25 ml-1.5">/ month</span>
                   </p>
                 </div>
-                <ul className="space-y-3.5 text-[14px] text-white/40 leading-relaxed flex-1 mb-8">
+                <ul className="space-y-3.5 text-[14px] text-white/50 leading-relaxed flex-1 mb-8">
                   {TEAM_FEATURES.map((f) => (
                     <li key={f} className="flex items-center gap-3">
-                      <Check className="w-4 h-4 shrink-0 text-white/20" />
+                      <Check className="w-4 h-4 shrink-0 text-white/30" />
                       {f}
                     </li>
                   ))}
@@ -412,8 +503,8 @@ export default function LandingPage() {
                   className="text-center border border-white/[0.06] rounded-2xl p-7 md:p-8 motion-safe:hover:-translate-y-0.5 hover:border-white/[0.10] transition-all duration-300"
                   style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.008))' }}
                 >
-                  <h3 className="text-[16px] font-semibold text-white/80 mb-2.5">{item.title}</h3>
-                  <p className="text-[13px] text-white/35 leading-[1.7]">{item.body}</p>
+                  <h3 className="text-[16px] font-semibold text-white/85 mb-2.5">{item.title}</h3>
+                  <p className="text-[14px] text-white/45 leading-[1.7]">{item.body}</p>
                 </div>
               </FadeIn>
             ))}
@@ -434,7 +525,7 @@ export default function LandingPage() {
                 Ready for clarity?
               </span>
             </h2>
-            <p className="text-[17px] text-white/40 mb-10 max-w-md mx-auto">
+            <p className="text-[17px] text-white/50 mb-10 max-w-md mx-auto">
               Start understanding the patterns that shape your closest relationships.
             </p>
             <Link
