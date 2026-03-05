@@ -34,7 +34,7 @@ export default function RelationshipMap({
         </div>
         <button
           onClick={onAddPerson}
-          className="inline-flex items-center justify-center h-[44px] px-6 border border-white/25 text-white/80 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/50 active:scale-[0.98] transition-all duration-200 ease-out"
+          className="inline-flex items-center justify-center h-12 px-6 border border-white/10 text-white/80 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/20 active:scale-[0.98] transition-all duration-200 ease-out"
         >
           Add person
         </button>

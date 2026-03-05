@@ -44,7 +44,7 @@ export default function ResetConfirmPage() {
           <input
             type="password"
             placeholder="New password"
-            className="w-full bg-transparent border border-white/10 px-5 py-3.5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-all duration-200 focus:outline-none rounded-sm"
+            className="w-full bg-transparent border border-white/10 px-5 py-3.5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-colors duration-200 focus:outline-none rounded-sm"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -53,7 +53,7 @@ export default function ResetConfirmPage() {
 
           <button
             type="submit"
-            className="w-full inline-flex items-center justify-center h-[48px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:bg-white/90 active:scale-[0.98] transition-all duration-200 ease-out disabled:opacity-40 disabled:cursor-not-allowed rounded-sm"
+            className="w-full inline-flex items-center justify-center h-12 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:bg-white/90 active:scale-[0.98] transition-all duration-200 ease-out disabled:opacity-40 disabled:cursor-not-allowed rounded-sm"
             disabled={loading}
           >
             {loading ? "Updating..." : "Update password"}

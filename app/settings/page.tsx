@@ -114,7 +114,7 @@ export default function SettingsPage() {
   return (
     <div className="min-h-screen text-white font-sans antialiased">
       <TopNav />
-      <main className="px-6 pt-16 pb-24 flex flex-col items-center">
+      <main className="px-6 pt-10 pb-16 flex flex-col items-center">
 <div className="w-full max-w-[1100px] space-y-12">
 
           <div>
@@ -138,7 +138,7 @@ export default function SettingsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Link
                   href="/auth/reset"
-                  className="inline-flex items-center justify-center h-[44px] px-6 border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/30 transition-all duration-200"
+                  className="inline-flex items-center justify-center h-12 px-6 border border-white/10 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/20 transition-colors duration-200"
                 >
                   Reset Password
                 </Link>
@@ -147,7 +147,7 @@ export default function SettingsPage() {
                     await signOut();
                     router.push('/auth/login');
                   }}
-                  className="inline-flex items-center justify-center h-[44px] px-6 border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/30 transition-all duration-200"
+                  className="inline-flex items-center justify-center h-12 px-6 border border-white/10 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/20 transition-all duration-200"
                 >
                   Sign Out
                 </button>
@@ -161,18 +161,18 @@ export default function SettingsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="space-y-1.5">
                   <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Date of birth</label>
-                  <input type="date" className="w-full bg-transparent border border-white/10 h-[44px] px-4 text-[14px] text-white focus:border-white/25 transition-colors duration-200 focus:outline-none rounded-sm [color-scheme:dark]" value={dob} onChange={(e) => setDob(e.target.value)} required />
+                  <input type="date" className="w-full bg-transparent border border-white/10 h-12 px-4 text-[14px] text-white focus:border-white/30 transition-colors duration-200 focus:outline-none rounded-sm [color-scheme:dark]" value={dob} onChange={(e) => setDob(e.target.value)} required />
                 </div>
                 <div className="space-y-1.5">
                   <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Birth time</label>
-                  <input type="time" className="w-full bg-transparent border border-white/10 h-[44px] px-4 text-[14px] text-white focus:border-white/25 transition-colors duration-200 focus:outline-none rounded-sm [color-scheme:dark]" value={time} onChange={(e) => setTime(e.target.value)} required />
+                  <input type="time" className="w-full bg-transparent border border-white/10 h-12 px-4 text-[14px] text-white focus:border-white/30 transition-colors duration-200 focus:outline-none rounded-sm [color-scheme:dark]" value={time} onChange={(e) => setTime(e.target.value)} required />
                 </div>
                 <div className="space-y-1.5">
                   <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Location</label>
-                  <input type="text" placeholder="City, Country" className="w-full bg-transparent border border-white/10 h-[44px] px-4 text-[14px] text-white placeholder:text-white/30 focus:border-white/25 transition-colors duration-200 focus:outline-none rounded-sm" value={location} onChange={(e) => setLocation(e.target.value)} required />
+                  <input type="text" placeholder="City, Country" className="w-full bg-transparent border border-white/10 h-12 px-4 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-colors duration-200 focus:outline-none rounded-sm" value={location} onChange={(e) => setLocation(e.target.value)} required />
                 </div>
               </div>
-              <button type="submit" className="inline-flex items-center justify-center h-[44px] px-6 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 active:scale-[0.98] transition-all duration-200 disabled:opacity-40" disabled={loading}>
+              <button type="submit" className="inline-flex items-center justify-center h-12 px-6 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 active:scale-[0.98] transition-colors duration-200 disabled:opacity-40" disabled={loading}>
                 {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Updating...</> : "Update & Recalculate"}
               </button>
             </form>
@@ -189,7 +189,7 @@ export default function SettingsPage() {
               <div className="flex gap-3">
                 <Link
                   href="/unlock"
-                  className="inline-flex items-center justify-center h-[44px] px-6 border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/30 transition-all duration-200"
+                  className="inline-flex items-center justify-center h-12 px-6 border border-white/10 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/20 transition-colors duration-200"
                 >
                   {isTeam(plan) ? 'Manage Plan' : 'Upgrade to Team'}
                 </Link>
@@ -200,18 +200,18 @@ export default function SettingsPage() {
           {/* Preferences */}
           <Panel title="PREFERENCES">
             <div className="space-y-5">
-              <label className="flex items-center space-x-3 text-[14px] text-white/65 cursor-pointer min-h-[44px]">
+              <label className="flex items-center space-x-3 text-[14px] text-white/65 cursor-pointer min-h-12">
                 <input type="checkbox" className="w-4 h-4 border-white/20 bg-transparent checked:bg-white accent-white rounded-sm cursor-pointer" defaultChecked />
                 <span>Email Notifications</span>
               </label>
               <div className="flex flex-col space-y-1.5">
                 <label className="font-mono text-[11px] text-white/50 tracking-[0.2em] uppercase">Audio Voice</label>
-                <select className="bg-transparent border border-white/10 h-[44px] px-4 text-[14px] text-white focus:border-white/25 hover:border-white/20 transition-all duration-200 focus:outline-none rounded-sm cursor-pointer">
+                <select className="bg-transparent border border-white/10 h-12 px-4 text-[14px] text-white focus:border-white/30 hover:border-white/20 transition-colors duration-200 focus:outline-none rounded-sm cursor-pointer">
                   <option>Voice 1 (Default)</option>
                   <option>Voice 2</option>
                 </select>
               </div>
-              <label className="flex items-center space-x-3 text-[14px] text-white/65 cursor-pointer min-h-[44px]">
+              <label className="flex items-center space-x-3 text-[14px] text-white/65 cursor-pointer min-h-12">
                 <input type="checkbox" className="w-4 h-4 border-white/20 bg-transparent checked:bg-white accent-white rounded-sm cursor-pointer" />
                 <span>Share full chart with invites (Default: Derived analysis only)</span>
               </label>
@@ -227,7 +227,7 @@ export default function SettingsPage() {
               <button
                 onClick={handleExport}
                 disabled={exporting}
-                className="inline-flex items-center justify-center gap-2 h-[44px] px-6 border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/30 transition-all duration-200 disabled:opacity-40"
+                className="inline-flex items-center justify-center gap-2 h-12 px-6 border border-white/10 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/20 transition-colors duration-200 disabled:opacity-40"
               >
                 {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
                 {exporting ? "Exporting..." : "Export Data"}
@@ -243,7 +243,7 @@ export default function SettingsPage() {
             <p className="text-[14px] text-white/45 leading-[1.6]">
               This will permanently delete your account and all associated data. This action cannot be undone.
             </p>
-            <button className="inline-flex items-center justify-center h-[44px] px-6 border border-red-500/20 text-red-500/70 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-500 transition-all duration-200">
+            <button className="inline-flex items-center justify-center h-12 px-6 border border-red-500/20 text-red-500/70 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-500 transition-colors duration-200">
               Delete Account
             </button>
           </div>

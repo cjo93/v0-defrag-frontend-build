@@ -97,11 +97,11 @@ export default function RelationshipsPage() {
             <h2 className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50 mb-1">Add Manually</h2>
           </div>
           <form onSubmit={handleManualAdd} className="grid grid-cols-1 gap-4">
-            <input type="text" placeholder="Name" className="w-full bg-transparent border border-white/10 px-5 py-3.5 text-[14px] text-white placeholder:text-white/30 focus:border-white/25 transition-colors duration-200 focus:outline-none rounded-sm" value={manual.name} onChange={(e) => setManual({ ...manual, name: e.target.value })} required />
-            <input type="date" className="w-full bg-transparent border border-white/10 px-5 py-3.5 text-[14px] text-white focus:border-white/25 transition-colors duration-200 focus:outline-none rounded-sm" value={manual.dob} onChange={(e) => setManual({ ...manual, dob: e.target.value })} required />
-            <input type="time" className="w-full bg-transparent border border-white/10 px-5 py-3.5 text-[14px] text-white focus:border-white/25 transition-colors duration-200 focus:outline-none rounded-sm" value={manual.time} onChange={(e) => setManual({ ...manual, time: e.target.value })} required />
-            <input type="text" placeholder="Location" className="w-full bg-transparent border border-white/10 px-5 py-3.5 text-[14px] text-white placeholder:text-white/30 focus:border-white/25 transition-colors duration-200 focus:outline-none rounded-sm" value={manual.location} onChange={(e) => setManual({ ...manual, location: e.target.value })} required />
-            <button type="submit" className="w-full h-[48px] bg-white text-black rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] hover:bg-white/90 transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed" disabled={loading}>
+            <input type="text" placeholder="Name" className="w-full bg-transparent border border-white/10 px-5 py-3.5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-colors duration-200 focus:outline-none rounded-sm" value={manual.name} onChange={(e) => setManual({ ...manual, name: e.target.value })} required />
+            <input type="date" className="w-full bg-transparent border border-white/10 px-5 py-3.5 text-[14px] text-white focus:border-white/30 transition-colors duration-200 focus:outline-none rounded-sm" value={manual.dob} onChange={(e) => setManual({ ...manual, dob: e.target.value })} required />
+            <input type="time" className="w-full bg-transparent border border-white/10 px-5 py-3.5 text-[14px] text-white focus:border-white/30 transition-colors duration-200 focus:outline-none rounded-sm" value={manual.time} onChange={(e) => setManual({ ...manual, time: e.target.value })} required />
+            <input type="text" placeholder="Location" className="w-full bg-transparent border border-white/10 px-5 py-3.5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-colors duration-200 focus:outline-none rounded-sm" value={manual.location} onChange={(e) => setManual({ ...manual, location: e.target.value })} required />
+            <button type="submit" className="w-full h-12 bg-white text-black rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] hover:bg-white/90 transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed" disabled={loading}>
               {loading ? "Adding..." : "Add Relationship"}
             </button>
           </form>
@@ -114,8 +114,8 @@ export default function RelationshipsPage() {
             <p className="text-[14px] text-white/45">Recipient enters their own birth data and manages their privacy settings.</p>
           </div>
           <form onSubmit={handleInvite} className="grid grid-cols-1 gap-4">
-            <input type="tel" placeholder="Phone Number" className="w-full bg-transparent border border-white/10 px-5 py-3.5 text-[14px] text-white placeholder:text-white/30 focus:border-white/25 transition-colors duration-200 focus:outline-none rounded-sm" value={invitePhone} onChange={(e) => setInvitePhone(e.target.value)} required />
-            <button type="submit" className="w-full h-[48px] border border-white/25 text-white/80 rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/50 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed" disabled={loading}>
+            <input type="tel" placeholder="Phone Number" className="w-full bg-transparent border border-white/10 px-5 py-3.5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-colors duration-200 focus:outline-none rounded-sm" value={invitePhone} onChange={(e) => setInvitePhone(e.target.value)} required />
+            <button type="submit" className="w-full h-12 border border-white/10 text-white/80 rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/20 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed" disabled={loading}>
               {loading ? "Sending..." : "Send Invite"}
             </button>
           </form>

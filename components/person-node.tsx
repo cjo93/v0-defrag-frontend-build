@@ -60,7 +60,7 @@ export default function PersonNode({
       {/* Node pill */}
       <div className="relative flex flex-col items-center gap-1 animate-float">
         <div
-          className="px-4 py-2.5 border border-white/10 bg-white/[0.02] rounded-sm shadow-[0_0_40px_rgba(255,255,255,0.03)] group-hover:border-white/25 group-hover:bg-white/[0.06] transition-all duration-300"
+          className="px-4 py-2.5 border border-white/10 bg-white/[0.02] rounded-sm shadow-[0_0_40px_rgba(255,255,255,0.03)] group-hover:border-white/20 group-hover:bg-white/[0.06] transition-all duration-300"
           style={{ animationDelay: delay }}
         >
           <span className="text-[14px] text-white font-medium whitespace-nowrap">

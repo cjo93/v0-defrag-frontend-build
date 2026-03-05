@@ -170,7 +170,7 @@ export default function InvitePage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="First name"
-                className="w-full h-[48px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors"
+                className="w-full h-12 px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors"
               />
             </div>
             <div className="space-y-2">
@@ -181,7 +181,7 @@ export default function InvitePage() {
                 type="date"
                 value={birthDate}
                 onChange={(e) => setBirthDate(e.target.value)}
-                className="w-full h-[48px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white outline-none focus:border-white/30 transition-colors [color-scheme:dark]"
+                className="w-full h-12 px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white outline-none focus:border-white/30 transition-colors [color-scheme:dark]"
               />
             </div>
             <button
@@ -189,7 +189,7 @@ export default function InvitePage() {
                 if (name.trim() && birthDate) setStep(2);
               }}
               disabled={!name.trim() || !birthDate}
-              className="w-full h-[48px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200"
+              className="w-full h-12 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200"
             >
               Continue
             </button>
@@ -210,7 +210,7 @@ export default function InvitePage() {
                 type="time"
                 value={birthTime}
                 onChange={(e) => setBirthTime(e.target.value)}
-                className="w-full h-[48px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white outline-none focus:border-white/30 transition-colors [color-scheme:dark]"
+                className="w-full h-12 px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white outline-none focus:border-white/30 transition-colors [color-scheme:dark]"
               />
             </div>
 
@@ -224,13 +224,13 @@ export default function InvitePage() {
             <div className="flex gap-3">
               <button
                 onClick={() => setStep(1)}
-                className="flex-1 h-[48px] border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/30 transition-all duration-200"
+                className="flex-1 h-12 border border-white/10 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/20 transition-all duration-200"
               >
                 Back
               </button>
               <button
                 onClick={() => setStep(3)}
-                className="flex-1 h-[48px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 transition-all duration-200"
+                className="flex-1 h-12 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 transition-all duration-200"
               >
                 Continue
               </button>
@@ -253,7 +253,7 @@ export default function InvitePage() {
                 value={birthPlace}
                 onChange={(e) => setBirthPlace(e.target.value)}
                 placeholder="e.g. Los Angeles, CA"
-                className="w-full h-[48px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors"
+                className="w-full h-12 px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors"
               />
             </div>
 
@@ -267,14 +267,14 @@ export default function InvitePage() {
             <div className="flex gap-3">
               <button
                 onClick={() => setStep(2)}
-                className="flex-1 h-[48px] border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/30 transition-all duration-200"
+                className="flex-1 h-12 border border-white/10 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/20 transition-all duration-200"
               >
                 Back
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={state === "submitting"}
-                className="flex-1 h-[48px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 disabled:opacity-50 transition-all duration-200"
+                className="flex-1 h-12 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 disabled:opacity-50 transition-all duration-200"
               >
                 {state === "submitting" ? "Submitting…" : "Submit"}
               </button>
@@ -311,7 +311,7 @@ function PrivacyToggle({
     <button
       type="button"
       onClick={onToggle}
-      className="w-full flex items-center justify-between border border-white/[0.06] bg-white/[0.02] rounded-lg px-4 py-3 hover:border-white/15 transition-colors"
+      className="w-full flex items-center justify-between border border-white/[0.06] bg-white/[0.02] rounded-lg px-4 py-3 hover:border-white/20 transition-colors"
     >
       <span className="text-[14px] text-white/60">{label}</span>
       <div

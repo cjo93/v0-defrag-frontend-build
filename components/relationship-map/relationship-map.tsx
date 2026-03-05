@@ -42,6 +42,7 @@ const CENTER = SIZE / 2;
 export default function RelationshipMap({ people }: { people: Person[] }) {
   const router = useRouter();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [tappedId, setTappedId] = useState<string | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
   const [mounted, setMounted] = useState(false);
 
@@ -158,12 +159,34 @@ export default function RelationshipMap({ people }: { people: Person[] }) {
                 setHoveredId(null);
                 setTooltipPos(null);
               }}
-              onClick={() => router.push(`/chat?person_id=${node.id}`)}
+              onClick={(e) => {
+                // Mobile two-tap: first tap shows tooltip, second navigates
+                if ('ontouchstart' in window) {
+                  if (tappedId !== node.id) {
+                    e.preventDefault();
+                    setTappedId(node.id);
+                    setHoveredId(node.id);
+                    const svg = e.currentTarget.closest('svg');
+                    if (svg) {
+                      const rect = svg.getBoundingClientRect();
+                      const scaleX = rect.width / SIZE;
+                      const scaleY = rect.height / SIZE;
+                      setTooltipPos({
+                        x: node.x * scaleX,
+                        y: node.y * scaleY - 16,
+                      });
+                    }
+                    return;
+                  }
+                }
+                router.push(`/chat?person_id=${node.id}`);
+              }}
               style={{
                 opacity: mounted ? 1 : 0,
-                transform: mounted ? 'scale(1)' : 'scale(0.9)',
+                transform: mounted ? 'scale(1)' : 'scale(0.92)',
                 transformOrigin: `${node.x}px ${node.y}px`,
                 transition: `opacity 200ms ease ${delay}ms, transform 200ms ease ${delay}ms`,
+                filter: isHovered ? 'drop-shadow(0 0 6px rgba(255,255,255,0.12))' : 'none',
               }}
             >
               {/* State ring */}
@@ -212,7 +235,7 @@ export default function RelationshipMap({ people }: { people: Person[] }) {
             transform: 'translate(-50%, -100%)',
           }}
         >
-          <div className="border border-white/15 bg-white/[0.04] rounded-sm px-3 py-2 space-y-0.5 shadow-lg">
+          <div className="border border-white/10 bg-white/[0.04] rounded-sm px-3 py-2 space-y-0.5 shadow-lg">
             <p className="text-[13px] text-white font-medium whitespace-nowrap">{hoveredPerson.name}</p>
             {hoveredPerson.relationship_label && (
               <p className="font-mono text-[10px] text-white/40 uppercase tracking-[0.12em]">

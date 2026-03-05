@@ -87,7 +87,7 @@ export default function LoginPage() {
             <>
               <button
                 onClick={handleAppleOAuth}
-                className="w-full inline-flex items-center justify-center h-[48px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:bg-white/90 active:scale-[0.98] transition-all duration-200 ease-out rounded-sm"
+                className="w-full inline-flex items-center justify-center h-12 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:bg-white/90 active:scale-[0.98] transition-all duration-200 rounded-sm"
               >
                 Continue with Apple
               </button>
@@ -107,7 +107,7 @@ export default function LoginPage() {
             <input
               type="email"
               placeholder="Email address"
-              className="w-full bg-transparent border border-white/10 h-[48px] px-5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-all duration-200 focus:outline-none rounded-sm"
+              className="w-full bg-transparent border border-white/10 h-12 px-5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-colors duration-200 focus:outline-none rounded-sm"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -115,7 +115,7 @@ export default function LoginPage() {
             <input
               type="password"
               placeholder="Password"
-              className="w-full bg-transparent border border-white/10 h-[48px] px-5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-all duration-200 focus:outline-none rounded-sm"
+              className="w-full bg-transparent border border-white/10 h-12 px-5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-colors duration-200 focus:outline-none rounded-sm"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -138,7 +138,7 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className="w-full inline-flex items-center justify-center gap-2 h-[48px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:bg-white/90 active:scale-[0.98] transition-all duration-200 ease-out disabled:opacity-40 disabled:cursor-not-allowed rounded-sm"
+              className="w-full inline-flex items-center justify-center gap-2 h-12 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:bg-white/90 active:scale-[0.98] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed rounded-sm"
               disabled={loading || (isTurnstileRequired && !turnstileToken)}
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}

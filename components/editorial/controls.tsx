@@ -9,7 +9,7 @@ export function LineInput(props: InputHTMLAttributes<HTMLInputElement>) {
       className={[
         "w-full bg-transparent text-white placeholder:text-white/25",
         "text-[16px] py-5",
-        "border-b border-white/15 focus:border-white/35 outline-none",
+        "border-b border-white/10 focus:border-white/30 outline-none",
         "transition-none",
         props.className || "",
       ].join(" ")}
@@ -51,7 +51,7 @@ export function PrimaryActionButton({
         "text-white",
         "py-5",
         "border border-white/20 hover:border-white/40",
-        "min-h-[44px]",
+        "min-h-12",
         props.className || "",
       ].join(" ")}
     >

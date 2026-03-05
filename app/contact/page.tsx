@@ -99,7 +99,7 @@ export default function ContactPage() {
               Thank you for reaching out. We will respond to your inquiry shortly.
             </p>
             <button
-              className="w-full h-[48px] border border-white/25 text-white/80 rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/50 transition-all duration-200 mt-4"
+              className="w-full h-12 border border-white/10 text-white/80 rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/20 transition-all duration-200 mt-4"
               onClick={() => {
                 setIsSuccess(false);
                 form.reset();
@@ -137,7 +137,7 @@ export default function ContactPage() {
                         <Input
                           placeholder="Your name"
                           {...field}
-                          className="bg-transparent border border-white/10 rounded-sm text-white text-[14px] focus-visible:ring-0 focus-visible:border-white/25 placeholder:text-white/30 h-[48px] px-5 transition-colors duration-200"
+                          className="bg-transparent border border-white/10 rounded-sm text-white text-[14px] focus-visible:ring-0 focus-visible:border-white/30 placeholder:text-white/30 h-12 px-5 transition-colors duration-200"
                           disabled={isSubmitting}
                         />
                       </FormControl>
@@ -159,7 +159,7 @@ export default function ContactPage() {
                           type="email"
                           placeholder="hello@example.com"
                           {...field}
-                          className="bg-transparent border border-white/10 rounded-sm text-white text-[14px] focus-visible:ring-0 focus-visible:border-white/25 placeholder:text-white/30 h-[48px] px-5 transition-colors duration-200"
+                          className="bg-transparent border border-white/10 rounded-sm text-white text-[14px] focus-visible:ring-0 focus-visible:border-white/30 placeholder:text-white/30 h-12 px-5 transition-colors duration-200"
                           disabled={isSubmitting}
                         />
                       </FormControl>
@@ -180,7 +180,7 @@ export default function ContactPage() {
                     <FormControl>
                       <Textarea
                         placeholder="How can we help?"
-                        className="bg-transparent border border-white/10 rounded-sm text-white text-[14px] focus-visible:ring-0 focus-visible:border-white/25 placeholder:text-white/30 min-h-[160px] p-5 resize-none transition-colors duration-200"
+                        className="bg-transparent border border-white/10 rounded-sm text-white text-[14px] focus-visible:ring-0 focus-visible:border-white/30 placeholder:text-white/30 min-h-[160px] p-5 resize-none transition-colors duration-200"
                         {...field}
                         disabled={isSubmitting}
                       />
@@ -193,7 +193,7 @@ export default function ContactPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full h-[48px] bg-white text-black rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] hover:bg-white/90 transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center"
+                className="w-full h-12 bg-white text-black rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] hover:bg-white/90 transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center"
               >
                 {isSubmitting ? (
                   <>

@@ -157,7 +157,7 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen text-white font-sans antialiased">
         <TopNav />
-        <main className="max-w-[1100px] mx-auto px-6 pt-16 pb-24">
+        <main className="max-w-[1100px] mx-auto px-6 pt-10 pb-16">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {[1, 2, 3, 4].map((i) => (
               <div
@@ -290,7 +290,7 @@ export default function DashboardPage() {
                   </div>
                   <Link
                     href="/unlock"
-                    className="inline-flex items-center justify-center h-[42px] px-5 border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/35 active:scale-[0.98] transition-all duration-200"
+                    className="inline-flex items-center justify-center h-12 px-5 border border-white/10 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/20 active:scale-[0.98] transition-all duration-200"
                   >
                     Upgrade to Team
                   </Link>
@@ -317,7 +317,7 @@ export default function DashboardPage() {
                       setAddMode("choose");
                       setShowAddModal(true);
                     }}
-                    className="inline-flex items-center justify-center h-[42px] px-5 border border-white/25 text-white/80 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/50 active:scale-[0.98] transition-all duration-200"
+                    className="inline-flex items-center justify-center h-12 px-5 border border-white/10 text-white/80 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/20 active:scale-[0.98] transition-all duration-200"
                   >
                     Add first person
                   </button>
@@ -408,7 +408,7 @@ export default function DashboardPage() {
                 </div>
                 <Link
                   href="/chat"
-                  className="inline-flex items-center justify-center h-[42px] px-6 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:bg-white/90 active:scale-[0.98] transition-all duration-200"
+                  className="inline-flex items-center justify-center h-12 px-6 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:bg-white/90 active:scale-[0.98] transition-all duration-200"
                 >
                   Start Chat
                 </Link>
@@ -639,39 +639,39 @@ function AddPersonModal({
               <div className="space-y-1.5">
                 <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Name</label>
                 <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="First name"
-                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
+                  className="w-full h-12 px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
               </div>
               <div className="space-y-1.5">
                 <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Relationship</label>
                 <input type="text" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="e.g. Father, Partner, Friend"
-                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
+                  className="w-full h-12 px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
               </div>
               <div className="space-y-1.5">
                 <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Date of birth</label>
                 <input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)}
-                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white outline-none focus:border-white/30 transition-colors [color-scheme:dark]" />
+                  className="w-full h-12 px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white outline-none focus:border-white/30 transition-colors [color-scheme:dark]" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Birth time</label>
                   <input type="time" value={birthTime} onChange={(e) => setBirthTime(e.target.value)}
-                    className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white outline-none focus:border-white/30 transition-colors [color-scheme:dark]" />
+                    className="w-full h-12 px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white outline-none focus:border-white/30 transition-colors [color-scheme:dark]" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Birth place</label>
                   <input type="text" value={birthPlace} onChange={(e) => setBirthPlace(e.target.value)} placeholder="City"
-                    className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
+                    className="w-full h-12 px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
                 </div>
               </div>
             </div>
 
             <div className="flex gap-3">
               <button onClick={() => setMode('choose')}
-                className="flex-1 h-[44px] border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/30 transition-all duration-200">
+                className="flex-1 h-12 border border-white/10 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/20 transition-all duration-200">
                 Back
               </button>
               <button onClick={handleManualSubmit} disabled={!name.trim() || !birthDate || submitting}
-                className="flex-1 h-[44px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200">
+                className="flex-1 h-12 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200">
                 {submitting ? 'Adding…' : 'Add person'}
               </button>
             </div>
@@ -690,27 +690,27 @@ function AddPersonModal({
               <div className="space-y-1.5">
                 <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Their name</label>
                 <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="First name"
-                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
+                  className="w-full h-12 px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
               </div>
               <div className="space-y-1.5">
                 <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Relationship</label>
                 <input type="text" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="e.g. Father, Partner, Friend"
-                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
+                  className="w-full h-12 px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
               </div>
               <div className="space-y-1.5">
                 <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Email (optional)</label>
                 <input type="email" value={contact} onChange={(e) => setContact(e.target.value)} placeholder="Their email address"
-                  className="w-full h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
+                  className="w-full h-12 px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[14px] text-white placeholder:text-white/25 outline-none focus:border-white/30 transition-colors" />
               </div>
             </div>
 
             <div className="flex gap-3">
               <button onClick={() => setMode('choose')}
-                className="flex-1 h-[44px] border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/30 transition-all duration-200">
+                className="flex-1 h-12 border border-white/10 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/20 transition-all duration-200">
                 Back
               </button>
               <button onClick={handleInviteSubmit} disabled={!name.trim() || submitting}
-                className="flex-1 h-[44px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200">
+                className="flex-1 h-12 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200">
                 {submitting ? 'Creating…' : 'Create invite'}
               </button>
             </div>
@@ -733,18 +733,18 @@ function AddPersonModal({
                 type="text"
                 readOnly
                 value={inviteLink}
-                className="flex-1 h-[44px] px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[13px] text-white/60 font-mono outline-none truncate"
+                className="flex-1 h-12 px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[13px] text-white/60 font-mono outline-none truncate"
               />
               <button
                 onClick={copyLink}
-                className="h-[44px] px-4 border border-white/15 rounded-sm text-white/60 hover:text-white hover:border-white/30 transition-all duration-200"
+                className="h-12 px-4 border border-white/10 rounded-sm text-white/60 hover:text-white hover:border-white/20 transition-all duration-200"
               >
                 {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
               </button>
             </div>
 
             <button onClick={onClose}
-              className="w-full h-[44px] bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 transition-all duration-200">
+              className="w-full h-12 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 transition-all duration-200">
               Done
             </button>
           </div>

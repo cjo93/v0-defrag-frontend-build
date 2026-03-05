@@ -109,7 +109,7 @@ function UnlockContent() {
               key={plan.id}
               className={`border p-6 md:p-8 space-y-6 transition-all duration-200 ease-out rounded-sm ${
                 plan.highlighted 
-                  ? 'border-white/20 bg-white/[0.04] hover:border-white/35 hover:bg-white/[0.06]' 
+                  ? 'border-white/20 bg-white/[0.04] hover:border-white/20 hover:bg-white/[0.06]' 
                   : 'border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]'
               }`}
             >
@@ -135,10 +135,10 @@ function UnlockContent() {
               <button
                 onClick={() => handleCheckout(plan.id)}
                 disabled={loading !== null}
-                className={`w-full h-[48px] rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] transition-all duration-200 ease-out active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed ${
+                className={`w-full h-12 rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] transition-all duration-200 ease-out active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed ${
                   plan.highlighted
                     ? 'bg-white text-black hover:bg-white/90'
-                    : 'border border-white/25 text-white/80 hover:text-white hover:border-white/50'
+                    : 'border border-white/10 text-white/80 hover:text-white hover:border-white/20'
                 }`}
               >
                 {loading === plan.id ? 'Loading...' : plan.cta}

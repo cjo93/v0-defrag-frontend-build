@@ -15,7 +15,7 @@ export default function PrinciplesPage() {
         </p>
         <Link
           href="/"
-          className="inline-flex items-center justify-center h-[48px] px-9 border border-white/25 text-white/80 rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/50 transition-all duration-200"
+          className="inline-flex items-center justify-center h-12 px-9 border border-white/10 text-white/80 rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/20 transition-all duration-200"
         >
           Return Home
         </Link>

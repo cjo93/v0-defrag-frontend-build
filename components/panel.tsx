@@ -11,7 +11,7 @@ export default function Panel({
 }) {
   return (
     <section
-      className={`border border-white/10 bg-white/[0.02] p-6 transition-all duration-200 hover:border-white/20 hover:-translate-y-[1px] rounded-sm ${className}`}
+      className={`border border-white/10 bg-white/[0.02] p-6 transition-colors duration-200 hover:border-white/20 rounded-sm ${className}`}
       aria-label={title || undefined}
     >
       {title && (

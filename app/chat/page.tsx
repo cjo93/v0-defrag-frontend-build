@@ -149,7 +149,7 @@ function ChatClient() {
               </p>
               <Link
                 href="/relationships"
-                className="inline-flex items-center justify-center h-[42px] px-6 border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/30 transition-all duration-200"
+                className="inline-flex items-center justify-center h-12 px-6 border border-white/10 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/20 active:scale-[0.98] transition-all duration-200"
               >
                 Browse People
               </Link>
@@ -191,14 +191,14 @@ function ChatClient() {
                   className={`animate-fade-in ${message.role === 'user' ? 'flex justify-end' : ''}`}
                 >
                   {message.role === 'user' ? (
-                    <div className="bg-white/[0.05] border border-white/15 p-5 rounded-sm max-w-[620px]">
-                      <p className="text-[14px] text-white leading-[1.6]">
+                    <div className="bg-white/[0.02] border border-white/10 p-5 rounded-sm max-w-[620px]">
+                      <p className="text-[14px] text-white/90 leading-relaxed">
                         {message.content}
                       </p>
                     </div>
                   ) : (
-                    <div className="bg-white/[0.02] border border-white/10 p-5 rounded-sm max-w-[720px]">
-                      <div className="text-[14px] text-white/70 leading-[1.6] whitespace-pre-wrap">
+                    <div className="bg-white/[0.05] border border-white/10 p-5 rounded-sm max-w-[720px]">
+                      <div className="text-[14px] text-white/70 leading-relaxed whitespace-pre-wrap">
                         {message.content}
                       </div>
                     </div>
@@ -244,14 +244,14 @@ function ChatClient() {
                 placeholder={personContext ? `Ask about ${personContext.name}...` : "Ask about a relationship dynamic"}
                 disabled={isLoading}
                 aria-label="Message input"
-                className="w-full bg-transparent border border-white/10 rounded-sm h-[42px] px-5 text-[14px] text-white focus:border-white/30 focus:outline-none transition-all duration-200 ease-out placeholder:text-white/30"
+                className="w-full bg-transparent border border-white/10 rounded-sm h-12 px-5 text-[14px] text-white focus:border-white/30 focus:outline-none transition-colors duration-200 placeholder:text-white/30"
               />
             </div>
             <button 
               type="submit" 
               disabled={isLoading || !input.trim()}
               aria-label="Send message"
-              className="inline-flex items-center justify-center h-[42px] px-7 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 active:scale-[0.98] transition-all duration-200 ease-out disabled:opacity-40"
+              className="inline-flex items-center justify-center h-12 px-7 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 active:scale-[0.98] transition-all duration-200 disabled:opacity-40"
             >
               Send
             </button>
