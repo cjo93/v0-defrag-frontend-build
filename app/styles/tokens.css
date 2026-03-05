@@ -1,17 +1,17 @@
 :root {
-  --bg-black: #0a0a0a;
-  --panel-black: #0a0a0a;
+  --bg-black: #09090b;
+  --panel-black: #09090b;
   --text-primary: #ffffff;
   --text-secondary: rgba(255,255,255,0.55);
   --text-muted: rgba(255,255,255,0.35);
-  --text-faint: rgba(255,255,255,0.25);
+  --text-faint: rgba(255,255,255,0.20);
   --line-low: rgba(255,255,255,0.08);
   --line-mid: rgba(255,255,255,0.15);
   --accent-risk: #e8613a;
-  --radius-card: 20px;
-  --radius-button: 8px;
-  --radius-input: 8px;
-  --ambient-glow: none;
+  --radius-card: 16px;
+  --radius-button: 10px;
+  --radius-input: 10px;
+  --ambient-glow: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(255,255,255,0.04), transparent 70%);
 }
 
 * {

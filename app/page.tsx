@@ -5,8 +5,6 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion, useInView } from 'framer-motion';
 import { useAuth } from '@/lib/auth-context';
-import { HeroAnimation } from '@/components/landing/hero-animation';
-import { RelationshipMapPreview } from '@/components/landing/relationship-map-preview';
 
 /* ─── Data ────────────────────────────────────────────────────── */
 
@@ -51,9 +49,9 @@ const OUTCOMES = [
 ];
 
 const TRUST_ITEMS = [
-  { title: 'PRIVATE BY DEFAULT', body: 'Your data is never shared, sold, or visible to other users.' },
-  { title: 'YOU CONTROL SHARING', body: 'Invite links only share what you allow. Nothing is exposed without consent.' },
-  { title: 'DELETE ANYTIME', body: 'Remove your account and all associated data disappears permanently.' },
+  { title: 'Private by default', body: 'Your data is never shared, sold, or visible to other users.' },
+  { title: 'You control sharing', body: 'Invite links only share what you allow. Nothing is exposed without consent.' },
+  { title: 'Delete anytime', body: 'Remove your account and all associated data disappears permanently.' },
 ];
 
 const SOLO_FEATURES = ['Personal dashboard', 'Relationship chat', 'Saved history'];
@@ -61,19 +59,23 @@ const TEAM_FEATURES = ['Everything in Solo', 'Add people + invite links', 'Relat
 
 /* ─── Reusable ────────────────────────────────────────────────── */
 
-function Dash({ className }: { className?: string }) {
-  return <span className={`inline-block w-3 h-[2px] bg-[#e8613a] ${className ?? ''}`} />;
+function Check({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3.5 8.5L6.5 11.5L12.5 4.5" />
+    </svg>
+  );
 }
 
 function FadeIn({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-50px' });
+  const inView = useInView(ref, { once: true, margin: '-60px' });
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 24 }}
-      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
-      transition={{ duration: 0.6, delay, ease: [0.25, 1, 0.5, 1] }}
+      initial={{ opacity: 0, y: 28 }}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
+      transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }}
       className={className}
     >
       {children}
@@ -95,159 +97,156 @@ export default function LandingPage() {
   useEffect(() => { setMounted(true); }, []);
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-white font-sans antialiased selection:bg-[#e8613a]/20 overflow-x-hidden">
+    <main className="min-h-screen bg-[#09090b] text-white font-sans antialiased selection:bg-white/10 overflow-x-hidden">
 
       {/* ── NAV ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0a]/90 backdrop-blur-md border-b border-white/[0.06]">
-        <div className="mx-auto max-w-[1200px] px-6 md:px-10 h-14 flex items-center justify-between">
-          <Link href="/" className="font-mono text-[14px] font-black tracking-[0.15em] text-white uppercase">
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.06]"
+        style={{ background: 'linear-gradient(to bottom, rgba(9,9,11,0.92), rgba(9,9,11,0.82))', backdropFilter: 'blur(20px) saturate(1.4)' }}
+      >
+        <div className="mx-auto max-w-[1200px] px-6 md:px-10 h-16 flex items-center justify-between">
+          <Link href="/" className="font-mono text-[13px] font-bold tracking-[0.2em] text-white/90 uppercase">
             DEFRAG
           </Link>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <button
               onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
-              className="hidden md:inline-flex items-center h-9 px-4 text-[11px] text-white/30 hover:text-white/60 transition-colors font-mono uppercase tracking-[0.15em]"
+              className="hidden md:inline-flex items-center h-10 px-4 text-[13px] text-white/35 hover:text-white/60 transition-colors duration-200 font-mono tracking-wide"
             >
               Pricing
             </button>
             <Link
               href="/auth/login"
-              className="inline-flex items-center h-9 px-4 text-[11px] text-white/30 hover:text-white/60 transition-colors font-mono uppercase tracking-[0.15em]"
+              className="inline-flex items-center h-10 px-4 text-[13px] text-white/35 hover:text-white/60 transition-colors duration-200 font-mono tracking-wide"
             >
               Log in
             </Link>
             <Link
               href="/auth/signup"
-              className="inline-flex items-center justify-center h-9 px-5 border border-[#e8613a] text-[#e8613a] text-[11px] font-mono font-bold uppercase tracking-[0.12em] rounded-full hover:bg-[#e8613a] hover:text-white motion-safe:active:scale-[0.97] transition-all duration-150"
+              className="inline-flex items-center justify-center h-10 px-5 bg-white text-[#09090b] text-[12px] font-mono font-bold uppercase tracking-[0.06em] rounded-lg motion-safe:active:scale-[0.97] transition-all duration-150 hover:bg-white/90"
             >
-              Initialize
+              Get started
             </Link>
           </div>
         </div>
       </nav>
 
       {/* ── HERO ── */}
-      <section className="relative pt-28 md:pt-36 pb-20 md:pb-32">
-        <div className="mx-auto max-w-[1200px] px-6 md:px-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            {/* Left — constellation */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={mounted ? { opacity: 1 } : {}}
-              transition={{ duration: 1, delay: 0.3 }}
-              className="order-2 lg:order-1"
+      <section className="relative pt-36 md:pt-48 pb-24 md:pb-36 overflow-hidden">
+        {/* Subtle radial glow */}
+        <div
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[600px] pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse 100% 80% at 50% 0%, rgba(255,255,255,0.04), rgba(255,255,255,0.01) 50%, transparent 80%)' }}
+        />
+
+        <div className="relative mx-auto max-w-[1200px] px-6 md:px-10 text-center">
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={mounted ? { opacity: 1 } : {}}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="font-mono text-[11px] uppercase tracking-[0.3em] text-white/30 mb-7"
+          >
+            Relational intelligence
+          </motion.p>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={mounted ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="text-[48px] md:text-[64px] lg:text-[76px] font-bold tracking-[-0.04em] leading-[1.0] mb-6"
+          >
+            <span className="bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/40">
+              Clarity for hard
+            </span>
+            <br />
+            <span className="bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/40">
+              relationships.
+            </span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={mounted ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="text-[18px] md:text-[20px] text-white/45 leading-[1.6] mb-10 max-w-lg mx-auto"
+          >
+            See patterns. Understand timing. Choose a calmer next step.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={mounted ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col sm:flex-row gap-4 justify-center mb-8"
+          >
+            <Link
+              href="/auth/signup"
+              className="inline-flex items-center justify-center h-13 px-8 bg-white text-[#09090b] text-[13px] font-mono font-bold uppercase tracking-[0.08em] rounded-xl shadow-[0_0_40px_rgba(255,255,255,0.06),0_4px_20px_rgba(0,0,0,0.4)] motion-safe:active:scale-[0.97] transition-all duration-150 hover:bg-white/90"
             >
-              <HeroAnimation />
-            </motion.div>
+              Start free
+            </Link>
+            <button
+              onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
+              className="inline-flex items-center justify-center h-13 px-8 border border-white/[0.10] text-white/45 text-[13px] font-mono font-bold uppercase tracking-[0.08em] rounded-xl hover:text-white/65 hover:border-white/20 hover:bg-white/[0.03] motion-safe:active:scale-[0.97] transition-all duration-200"
+            >
+              See how it works
+            </button>
+          </motion.div>
 
-            {/* Right — copy */}
-            <div className="order-1 lg:order-2">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={mounted ? { opacity: 1 } : {}}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className="flex items-center gap-3 mb-8"
-              >
-                <span className="block w-8 h-[1px] bg-[#e8613a]" />
-                <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#e8613a]">DEFRAG_INIT</span>
-                <span className="block flex-1 h-[1px] bg-white/[0.06]" />
-              </motion.div>
-
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={mounted ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.7, delay: 0.2, ease: [0.25, 1, 0.5, 1] }}
-                className="text-[40px] md:text-[52px] lg:text-[60px] font-black tracking-[-0.03em] leading-[1.0] uppercase mb-5"
-              >
-                The user manual for{' '}
-                <span className="text-[#e8613a]">your people.</span>
-              </motion.h1>
-
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={mounted ? { opacity: 1 } : {}}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                className="font-mono text-[12px] uppercase tracking-[0.2em] text-white/35 mb-8"
-              >
-                Stop guessing. Start operating.
-              </motion.p>
-
-              <motion.p
-                initial={{ opacity: 0, y: 12 }}
-                animate={mounted ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: 0.5, ease: [0.25, 1, 0.5, 1] }}
-                className="text-[15px] text-white/40 leading-[1.7] mb-10 max-w-md font-mono"
-              >
-                Too many theories, not enough instructions. Defrag translates relational noise into clear, structured guidance.
-              </motion.p>
-
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={mounted ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: 0.6 }}
-                className="flex flex-col sm:flex-row gap-4 mb-8"
-              >
-                <Link
-                  href="/auth/signup"
-                  className="inline-flex items-center justify-center h-12 px-8 bg-white text-[#0a0a0a] text-[12px] font-mono font-black uppercase tracking-[0.12em] rounded-sm hover:bg-white/90 motion-safe:active:scale-[0.97] transition-all duration-150"
-                >
-                  Initialize Defrag
-                </Link>
-              </motion.div>
-
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={mounted ? { opacity: 1 } : {}}
-                transition={{ duration: 0.4, delay: 0.8 }}
-                className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/20"
-              >
-                Simple instructions for difficult people.
-              </motion.p>
-            </div>
-          </div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={mounted ? { opacity: 1 } : {}}
+            transition={{ duration: 0.5, delay: 0.8 }}
+            className="flex flex-wrap justify-center gap-x-5 gap-y-1 text-[12px] text-white/20 font-mono"
+          >
+            <span>Private by default</span>
+            <span className="text-white/8">&middot;</span>
+            <span>Delete anytime</span>
+            <span className="text-white/8">&middot;</span>
+            <span>No social feed</span>
+          </motion.div>
         </div>
       </section>
 
-      {/* ── MODULE CARDS ── */}
+      {/* ── FEATURE CARDS ── */}
       <section className="border-t border-white/[0.06]">
-        <div className="mx-auto max-w-[1200px] px-6 md:px-10 py-20 md:py-28">
+        <div className="mx-auto max-w-[1200px] px-6 md:px-10 py-24 md:py-32">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {/* Module 01 — MAP (dark card) */}
+            {/* Relationship Map (dark card) */}
             <FadeIn>
-              <div className="relative bg-[#111] border border-white/[0.06] rounded-[20px] p-8 md:p-10 h-full flex flex-col overflow-hidden">
-                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/20 mb-5">Module_01 // Map</span>
-                <h2 className="text-[48px] md:text-[56px] font-black uppercase tracking-[-0.02em] leading-none text-white mb-4">
-                  MAP.
+              <div className="relative bg-[#111113] border border-white/[0.06] rounded-2xl p-8 md:p-10 h-full flex flex-col overflow-hidden">
+                <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/20 mb-5">Relationship map</span>
+                <h2 className="text-[40px] md:text-[48px] font-bold tracking-[-0.03em] leading-none text-white mb-4">
+                  See the full picture.
                 </h2>
-                <p className="text-[14px] text-white/40 leading-[1.7] mb-8 max-w-sm">
-                  Every relationship and its current state. See where things stand at a glance.
+                <p className="text-[15px] text-white/40 leading-[1.7] mb-8 max-w-sm">
+                  Every relationship and its current state, visible at a glance. Watch dynamics shift over time.
                 </p>
-                <div className="mt-auto">
-                  <RelationshipMapPreview />
+                <div className="mt-auto pt-4 border-t border-white/[0.04]">
+                  <p className="text-[12px] text-white/20 font-mono tracking-wide">Updated continuously</p>
                 </div>
               </div>
             </FadeIn>
 
-            {/* Module 02 — CLARITY (light card) */}
+            {/* Chat (light card) */}
             <FadeIn delay={0.1}>
-              <div className="relative bg-[#f0eeeb] border border-white/[0.06] rounded-[20px] p-8 md:p-10 h-full flex flex-col overflow-hidden">
-                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-black/30 mb-5">Module_02 // Chat</span>
-                <h2 className="text-[48px] md:text-[56px] font-black uppercase tracking-[-0.02em] leading-none text-[#0a0a0a] mb-4">
-                  CLARITY.
+              <div className="relative bg-[#f0eeeb] border border-white/[0.06] rounded-2xl p-8 md:p-10 h-full flex flex-col overflow-hidden">
+                <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-black/25 mb-5">Relationship chat</span>
+                <h2 className="text-[40px] md:text-[48px] font-bold tracking-[-0.03em] leading-none text-[#09090b] mb-4">
+                  Ask anything.
                 </h2>
-                <p className="text-[14px] text-black/50 leading-[1.7] mb-8 max-w-sm">
-                  Translate behavior into structural documentation. No more guessing why the wall is up.
+                <p className="text-[15px] text-black/45 leading-[1.7] mb-8 max-w-sm">
+                  Get structured answers about what&rsquo;s happening, why it keeps repeating, and what might actually help.
                 </p>
                 <div className="mt-auto space-y-3">
                   {EXAMPLE_ANSWER.map((block, i) => (
                     <div
                       key={block.heading}
-                      className={`rounded-xl p-5 ${i === 0 ? 'bg-[#e8e5e0] text-[#0a0a0a]' : 'bg-[#0a0a0a] text-white'}`}
+                      className={`rounded-xl p-5 ${i === 0 ? 'bg-[#e8e5e0] text-[#09090b]' : 'bg-[#09090b] text-white'}`}
                     >
-                      <span className={`font-mono text-[9px] uppercase tracking-[0.2em] ${i === 0 ? 'text-black/30' : 'text-white/25'} block mb-2`}>
+                      <span className={`font-mono text-[9px] uppercase tracking-[0.2em] ${i === 0 ? 'text-black/25' : 'text-white/20'} block mb-2`}>
                         {block.heading.replace('\u2019', "'")}
                       </span>
-                      <p className={`text-[14px] font-semibold leading-[1.5] ${i === 0 ? 'text-[#0a0a0a]' : 'text-white/90'}`}>
+                      <p className={`text-[13px] leading-[1.6] ${i === 0 ? 'text-[#09090b]/80' : 'text-white/70'}`}>
                         &ldquo;{block.body}&rdquo;
                       </p>
                     </div>
@@ -261,25 +260,28 @@ export default function LandingPage() {
 
       {/* ── HOW IT WORKS ── */}
       <section id="how-it-works" className="border-t border-white/[0.06]">
-        <div className="mx-auto max-w-[1200px] px-6 md:px-10 py-20 md:py-28">
+        <div className="mx-auto max-w-[1200px] px-6 md:px-10 py-24 md:py-32">
           <FadeIn>
-            <div className="flex items-center gap-3 mb-4">
-              <Dash />
-              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#e8613a]">Protocol</span>
-            </div>
-            <h2 className="text-[36px] md:text-[44px] font-black uppercase tracking-[-0.02em] leading-[1.0] text-white mb-14">
+            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-white/25 mb-4">How it works</p>
+            <h2 className="text-[36px] md:text-[44px] font-bold tracking-[-0.03em] leading-[1.05] text-white mb-14">
               Three steps to clarity.
             </h2>
           </FadeIn>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {HOW_IT_WORKS.map((card, i) => (
-              <FadeIn key={card.step} delay={i * 0.08}>
-                <div className="h-full border border-white/[0.06] bg-white/[0.02] p-7 md:p-8 rounded-[16px] hover:border-white/[0.12] motion-safe:hover:-translate-y-0.5 transition-all duration-300">
-                  <span className="inline-block font-mono text-[36px] font-black text-white/[0.06] leading-none mb-5">
+              <FadeIn key={card.step} delay={i * 0.1}>
+                <div
+                  className="group relative h-full border border-white/[0.06] p-7 md:p-8 rounded-2xl motion-safe:hover:-translate-y-1 hover:border-white/[0.12] transition-all duration-300 overflow-hidden"
+                  style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01))' }}
+                >
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                    style={{ background: 'radial-gradient(circle at 50% 0%, rgba(255,255,255,0.03), transparent 60%)' }}
+                  />
+                  <span className="relative inline-block font-mono text-[32px] font-extralight text-white/[0.06] mb-5 leading-none">
                     {card.step}
                   </span>
-                  <h3 className="text-[16px] font-bold text-white/90 uppercase tracking-wide mb-3">{card.title}</h3>
-                  <p className="text-[14px] text-white/35 leading-[1.7]">{card.body}</p>
+                  <h3 className="relative text-[17px] font-semibold text-white/90 mb-3">{card.title}</h3>
+                  <p className="relative text-[14px] text-white/40 leading-[1.7]">{card.body}</p>
                 </div>
               </FadeIn>
             ))}
@@ -289,21 +291,18 @@ export default function LandingPage() {
 
       {/* ── WHAT YOU GET ── */}
       <section className="border-t border-white/[0.06]">
-        <div className="mx-auto max-w-[1200px] px-6 md:px-10 py-20 md:py-28">
+        <div className="mx-auto max-w-[1200px] px-6 md:px-10 py-24 md:py-32">
           <FadeIn>
-            <div className="flex items-center gap-3 mb-4">
-              <Dash />
-              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#e8613a]">Output</span>
-            </div>
-            <h2 className="text-[36px] md:text-[44px] font-black uppercase tracking-[-0.02em] leading-[1.0] text-white mb-12">
+            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-white/25 mb-4">What you get</p>
+            <h2 className="text-[36px] md:text-[44px] font-bold tracking-[-0.03em] leading-[1.05] text-white mb-12">
               Clear answers, not vague advice.
             </h2>
           </FadeIn>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {OUTCOMES.map((item, i) => (
               <FadeIn key={item} delay={i * 0.06}>
-                <div className="flex items-start gap-4 border border-white/[0.06] bg-white/[0.02] p-6 rounded-[16px]">
-                  <span className="font-mono text-[10px] text-[#e8613a] mt-1 shrink-0">{String(i + 1).padStart(2, '0')}</span>
+                <div className="flex items-start gap-3.5 border border-white/[0.06] bg-white/[0.02] p-6 rounded-2xl">
+                  <Check className="w-4 h-4 mt-1 shrink-0 text-white/25" />
                   <p className="text-[15px] text-white/50 leading-[1.6]">{item}</p>
                 </div>
               </FadeIn>
@@ -313,41 +312,44 @@ export default function LandingPage() {
       </section>
 
       {/* ── PRICING ── */}
-      <section id="pricing" className="border-t border-white/[0.06]">
-        <div className="mx-auto max-w-[1200px] px-6 md:px-10 py-20 md:py-28">
+      <section id="pricing" className="relative border-t border-white/[0.06]">
+        <div
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.025), transparent 70%)' }}
+        />
+        <div className="relative mx-auto max-w-[1200px] px-6 md:px-10 py-24 md:py-32">
           <FadeIn className="text-center mb-14">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <span className="block w-6 h-[1px] bg-white/[0.08]" />
-              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#e8613a]">Pricing</span>
-              <span className="block w-6 h-[1px] bg-white/[0.08]" />
-            </div>
-            <h2 className="text-[36px] md:text-[44px] font-black uppercase tracking-[-0.02em] leading-[1.0] text-white">
+            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-white/25 mb-4">Pricing</p>
+            <h2 className="text-[36px] md:text-[44px] font-bold tracking-[-0.03em] leading-[1.05] text-white">
               Simple plans. Cancel anytime.
             </h2>
           </FadeIn>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-[740px] mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-[760px] mx-auto">
             {/* Solo */}
             <FadeIn>
-              <div className="h-full border border-white/[0.06] bg-white/[0.02] p-7 md:p-8 rounded-[20px] flex flex-col hover:border-white/[0.12] motion-safe:hover:-translate-y-0.5 transition-all duration-300">
-                <div className="mb-6">
-                  <h3 className="text-[18px] font-black uppercase tracking-[0.05em] text-white/90">Solo</h3>
-                  <p className="text-[12px] text-white/25 mt-1 font-mono uppercase tracking-wide">Personal clarity</p>
-                  <p className="text-[36px] font-black text-white mt-5 tracking-tight">
-                    $19<span className="text-[13px] font-normal text-white/20 ml-1.5">/ month</span>
+              <div
+                className="group relative h-full border border-white/[0.06] p-7 md:p-8 rounded-2xl flex flex-col motion-safe:hover:-translate-y-1 hover:border-white/[0.12] transition-all duration-300"
+                style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01))' }}
+              >
+                <div className="mb-7">
+                  <h3 className="text-[20px] font-semibold text-white/90">Solo</h3>
+                  <p className="text-[13px] text-white/30 mt-1">For personal clarity</p>
+                  <p className="text-[36px] font-bold text-white mt-4 tracking-tight">
+                    $19<span className="text-[14px] font-normal text-white/25 ml-1.5">/ month</span>
                   </p>
                 </div>
-                <ul className="space-y-3 text-[13px] text-white/40 leading-relaxed flex-1 mb-7 font-mono">
+                <ul className="space-y-3.5 text-[14px] text-white/40 leading-relaxed flex-1 mb-8">
                   {SOLO_FEATURES.map((f) => (
                     <li key={f} className="flex items-center gap-3">
-                      <Dash className="w-2 h-[1.5px]" />
+                      <Check className="w-4 h-4 shrink-0 text-white/20" />
                       {f}
                     </li>
                   ))}
                 </ul>
                 <Link
                   href="/auth/signup"
-                  className="inline-flex items-center justify-center h-11 w-full bg-white text-[#0a0a0a] text-[11px] font-mono font-black uppercase tracking-[0.12em] rounded-sm hover:bg-white/90 motion-safe:active:scale-[0.97] transition-all duration-150"
+                  className="inline-flex items-center justify-center h-12 w-full border border-white/[0.10] text-white/65 text-[13px] font-mono font-bold uppercase tracking-[0.08em] rounded-xl hover:text-white hover:border-white/20 hover:bg-white/[0.04] motion-safe:active:scale-[0.97] transition-all duration-150"
                 >
                   Start Solo
                 </Link>
@@ -355,53 +357,63 @@ export default function LandingPage() {
             </FadeIn>
 
             {/* Team */}
-            <FadeIn delay={0.08}>
-              <div className="h-full relative border border-[#e8613a]/30 bg-[#e8613a]/[0.04] p-7 md:p-8 rounded-[20px] flex flex-col hover:border-[#e8613a]/50 motion-safe:hover:-translate-y-0.5 transition-all duration-300">
+            <FadeIn delay={0.1}>
+              <div
+                className="group relative h-full p-7 md:p-8 rounded-2xl flex flex-col motion-safe:hover:-translate-y-1 transition-all duration-300"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  boxShadow: '0 0 60px rgba(255,255,255,0.02)',
+                }}
+              >
                 <div className="absolute -top-3 right-6">
-                  <span className="inline-block font-mono text-[9px] uppercase tracking-[0.12em] bg-[#e8613a] text-white px-3 py-1 rounded-sm font-bold">
+                  <span className="inline-block font-mono text-[9px] uppercase tracking-[0.15em] px-3 py-1 rounded-full font-bold text-black bg-white">
                     Best value
                   </span>
                 </div>
-                <div className="mb-6">
-                  <h3 className="text-[18px] font-black uppercase tracking-[0.05em] text-white/90">Team</h3>
-                  <p className="text-[12px] text-white/25 mt-1 font-mono uppercase tracking-wide">Family or close groups</p>
-                  <p className="text-[36px] font-black text-white mt-5 tracking-tight">
-                    $33<span className="text-[13px] font-normal text-white/20 ml-1.5">/ month</span>
+                <div className="mb-7">
+                  <h3 className="text-[20px] font-semibold text-white/90">Team</h3>
+                  <p className="text-[13px] text-white/30 mt-1">For family or close groups</p>
+                  <p className="text-[36px] font-bold text-white mt-4 tracking-tight">
+                    $33<span className="text-[14px] font-normal text-white/25 ml-1.5">/ month</span>
                   </p>
                 </div>
-                <ul className="space-y-3 text-[13px] text-white/40 leading-relaxed flex-1 mb-7 font-mono">
+                <ul className="space-y-3.5 text-[14px] text-white/40 leading-relaxed flex-1 mb-8">
                   {TEAM_FEATURES.map((f) => (
                     <li key={f} className="flex items-center gap-3">
-                      <Dash className="w-2 h-[1.5px]" />
+                      <Check className="w-4 h-4 shrink-0 text-white/20" />
                       {f}
                     </li>
                   ))}
                 </ul>
                 <Link
                   href="/auth/signup"
-                  className="inline-flex items-center justify-center h-11 w-full bg-[#e8613a] text-white text-[11px] font-mono font-black uppercase tracking-[0.12em] rounded-sm hover:bg-[#d4552a] motion-safe:active:scale-[0.97] transition-all duration-150"
+                  className="inline-flex items-center justify-center h-12 w-full bg-white text-[#09090b] text-[13px] font-mono font-bold uppercase tracking-[0.08em] rounded-xl shadow-[0_0_20px_rgba(255,255,255,0.08)] motion-safe:active:scale-[0.97] transition-all duration-150 hover:bg-white/90"
                 >
                   Start Team
                 </Link>
               </div>
             </FadeIn>
           </div>
-          <p className="text-[11px] text-white/15 text-center mt-8 font-mono uppercase tracking-[0.15em]">Upgrade anytime.</p>
+          <p className="text-[12px] text-white/20 text-center mt-8 font-mono tracking-wide">Upgrade anytime.</p>
         </div>
       </section>
 
       {/* ── TRUST ── */}
       <section className="border-t border-white/[0.06]">
-        <div className="mx-auto max-w-[1200px] px-6 md:px-10 py-20 md:py-24">
-          <FadeIn className="text-center mb-10">
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/15">Trust</span>
+        <div className="mx-auto max-w-[1200px] px-6 md:px-10 py-24 md:py-28">
+          <FadeIn className="text-center mb-12">
+            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-white/25 mb-4">Trust</p>
           </FadeIn>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-[880px] mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-[900px] mx-auto">
             {TRUST_ITEMS.map((item, i) => (
-              <FadeIn key={item.title} delay={i * 0.06}>
-                <div className="text-center border border-white/[0.06] bg-white/[0.015] rounded-[16px] p-6 md:p-7">
-                  <h3 className="text-[11px] font-mono font-bold text-white/50 uppercase tracking-[0.15em] mb-3">{item.title}</h3>
-                  <p className="text-[13px] text-white/30 leading-[1.7]">{item.body}</p>
+              <FadeIn key={item.title} delay={i * 0.1}>
+                <div
+                  className="text-center border border-white/[0.06] rounded-2xl p-7 md:p-8 motion-safe:hover:-translate-y-0.5 hover:border-white/[0.10] transition-all duration-300"
+                  style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.008))' }}
+                >
+                  <h3 className="text-[16px] font-semibold text-white/80 mb-2.5">{item.title}</h3>
+                  <p className="text-[13px] text-white/35 leading-[1.7]">{item.body}</p>
                 </div>
               </FadeIn>
             ))}
@@ -410,20 +422,26 @@ export default function LandingPage() {
       </section>
 
       {/* ── CTA BAND ── */}
-      <section className="border-t border-white/[0.06]">
-        <div className="mx-auto max-w-[1200px] px-6 md:px-10 py-20 md:py-28 text-center">
+      <section className="relative border-t border-white/[0.06] overflow-hidden">
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.025), transparent 60%)' }}
+        />
+        <div className="relative mx-auto max-w-[1200px] px-6 md:px-10 py-24 md:py-32 text-center">
           <FadeIn>
-            <h2 className="text-[36px] md:text-[48px] font-black uppercase tracking-[-0.02em] leading-[1.0] mb-5">
-              Ready to <span className="text-[#e8613a]">operate?</span>
+            <h2 className="text-[36px] md:text-[48px] font-bold tracking-[-0.03em] leading-[1.05] mb-6">
+              <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-white/50">
+                Ready for clarity?
+              </span>
             </h2>
-            <p className="text-[14px] text-white/30 mb-10 max-w-sm mx-auto font-mono leading-[1.7]">
+            <p className="text-[17px] text-white/40 mb-10 max-w-md mx-auto">
               Start understanding the patterns that shape your closest relationships.
             </p>
             <Link
               href="/auth/signup"
-              className="inline-flex items-center justify-center h-12 px-10 bg-white text-[#0a0a0a] text-[12px] font-mono font-black uppercase tracking-[0.12em] rounded-sm hover:bg-white/90 motion-safe:active:scale-[0.97] transition-all duration-150"
+              className="inline-flex items-center justify-center h-13 px-10 bg-white text-[#09090b] text-[13px] font-mono font-bold uppercase tracking-[0.08em] rounded-xl shadow-[0_0_40px_rgba(255,255,255,0.06),0_4px_20px_rgba(0,0,0,0.4)] motion-safe:active:scale-[0.97] transition-all duration-150 hover:bg-white/90"
             >
-              Initialize Defrag
+              Get started
             </Link>
           </FadeIn>
         </div>
@@ -431,15 +449,15 @@ export default function LandingPage() {
 
       {/* ── FOOTER ── */}
       <footer className="border-t border-white/[0.06]">
-        <div className="mx-auto max-w-[1200px] px-6 md:px-10 py-8 flex justify-between items-center flex-wrap gap-4">
-          <span className="font-mono text-[10px] tracking-[0.15em] text-white/15 uppercase">
+        <div className="mx-auto max-w-[1200px] px-6 md:px-10 py-10 flex justify-between items-center flex-wrap gap-4">
+          <span className="font-mono text-[11px] tracking-[0.15em] text-white/15 uppercase">
             DEFRAG &copy; {new Date().getFullYear()}
           </span>
           <div className="flex gap-6">
-            <Link href="/principles" className="font-mono text-[10px] tracking-[0.15em] text-white/15 uppercase hover:text-white/30 transition-colors py-2">
+            <Link href="/principles" className="font-mono text-[11px] tracking-[0.15em] text-white/15 uppercase hover:text-white/35 transition-colors duration-200 py-2">
               Principles
             </Link>
-            <Link href="/contact" className="font-mono text-[10px] tracking-[0.15em] text-white/15 uppercase hover:text-white/30 transition-colors py-2">
+            <Link href="/contact" className="font-mono text-[11px] tracking-[0.15em] text-white/15 uppercase hover:text-white/35 transition-colors duration-200 py-2">
               Contact
             </Link>
           </div>

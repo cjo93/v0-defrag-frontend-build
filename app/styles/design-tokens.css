@@ -1,12 +1,12 @@
 :root {
 
   /* background */
-  --bg-primary: #0a0a0a;
+  --bg-primary: #09090b;
 
-  /* accent */
-  --accent: #e8613a;
-  --accent-dim: rgba(232, 97, 58, 0.5);
-  --accent-faint: rgba(232, 97, 58, 0.12);
+  /* accent — white spectrum */
+  --accent: rgba(255,255,255,0.90);
+  --accent-dim: rgba(255,255,255,0.45);
+  --accent-faint: rgba(255,255,255,0.08);
 
   /* text */
   --text-primary: rgba(255,255,255,0.92);
@@ -17,5 +17,6 @@
   --panel-bg: rgba(255,255,255,0.03);
   --panel-border: rgba(255,255,255,0.08);
   --panel-border-hover: rgba(255,255,255,0.15);
+  --panel-glow: 0 0 80px rgba(255,255,255,0.03);
 
 }
