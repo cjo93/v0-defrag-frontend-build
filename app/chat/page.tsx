@@ -234,7 +234,7 @@ function ChatClient() {
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 border-t border-white/10 bg-[#0A0A0A] px-6 md:px-8 py-5 safe-bottom">
+      <div className="fixed bottom-0 left-0 right-0 border-t border-white/10 bg-black px-6 md:px-8 py-5 safe-bottom">
         <div className="mx-auto w-full max-w-[800px]">
           <form onSubmit={handleSend} className="flex items-end gap-4">
             <div className="flex-1">

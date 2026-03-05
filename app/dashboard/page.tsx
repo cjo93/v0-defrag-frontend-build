@@ -158,7 +158,7 @@ export default function DashboardPage() {
       <div className="min-h-screen text-white font-sans antialiased">
         <TopNav />
         <main className="max-w-[1100px] mx-auto px-6 pt-16 pb-24">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
@@ -222,7 +222,7 @@ export default function DashboardPage() {
 
         <DailyInsight insight={dailyInsight} />
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
           {/* ─── Panel 1: Today Summary ─── */}
           <div className="col-span-12 lg:col-span-7 animate-fade-in">
@@ -340,7 +340,7 @@ export default function DashboardPage() {
                       <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150 shrink-0">
                         <Link
                           href={`/chat?person_id=${person.id}`}
-                          className="p-1.5 text-white/30 hover:text-white/70 transition-colors"
+                          className="p-2 text-white/30 hover:text-white/70 transition-colors"
                           title={`Chat about ${person.name}`}
                         >
                           <MessageCircle className="w-3.5 h-3.5" />
@@ -349,13 +349,13 @@ export default function DashboardPage() {
                           <div className="flex items-center gap-1.5 animate-fade-in">
                             <button
                               onClick={() => handleDeletePerson(person.id)}
-                              className="font-mono text-[10px] text-red-400/80 hover:text-red-400 uppercase tracking-[0.1em] transition-colors"
+                              className="font-mono text-[11px] text-red-400/80 hover:text-red-400 uppercase tracking-[0.1em] transition-colors py-1 px-1"
                             >
                               Confirm
                             </button>
                             <button
                               onClick={() => setConfirmDeleteId(null)}
-                              className="font-mono text-[10px] text-white/30 hover:text-white/50 uppercase tracking-[0.1em] transition-colors"
+                              className="font-mono text-[11px] text-white/30 hover:text-white/50 uppercase tracking-[0.1em] transition-colors py-1 px-1"
                             >
                               Cancel
                             </button>
@@ -363,7 +363,7 @@ export default function DashboardPage() {
                         ) : (
                           <button
                             onClick={() => setConfirmDeleteId(person.id)}
-                            className="p-1.5 text-white/20 hover:text-red-400/70 transition-colors"
+                            className="p-2 text-white/20 hover:text-red-400/70 transition-colors"
                             title={`Remove ${person.name}`}
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -586,7 +586,7 @@ function AddPersonModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm animate-fade-in">
-      <div className="w-full max-w-[440px] border border-white/10 bg-[#0a0a0a] rounded-sm p-6 md:p-8 space-y-6 relative">
+      <div className="w-full max-w-[440px] border border-white/10 bg-black rounded-sm p-6 md:p-8 space-y-6 relative">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-white/30 hover:text-white/60 transition-colors"

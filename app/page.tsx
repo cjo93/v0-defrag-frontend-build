@@ -29,7 +29,7 @@ export default function LandingPage() {
         </p>
         <Link
           href="/auth/login"
-          className="inline-flex items-center justify-center h-[48px] px-8 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm active:scale-[0.98] transition-all duration-200 w-fit"
+          className="inline-flex items-center justify-center h-[48px] px-8 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 active:scale-[0.98] transition-all duration-200 w-fit"
         >
           Open Dashboard
         </Link>
@@ -45,7 +45,7 @@ export default function LandingPage() {
       {/* ── PLATFORM EXPLANATION ── */}
       <section className="mx-auto max-w-[1100px] px-6 py-20">
         <h2 className="section-title text-white mb-10">Three things that change the dynamic.</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
             { title: 'See the pattern', body: 'Spot what keeps repeating — without blame.' },
             { title: 'Choose better timing', body: 'Know when to speak or wait for a cleaner opening.' },
@@ -79,7 +79,7 @@ export default function LandingPage() {
       {/* ── PRICING ── */}
       <section className="mx-auto max-w-[1100px] px-6 py-20">
         <h2 className="section-title text-white mb-10">Simple, transparent plans.</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="border border-white/10 bg-white/[0.02] p-6 rounded-sm flex flex-col hover:border-white/20 hover:-translate-y-[1px] transition-all duration-200">
             <h3 className="text-[20px] font-medium text-white mb-2">Solo</h3>
             <p className="text-[28px] font-normal text-white mb-5">$19<span className="text-[14px] text-white/45 ml-1">/ month</span></p>
@@ -120,7 +120,7 @@ export default function LandingPage() {
         <p className="text-[20px] text-white/65 mb-10">Create an account and get a clear next step today.</p>
         <Link
           href="/auth/login"
-          className="inline-flex items-center justify-center h-[48px] px-8 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm active:scale-[0.98] transition-all duration-200"
+          className="inline-flex items-center justify-center h-[48px] px-8 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 active:scale-[0.98] transition-all duration-200"
         >
           Create account
         </Link>
@@ -132,10 +132,10 @@ export default function LandingPage() {
           DEFRAG © {new Date().getFullYear()}
         </span>
         <div className="flex gap-6">
-          <Link href="/principles" className="font-mono text-[11px] tracking-[0.15em] text-white/35 uppercase hover:text-white/60 transition-colors duration-200">
+          <Link href="/principles" className="font-mono text-[11px] tracking-[0.15em] text-white/35 uppercase hover:text-white/60 transition-colors duration-200 py-2">
             Principles
           </Link>
-          <Link href="/contact" className="font-mono text-[11px] tracking-[0.15em] text-white/35 uppercase hover:text-white/60 transition-colors duration-200">
+          <Link href="/contact" className="font-mono text-[11px] tracking-[0.15em] text-white/35 uppercase hover:text-white/60 transition-colors duration-200 py-2">
             Contact
           </Link>
         </div>

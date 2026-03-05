@@ -49,7 +49,7 @@ export default function ResetPasswordPage() {
       <div className="w-full max-w-[440px] space-y-8 border border-white/10 bg-white/[0.02] p-8 md:p-10 rounded-sm animate-fade-in">
         <div className="text-center">
           <p className="font-mono text-[13px] font-semibold tracking-[0.2em] text-white mb-3">DEFRAG</p>
-          <p className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">Reset your password</p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Reset your password</p>
         </div>
 
         {sent ? (
@@ -57,7 +57,7 @@ export default function ResetPasswordPage() {
             <p className="text-[14px] text-white/65">Password reset email sent. Check your inbox.</p>
             <Link
               href="/auth/login"
-              className="inline-block font-mono text-[11px] uppercase tracking-[0.15em] text-white/45 hover:text-white/70 transition-colors duration-200"
+              className="inline-block font-mono text-[11px] uppercase tracking-[0.15em] text-white/45 hover:text-white/70 transition-colors duration-200 py-2"
             >
               Back to login
             </Link>
@@ -68,7 +68,7 @@ export default function ResetPasswordPage() {
               <input
                 type="email"
                 placeholder="Email address"
-                className="w-full bg-transparent border border-white/10 px-5 py-3.5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-all duration-200 focus:outline-none rounded-sm"
+                className="w-full bg-transparent border border-white/10 h-[48px] px-5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-all duration-200 focus:outline-none rounded-sm"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -101,7 +101,7 @@ export default function ResetPasswordPage() {
             <div className="text-center pt-2">
               <Link
                 href="/auth/login"
-                className="font-mono text-[11px] uppercase tracking-[0.15em] text-white/45 hover:text-white/70 transition-colors duration-200"
+                className="font-mono text-[11px] uppercase tracking-[0.15em] text-white/45 hover:text-white/70 transition-colors duration-200 py-2"
               >
                 Back to login
               </Link>

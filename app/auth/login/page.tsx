@@ -96,7 +96,7 @@ export default function LoginPage() {
                   <span className="w-full border-t border-white/10" />
                 </div>
                 <div className="relative flex justify-center">
-                  <span className="bg-[#0A0A0A] px-3 text-white/45 font-mono text-[11px] tracking-[0.2em] uppercase">Or email</span>
+                  <span className="bg-black px-3 text-white/45 font-mono text-[11px] tracking-[0.2em] uppercase">Or email</span>
                 </div>
               </div>
             </>
@@ -106,7 +106,7 @@ export default function LoginPage() {
             <input
               type="email"
               placeholder="Email address"
-              className="w-full bg-transparent border border-white/10 px-5 py-3.5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-all duration-200 focus:outline-none rounded-sm"
+              className="w-full bg-transparent border border-white/10 h-[48px] px-5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-all duration-200 focus:outline-none rounded-sm"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -114,7 +114,7 @@ export default function LoginPage() {
             <input
               type="password"
               placeholder="Password"
-              className="w-full bg-transparent border border-white/10 px-5 py-3.5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-all duration-200 focus:outline-none rounded-sm"
+              className="w-full bg-transparent border border-white/10 h-[48px] px-5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-all duration-200 focus:outline-none rounded-sm"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -148,13 +148,13 @@ export default function LoginPage() {
           <div className="flex items-center justify-between pt-2">
             <Link
               href="/auth/signup"
-              className="font-mono text-[11px] uppercase tracking-[0.15em] text-white/45 hover:text-white/70 transition-colors duration-200"
+              className="font-mono text-[11px] uppercase tracking-[0.15em] text-white/45 hover:text-white/70 transition-colors duration-200 py-2"
             >
               Create account
             </Link>
             <Link
               href="/auth/reset"
-              className="font-mono text-[11px] uppercase tracking-[0.15em] text-white/45 hover:text-white/70 transition-colors duration-200"
+              className="font-mono text-[11px] uppercase tracking-[0.15em] text-white/45 hover:text-white/70 transition-colors duration-200 py-2"
             >
               Reset password
             </Link>

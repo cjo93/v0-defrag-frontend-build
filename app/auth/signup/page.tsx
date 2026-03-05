@@ -71,7 +71,7 @@ export default function SignupPage() {
           <input
             type="email"
             placeholder="Email address"
-            className="w-full bg-transparent border border-white/10 px-5 py-3.5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-all duration-200 focus:outline-none rounded-sm"
+            className="w-full bg-transparent border border-white/10 h-[48px] px-5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-all duration-200 focus:outline-none rounded-sm"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -79,7 +79,7 @@ export default function SignupPage() {
           <input
             type="password"
             placeholder="Password"
-            className="w-full bg-transparent border border-white/10 px-5 py-3.5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-all duration-200 focus:outline-none rounded-sm"
+            className="w-full bg-transparent border border-white/10 h-[48px] px-5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-all duration-200 focus:outline-none rounded-sm"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -114,7 +114,7 @@ export default function SignupPage() {
         <div className="text-center pt-2">
           <Link
             href="/auth/login"
-            className="font-mono text-[11px] uppercase tracking-[0.15em] text-white/45 hover:text-white/70 transition-colors duration-200"
+            className="font-mono text-[11px] uppercase tracking-[0.15em] text-white/45 hover:text-white/70 transition-colors duration-200 py-2"
           >
             Back to login
           </Link>

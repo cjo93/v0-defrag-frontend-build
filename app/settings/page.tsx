@@ -172,7 +172,7 @@ export default function SettingsPage() {
                   <input type="text" placeholder="City, Country" className="w-full bg-transparent border border-white/10 h-[44px] px-4 text-[14px] text-white placeholder:text-white/30 focus:border-white/25 transition-colors duration-200 focus:outline-none rounded-sm" value={location} onChange={(e) => setLocation(e.target.value)} required />
                 </div>
               </div>
-              <button type="submit" className="inline-flex items-center justify-center h-[44px] px-6 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 transition-colors duration-200 disabled:opacity-40" disabled={loading}>
+              <button type="submit" className="inline-flex items-center justify-center h-[44px] px-6 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 active:scale-[0.98] transition-all duration-200 disabled:opacity-40" disabled={loading}>
                 {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Updating...</> : "Update & Recalculate"}
               </button>
             </form>
@@ -200,19 +200,19 @@ export default function SettingsPage() {
           {/* Preferences */}
           <Panel title="PREFERENCES">
             <div className="space-y-5">
-              <label className="flex items-center space-x-3 text-[14px] text-white/65 cursor-pointer">
-                <input type="checkbox" className="border-white/20 bg-transparent checked:bg-white accent-white" defaultChecked />
+              <label className="flex items-center space-x-3 text-[14px] text-white/65 cursor-pointer min-h-[44px]">
+                <input type="checkbox" className="w-4 h-4 border-white/20 bg-transparent checked:bg-white accent-white rounded-sm cursor-pointer" defaultChecked />
                 <span>Email Notifications</span>
               </label>
               <div className="flex flex-col space-y-1.5">
                 <label className="font-mono text-[11px] text-white/50 tracking-[0.2em] uppercase">Audio Voice</label>
-                <select className="bg-transparent border border-white/10 h-[44px] px-4 text-[14px] text-white focus:border-white/25 transition-colors duration-200 focus:outline-none rounded-sm">
+                <select className="bg-transparent border border-white/10 h-[44px] px-4 text-[14px] text-white focus:border-white/25 hover:border-white/20 transition-all duration-200 focus:outline-none rounded-sm cursor-pointer">
                   <option>Voice 1 (Default)</option>
                   <option>Voice 2</option>
                 </select>
               </div>
-              <label className="flex items-center space-x-3 text-[14px] text-white/65 cursor-pointer">
-                <input type="checkbox" className="border-white/20 bg-transparent checked:bg-white accent-white" />
+              <label className="flex items-center space-x-3 text-[14px] text-white/65 cursor-pointer min-h-[44px]">
+                <input type="checkbox" className="w-4 h-4 border-white/20 bg-transparent checked:bg-white accent-white rounded-sm cursor-pointer" />
                 <span>Share full chart with invites (Default: Derived analysis only)</span>
               </label>
             </div>
