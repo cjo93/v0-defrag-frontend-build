@@ -159,20 +159,30 @@ export async function updatePersonRelationshipState(
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - LOOKBACK_DAYS);
 
-  // Get recent user messages in conversations linked to this person's owner
-  // We look at messages that have relational_pattern stored (those are from chat with person context)
-  const { data: messages } = await admin
-    .from('messages')
-    .select('content, relational_pattern, tension_type, created_at')
-    .gte('created_at', cutoff.toISOString())
-    .eq('role', 'user')
-    .order('created_at', { ascending: false })
-    .limit(50);
+  // Find conversations for this person
+  const { data: convRows } = await admin
+    .from('conversations')
+    .select('id')
+    .eq('user_id', ownerUserId)
+    .eq('person_id', personId);
 
-  // Filter to messages that belong to this user's conversations
-  // Since messages don't have person_id directly, we use conversations owned by the user
-  // that have relational_pattern data (meaning pattern detection ran)
-  const relevantMessages = (messages || []).filter(m => m.relational_pattern);
+  const convIds = (convRows || []).map(c => c.id);
+
+  // If no conversations exist for this person, fall back to empty pattern list
+  let relevantMessages: any[] = [];
+  if (convIds.length > 0) {
+    const { data: messages } = await admin
+      .from('messages')
+      .select('content, relational_pattern, tension_type, created_at')
+      .in('conversation_id', convIds)
+      .gte('created_at', cutoff.toISOString())
+      .eq('role', 'user')
+      .not('relational_pattern', 'is', null)
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    relevantMessages = messages || [];
+  }
 
   // Build pattern snapshots from stored data
   const recentPatterns: PatternSnapshot[] = relevantMessages.map(m => ({

@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
         owner_user_id: invite.inviter_user_id,
         invite_id: invite.id,
         name,
-        relationship_label: relationship_label || invite.invitee_name || null,
+        relationship_label: relationship_label || invite.relationship_label || invite.invitee_name || null,
         birth_date,
         birth_time: effectivePrivacy === 'full' ? (birth_time || null) : null,
         birth_place: effectivePrivacy === 'full' ? (birth_place || null) : null,

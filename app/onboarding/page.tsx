@@ -71,12 +71,13 @@ export default function OnboardingPage() {
 
       if (error) throw error;
 
-      // Ensure profile row exists
+      // Ensure profile row exists with onboarding state
       await supabase
         .from('profiles')
         .upsert({
           user_id: session.user.id,
           email: session.user.email || '',
+          onboarding_complete: true,
         }, {
           onConflict: 'user_id'
         });

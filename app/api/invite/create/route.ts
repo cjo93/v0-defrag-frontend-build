@@ -45,10 +45,11 @@ export async function POST(req: NextRequest) {
         token,
         invitee_name: name,
         invitee_contact: contact || null,
+        relationship_label: relationship_label || null,
         expires_at: expiresAt.toISOString(),
         status: 'pending',
       })
-      .select('id, token, invitee_name, expires_at, status, created_at')
+      .select('id, token, invitee_name, relationship_label, expires_at, status, created_at')
       .single();
 
     if (insertError) {
@@ -65,7 +66,6 @@ export async function POST(req: NextRequest) {
       ok: true,
       invite: {
         ...invite,
-        relationship_label: relationship_label || null,
         link: inviteLink,
       },
     });

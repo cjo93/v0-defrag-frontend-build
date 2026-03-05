@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
     if (!conversationId) {
       const { data: newConv, error: convError } = await supabaseAdmin
         .from('conversations')
-        .insert({ user_id: userId, title: sanitised.slice(0, 50) })
+        .insert({ user_id: userId, person_id: person_id || null, title: sanitised.slice(0, 50) })
         .select('id')
         .single();
 
