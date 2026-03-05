@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion, useInView, useScroll, useTransform, useMotionValue } from 'framer-motion';
 import { useAuth } from '@/lib/auth-context';
+import HowDefragWorksExplainer from '@/components/HowDefragWorksExplainer';
 
 /* ─── Data ────────────────────────────────────────────────────── */
 
@@ -490,7 +491,7 @@ export default function LandingPage() {
             </Link>
             <button
               onClick={() => document.getElementById('see-output')?.scrollIntoView({ behavior: 'smooth' })}
-              className="inline-flex items-center justify-center h-14 px-9 border border-white/[0.10] text-white/40 text-[13px] font-bold uppercase tracking-[0.08em] rounded-xl hover:text-white/60 hover:border-white/20 hover:bg-white/[0.03] motion-safe:active:scale-[0.97] transition-all duration-200"
+              className="inline-flex items-center justify-center h-14 px-9 border border-white/[0.10] text-white/40 text-[13px] font-bold uppercase tracking-[0.08em] rounded-xl hover:text-white hover:border-white/20 hover:bg-white/[0.03] motion-safe:active:scale-[0.97] transition-all duration-200"
             >
               See what DEFRAG outputs
             </button>
