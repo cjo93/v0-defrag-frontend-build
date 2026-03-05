@@ -1,17 +1,17 @@
 :root {
-  --bg-black: #0A0A0A;
-  --panel-black: #0A0A0A;
+  --bg-black: #08080c;
+  --panel-black: #08080c;
   --text-primary: #ffffff;
   --text-secondary: rgba(255,255,255,0.7);
   --text-muted: rgba(255,255,255,0.45);
   --text-faint: rgba(255,255,255,0.4);
-  --line-low: rgba(255,255,255,0.1);
-  --line-mid: rgba(255,255,255,0.2);
+  --line-low: rgba(255,255,255,0.08);
+  --line-mid: rgba(255,255,255,0.15);
   --accent-risk: #ffffff;
-  --radius-card: 2px;
-  --radius-button: 2px;
-  --radius-input: 2px;
-  --ambient-glow: radial-gradient(circle at 50% 10%, rgba(255,255,255,0.04), transparent 60%);
+  --radius-card: 12px;
+  --radius-button: 10px;
+  --radius-input: 10px;
+  --ambient-glow: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(139,92,246,0.12), transparent);
 }
 
 * {
@@ -28,6 +28,7 @@ body {
   font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 button, input, select, textarea {

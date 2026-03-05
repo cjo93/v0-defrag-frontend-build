@@ -1,7 +1,15 @@
 :root {
 
   /* background */
-  --bg-primary: #0A0A0A;
+  --bg-primary: #08080c;
+
+  /* accent palette */
+  --accent-purple: #8b5cf6;
+  --accent-blue: #6366f1;
+  --accent-indigo: #818cf8;
+  --accent-cyan: #22d3ee;
+  --accent-glow: rgba(139, 92, 246, 0.15);
+  --accent-glow-blue: rgba(99, 102, 241, 0.12);
 
   /* text */
   --text-primary: rgba(255,255,255,0.92);
@@ -9,8 +17,9 @@
   --text-muted: rgba(255,255,255,0.45);
 
   /* surfaces */
-  --panel-bg: rgba(255,255,255,0.02);
-  --panel-border: rgba(255,255,255,0.10);
-  --panel-border-hover: rgba(255,255,255,0.20);
+  --panel-bg: rgba(255,255,255,0.03);
+  --panel-border: rgba(255,255,255,0.08);
+  --panel-border-hover: rgba(255,255,255,0.15);
+  --panel-glow: rgba(139, 92, 246, 0.06);
 
 }
