@@ -1,22 +1,26 @@
 :root {
 
   /* background */
-  --bg-primary: #09090b;
+  --bg-primary: #0a0a0c;
+  --bg-premium-gradient: linear-gradient(135deg, #0a0a0c 0%, #18181b 60%, #f8f6f2 100%);
 
-  /* accent — white spectrum */
-  --accent: rgba(255,255,255,0.90);
-  --accent-dim: rgba(255,255,255,0.45);
-  --accent-faint: rgba(255,255,255,0.08);
+  /* accent — premium whites/creams */
+  --accent: #f8f6f2;
+  --accent-cream: #f5eee6;
+  --accent-cream-dim: #eae4db;
+  --accent-dim: rgba(248,246,242,0.45);
+  --accent-faint: rgba(248,246,242,0.08);
 
   /* text */
-  --text-primary: rgba(255,255,255,0.92);
-  --text-secondary: rgba(255,255,255,0.55);
-  --text-muted: rgba(255,255,255,0.35);
+  --text-primary: #f8f6f2;
+  --text-secondary: #eae4db;
+  --text-muted: #b8b6b2;
 
   /* surfaces */
-  --panel-bg: rgba(255,255,255,0.03);
-  --panel-border: rgba(255,255,255,0.08);
-  --panel-border-hover: rgba(255,255,255,0.15);
-  --panel-glow: 0 0 80px rgba(255,255,255,0.03);
+  --panel-bg: rgba(248,246,242,0.03);
+  --panel-bg-cream: #f5eee6;
+  --panel-border: rgba(248,246,242,0.08);
+  --panel-border-hover: rgba(248,246,242,0.15);
+  --panel-glow: 0 0 80px rgba(248,246,242,0.06);
 
 }

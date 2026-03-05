@@ -366,12 +366,12 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-[#09090b] text-white font-sans antialiased selection:bg-white/10 overflow-x-hidden">
+    <main className="min-h-screen font-sans antialiased overflow-x-hidden" style={{ background: 'var(--bg-premium-gradient)', color: 'var(--text-primary)' }}>
       {/* Subtle noise overlay */}
       <div
-        className="fixed inset-0 pointer-events-none z-[60] opacity-[0.025]"
+        className="fixed inset-0 pointer-events-none z-[60] opacity-[0.04]"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+          background: 'radial-gradient(ellipse 80% 60% at 50% 20%, #f8f6f2 0%, transparent 70%)',
           backgroundRepeat: 'repeat',
           backgroundSize: '128px 128px',
         }}
@@ -382,15 +382,15 @@ export default function LandingPage() {
         className="fixed top-0 left-0 right-0 z-50"
         style={{
           backdropFilter: 'blur(20px) saturate(1.4)',
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          borderBottom: '1px solid var(--panel-border)',
         }}
         animate={{
-          backgroundColor: scrolled ? 'rgba(9,9,11,0.95)' : 'rgba(9,9,11,0.6)',
+          backgroundColor: scrolled ? 'rgba(10,10,12,0.97)' : 'rgba(10,10,12,0.7)',
         }}
         transition={{ duration: 0.3 }}
       >
         <div className="mx-auto max-w-[1200px] px-6 md:px-10 h-16 flex items-center justify-between">
-          <Link href="/" className="text-[14px] font-bold tracking-[0.2em] text-white/90 uppercase">
+          <Link href="/" className="text-[14px] font-bold tracking-[0.2em]" style={{ color: 'var(--accent-cream)' }}>
             DEFRAG
           </Link>
           <div className="flex items-center gap-1.5">
@@ -414,9 +414,9 @@ export default function LandingPage() {
             </Link>
             <Link
               href="/auth/signup"
-              className="group relative inline-flex items-center justify-center h-10 px-5 bg-white text-[#09090b] text-[12px] font-bold uppercase tracking-[0.06em] rounded-lg motion-safe:active:scale-[0.97] transition-all duration-150 hover:bg-white/90 overflow-hidden"
+              className="group relative inline-flex items-center justify-center h-10 px-5 bg-[var(--accent-cream)] text-[#18181b] text-[12px] font-bold uppercase tracking-[0.06em] rounded-lg shadow-[0_0_24px_rgba(248,246,242,0.12)] motion-safe:active:scale-[0.97] transition-all duration-150 hover:bg-[var(--accent-cream-dim)] overflow-hidden border border-[var(--panel-border)]"
             >
-              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
+              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--accent-cream)] to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
               <span className="relative">Get started</span>
             </Link>
           </div>
@@ -428,14 +428,14 @@ export default function LandingPage() {
         {/* Dramatic radial glow */}
         <motion.div
           className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[1200px] h-[800px] pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 20%, rgba(255,255,255,0.08), rgba(255,255,255,0.02) 40%, transparent 70%)' }}
-          animate={{ opacity: [0.6, 1, 0.6] }}
+          style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 20%, #f5eee6 0%, transparent 70%)' }}
+          animate={{ opacity: [0.7, 1, 0.7] }}
           transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
         />
         {/* Floating accent glow */}
         <motion.div
           className="absolute top-[15%] left-[35%] w-[600px] h-[500px] pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at center, rgba(255,255,255,0.03), transparent 65%)' }}
+          style={{ background: 'radial-gradient(ellipse at center, #eae4db 0%, transparent 65%)' }}
           animate={{ x: [0, 40, 0], y: [0, -20, 0], opacity: [0.3, 0.6, 0.3] }}
           transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
         />
@@ -456,12 +456,13 @@ export default function LandingPage() {
             animate={mounted ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 1, delay: 0.2, ease: EASE }}
             className="text-[46px] md:text-[68px] lg:text-[82px] font-bold tracking-[-0.04em] leading-[0.95] mb-7"
+            style={{ color: 'var(--accent-cream)' }}
           >
-            <span className="bg-clip-text text-transparent bg-gradient-to-b from-white via-white/95 to-white/30">
+            <span className="bg-clip-text text-transparent bg-gradient-to-b from-[var(--accent-cream)] via-white/95 to-white/30">
               Finally understand
             </span>
             <br />
-            <span className="bg-clip-text text-transparent bg-gradient-to-b from-white via-white/90 to-white/25">
+            <span className="bg-clip-text text-transparent bg-gradient-to-b from-[var(--accent-cream)] via-white/90 to-white/25">
               why it keeps happening.
             </span>
           </motion.h1>
@@ -470,7 +471,8 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={mounted ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.4, ease: EASE }}
-            className="text-[18px] md:text-[21px] text-white/50 leading-[1.65] mb-11 max-w-[560px] mx-auto"
+            className="text-[18px] md:text-[21px] leading-[1.65] mb-11 max-w-[560px] mx-auto"
+            style={{ color: 'var(--text-secondary)' }}
           >
             DEFRAG maps the invisible dynamics behind your hardest relationships
             and tells you exactly what to do next.
@@ -484,14 +486,14 @@ export default function LandingPage() {
           >
             <Link
               href="/auth/signup"
-              className="group relative inline-flex items-center justify-center h-14 px-9 bg-white text-[#09090b] text-[13px] font-bold uppercase tracking-[0.08em] rounded-xl shadow-[0_0_50px_rgba(255,255,255,0.1),0_4px_24px_rgba(0,0,0,0.4)] motion-safe:active:scale-[0.97] transition-all duration-150 hover:bg-white/90 overflow-hidden"
+              className="group relative inline-flex items-center justify-center h-14 px-9 bg-[var(--accent-cream)] text-[#18181b] text-[13px] font-bold uppercase tracking-[0.08em] rounded-xl shadow-[0_0_50px_rgba(248,246,242,0.12),0_4px_24px_rgba(0,0,0,0.4)] motion-safe:active:scale-[0.97] transition-all duration-150 hover:bg-[var(--accent-cream-dim)] overflow-hidden border border-[var(--panel-border)]"
             >
-              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
+              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--accent-cream)] to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
               <span className="relative">Start free &mdash; no card required</span>
             </Link>
             <button
               onClick={() => document.getElementById('see-output')?.scrollIntoView({ behavior: 'smooth' })}
-              className="inline-flex items-center justify-center h-14 px-9 border border-white/[0.10] text-white/40 text-[13px] font-bold uppercase tracking-[0.08em] rounded-xl hover:text-white hover:border-white/20 hover:bg-white/[0.03] motion-safe:active:scale-[0.97] transition-all duration-200"
+              className="inline-flex items-center justify-center h-14 px-9 border border-[var(--panel-border)] text-[var(--text-muted)] text-[13px] font-bold uppercase tracking-[0.08em] rounded-xl hover:text-[var(--accent-cream)] hover:border-[var(--panel-border-hover)] hover:bg-[var(--panel-bg-cream)] motion-safe:active:scale-[0.97] transition-all duration-200"
             >
               See what DEFRAG outputs
             </button>
