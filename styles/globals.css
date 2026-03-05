@@ -185,3 +185,45 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* --- DEFRAG landing premium motion (monochrome + accessible) --- */
+@media (prefers-reduced-motion: no-preference) {
+  .df-reveal {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 700ms ease, transform 900ms ease;
+    will-change: opacity, transform;
+  }
+  .df-reveal.is-on {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Subtle signal movement for schematic lines */
+  .df-vibrate {
+    animation: df-vibrate 2.8s ease-in-out infinite;
+    transform-origin: center;
+    will-change: transform, opacity;
+  }
+  @keyframes df-vibrate {
+    0%, 100% {
+      transform: translateX(0);
+      opacity: 0.55;
+    }
+    50% {
+      transform: translateX(1.5px);
+      opacity: 0.85;
+    }
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .df-reveal {
+    opacity: 1;
+    transform: none;
+  }
+  .df-vibrate {
+    animation: none;
+  }
+}

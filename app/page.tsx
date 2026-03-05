@@ -5,15 +5,15 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion, useInView, useScroll, useTransform, useMotionValue } from 'framer-motion';
 import { useAuth } from '@/lib/auth-context';
-import HowDefragWorksExplainer from '@/components/HowDefragWorksExplainer';
 
 /* ─── Data ────────────────────────────────────────────────────── */
+
 
 const HOW_IT_WORKS = [
   {
     step: '01',
     title: 'Enter your birth data',
-    body: 'Date, time, and location. Takes under a minute. If you don\u2019t know your birth time, we estimate accurately.',
+    body: 'Date, time (optional), and location. Takes under a minute. If you don\'t know your birth time, you can still start with a partial map.',
   },
   {
     step: '02',
@@ -23,7 +23,30 @@ const HOW_IT_WORKS = [
   {
     step: '03',
     title: 'Get real answers',
-    body: 'Ask DEFRAG anything. You\u2019ll get a structured breakdown: what\u2019s happening, why it keeps happening, and exactly what to do next.',
+    body: 'Ask DEFRAG anything. You\u2019ll get a structured breakdown: what\u2019s happening, why it keeps happening, and what to do next.',
+  },
+];
+
+const ENGINE_STEPS = [
+  {
+    title: 'Birth data',
+    body: 'Date, time (optional), and location generate a personal pattern map — how you decide, process emotion, communicate, and recover.',
+  },
+  {
+    title: 'Relationship overlay',
+    body: 'Add the people that matter. DEFRAG compares patterns to show where conversations naturally tighten or open.',
+  },
+  {
+    title: 'Repeat detection',
+    body: 'DEFRAG flags what keeps looping — the same trigger, the same sequence, the same outcome — even when the topic changes.',
+  },
+  {
+    title: 'AI translation',
+    body: 'Complex structure becomes plain language: what’s happening, why it repeats, and what usually helps.',
+  },
+  {
+    title: 'Clear guidance',
+    body: 'One next step you can take now, plus a clean line to say that keeps the conversation open.',
   },
 ];
 
@@ -33,15 +56,15 @@ const EXAMPLE_OUTPUTS = [
     sections: [
       {
         heading: 'The pattern',
-        body: 'Your mom reads emotional space as rejection. When you pull back to protect your energy, she escalates \u2014 not because she\u2019s ignoring your boundary, but because distance triggers her deepest fear.',
+        body: 'Your mom reads emotional space as disconnection. When you pull back to reset, she escalates — not to ignore your boundary, but to close the gap fast.',
       },
       {
         heading: 'Why it cycles',
-        body: 'This intensifies during transitions \u2014 holidays, moves, life changes. Her need for closeness spikes exactly when your need for space does. Neither of you is wrong. The timing is the problem.',
+        body: 'This spikes during transitions — holidays, moves, big life changes. Her need for closeness rises exactly when your need for space does. Neither of you is wrong. The mismatch is the timing.',
       },
       {
         heading: 'Your next move',
-        body: '"I need a few days to reset \u2014 it\u2019s not about you." Short. Direct. Before the tension builds. Timing beats wording every time.',
+        body: '"I need a couple days to reset — it\'s not about you." Short. Direct. Said early, before tension builds. Timing often beats wording.',
       },
     ],
   },
@@ -50,7 +73,7 @@ const EXAMPLE_OUTPUTS = [
 const VALUE_PROPS = [
   {
     title: 'Stop guessing why it hurts',
-    body: 'DEFRAG shows you the invisible mechanics behind conflict \u2014 the patterns, triggers, and timing that keep relationships stuck.',
+    body: 'DEFRAG shows the pattern behind conflict — what sets it off, how it escalates, and what usually helps.',
   },
   {
     title: 'Answers, not more questions',
@@ -58,11 +81,11 @@ const VALUE_PROPS = [
   },
   {
     title: 'See your entire relational world',
-    body: 'A living map of every key relationship \u2014 who\u2019s in tension, who\u2019s aligned, and where to focus your energy today.',
+    body: 'A living map of your key relationships — where things are smooth, where they\'re strained, and where to focus today.',
   },
   {
     title: 'Know when to speak and when to wait',
-    body: 'Timing recommendations based on relational dynamics tell you the best window to have hard conversations.',
+    body: 'Timing suggestions help you choose better windows for hard conversations — so you\'re not forcing it at the worst moment.',
   },
 ];
 
@@ -329,6 +352,7 @@ function ConstellationMap() {
 
 /* ─── Gradient section divider ─── */
 
+
 function SectionDivider() {
   return (
     <div className="relative h-px">
@@ -338,6 +362,59 @@ function SectionDivider() {
         style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)' }}
       />
     </div>
+  );
+}
+
+function RelationalEngineSection() {
+  return (
+    <section className="relative">
+      <div
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[520px] pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.035), transparent 70%)' }}
+      />
+
+      <div className="relative mx-auto max-w-[1200px] px-6 md:px-10 py-24 md:py-32">
+        <FadeIn className="text-center mb-14">
+          <p className="text-[11px] uppercase tracking-[0.25em] text-white/25 mb-4 font-medium">What DEFRAG uses</p>
+          <h2 className="text-[36px] md:text-[48px] font-bold tracking-[-0.03em] leading-[1.05] text-white mb-3">
+            From human data<br className="hidden md:block" /> to clear answers.
+          </h2>
+          <p className="text-[16px] text-white/35 max-w-[720px] mx-auto leading-[1.7]">
+            DEFRAG is a platform: it builds a personal pattern map, overlays relationships, and turns what repeats into guidance you can use.
+          </p>
+        </FadeIn>
+
+        {/* Pipeline */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-5">
+          {ENGINE_STEPS.map((s, i) => (
+            <FadeIn key={s.title} delay={i * 0.08}>
+              <SpotlightCard
+                className="group h-full border border-white/[0.06] rounded-2xl p-7 md:p-7 overflow-hidden"
+                style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.008))' }}
+              >
+                <div className="flex items-center justify-between mb-5">
+                  <span className="text-[11px] uppercase tracking-[0.25em] text-white/25 font-medium">Step {String(i + 1).padStart(2, '0')}</span>
+                  <span className="text-[11px] text-white/20">{i < ENGINE_STEPS.length - 1 ? '→' : '•'}</span>
+                </div>
+
+                <h3 className="text-[16px] font-semibold text-white/85 mb-2.5">{s.title}</h3>
+                <p className="text-[14px] text-white/40 leading-[1.75]">{s.body}</p>
+
+                {/* subtle bottom rule */}
+                <div className="mt-6 h-px w-full" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)' }} />
+              </SpotlightCard>
+            </FadeIn>
+          ))}
+        </div>
+
+        {/* Small clarity note */}
+        <FadeIn delay={0.25}>
+          <div className="mt-10 text-center text-[12px] text-white/20 tracking-wide">
+            Private by default. You control what’s stored, shared, and deleted.
+          </div>
+        </FadeIn>
+      </div>
+    </section>
   );
 }
 
@@ -474,8 +551,7 @@ export default function LandingPage() {
             className="text-[18px] md:text-[21px] leading-[1.65] mb-11 max-w-[560px] mx-auto"
             style={{ color: 'var(--text-secondary)' }}
           >
-            DEFRAG maps the invisible dynamics behind your hardest relationships
-            and tells you exactly what to do next.
+            DEFRAG helps you see what\u2019s happening between people \u2014 then gives you clear next steps.
           </motion.p>
 
           <motion.div
@@ -592,6 +668,10 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── RELATIONAL ENGINE ── */}
+      <SectionDivider />
+      <RelationalEngineSection />
+
       {/* ── HOW IT WORKS ── */}
       <SectionDivider />
       <section id="how-it-works">
@@ -644,7 +724,7 @@ export default function LandingPage() {
           <FadeIn>
             <p className="text-[11px] uppercase tracking-[0.25em] text-white/25 mb-4 font-medium">What DEFRAG does for you</p>
             <h2 className="text-[36px] md:text-[48px] font-bold tracking-[-0.03em] leading-[1.05] text-white mb-12">
-              Not therapy. Not horoscopes.<br className="hidden md:block" /> Precision.
+              Not generic advice.<br className="hidden md:block" /> Clear guidance.
             </h2>
           </FadeIn>
           <motion.div
