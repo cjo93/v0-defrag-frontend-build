@@ -15,7 +15,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   // Not unlocked → unlock screen
-  if (!status.is_basic_unlocked) {
+  if (!status.is_solo_unlocked) {
     redirect('/unlock');
   }
 

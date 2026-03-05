@@ -156,7 +156,7 @@ export default function RelationshipField({ people }: { people: Person[] }) {
             transform: 'translate(-50%, -100%)',
           }}
         >
-          <div className="border border-white/15 bg-[#111] rounded-sm px-3 py-2 space-y-0.5 shadow-lg">
+          <div className="border border-white/15 bg-white/[0.04] rounded-sm px-3 py-2 space-y-0.5 shadow-lg">
             <p className="text-[13px] text-white font-medium whitespace-nowrap">{hoveredPerson.name}</p>
             {hoveredPerson.relationship_label && (
               <p className="font-mono text-[10px] text-white/40 uppercase tracking-[0.12em]">
