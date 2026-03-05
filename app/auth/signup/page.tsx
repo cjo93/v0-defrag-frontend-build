@@ -18,6 +18,7 @@ export default function SignupPage() {
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   if (!supabase) return <ServiceUnavailable />;
+  const sb = supabase;
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://defrag.app';
   const isTurnstileRequired = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
@@ -33,7 +34,7 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { data, error } = await sb.auth.signUp({
         email,
         password,
         options: {

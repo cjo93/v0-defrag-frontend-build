@@ -13,13 +13,14 @@ export default function ResetConfirmPage() {
   const [loading, setLoading] = useState(false);
 
   if (!supabase) return <ServiceUnavailable />;
+  const sb = supabase;
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.updateUser({ password });
+      const { error } = await sb.auth.updateUser({ password });
       if (error) throw error;
 
       toast({ title: "Password updated", description: "You can now sign in with your new password." });

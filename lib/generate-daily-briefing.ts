@@ -8,7 +8,7 @@
  * Cost: ~120 tokens per user per day.
  */
 
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { SupabaseAdminProxy } from './auth-server';
 import OpenAI from 'openai';
 
 let _openai: OpenAI | null = null;
@@ -24,7 +24,7 @@ function getOpenAI(): OpenAI {
  * Returns the cached version if one already exists for today.
  */
 export async function generateDailyBriefing(
-  admin: SupabaseClient,
+  admin: SupabaseAdminProxy,
   userId: string,
 ): Promise<string | null> {
   const today = new Date().toISOString().slice(0, 10);

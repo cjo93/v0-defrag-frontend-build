@@ -7,7 +7,7 @@ echo "[DEFRAG_CI] Installing dependencies..."
 pnpm install --frozen-lockfile
 
 echo "[DEFRAG_CI] Running typecheck..."
-pnpm typecheck || echo "[DEFRAG_CI] Typecheck warnings (ignored via config)"
+pnpm typecheck
 
 echo "[DEFRAG_CI] Running lint..."
 pnpm lint

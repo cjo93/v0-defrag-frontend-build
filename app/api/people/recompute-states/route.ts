@@ -3,6 +3,13 @@ import { createServerClient, supabaseAdmin } from '@/lib/auth-server';
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/rate-limit';
 import { updatePersonRelationshipState } from '@/lib/relationship-state';
 
+interface PersonRow {
+  id: string;
+  relationship_state: string | null;
+  relationship_state_updated_at: string | null;
+  updated_at: string | null;
+}
+
 const MAX_PEOPLE = 100;
 const STALE_THRESHOLD_MS = 6 * 60 * 60 * 1000; // 6 hours
 
@@ -45,7 +52,7 @@ export async function POST(req: NextRequest) {
     const { data: people, error: peopleError } = await supabaseAdmin
       .from('people')
       .select('id, relationship_state, relationship_state_updated_at, updated_at')
-      .eq('owner_user_id', userId);
+      .eq('owner_user_id', userId) as { data: PersonRow[] | null; error: any };
 
     if (peopleError || !people) {
       console.error('[DEFRAG_API] Recompute: failed to fetch people:', peopleError);

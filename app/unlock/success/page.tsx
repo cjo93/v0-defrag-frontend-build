@@ -10,6 +10,7 @@ function SuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const [verified, setVerified] = useState(false);
+  const [timedOut, setTimedOut] = useState(false);
   const [countdown, setCountdown] = useState(5);
 
   // Poll for payment verification before allowing redirect
@@ -38,7 +39,8 @@ function SuccessContent() {
         } catch {}
         await new Promise(r => setTimeout(r, 1500));
       }
-      // After 30s of polling, let them through anyway (webhook may be slow)
+      // After 30s of polling, show fallback — webhook may be slow
+      setTimedOut(true);
       setVerified(true);
     };
     poll();
@@ -73,9 +75,15 @@ function SuccessContent() {
         <div className="space-y-3">
           <p className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50">Subscription active</p>
           <h1 className="text-[26px] md:text-[36px] font-normal tracking-[-0.015em]">You&apos;re in</h1>
-          <p className="text-[14px] md:text-[16px] text-white/65">
-            Your subscription is active. Welcome to DEFRAG.
-          </p>
+          {timedOut ? (
+            <p className="text-[14px] md:text-[16px] text-white/65">
+              Payment received. It may take a moment to activate — if your dashboard is still locked, refresh the page.
+            </p>
+          ) : (
+            <p className="text-[14px] md:text-[16px] text-white/65">
+              Your subscription is active. Welcome to DEFRAG.
+            </p>
+          )}
         </div>
 
         <div className="flex items-center justify-center gap-2 font-mono text-[11px] text-white/35 tracking-[0.2em] uppercase">

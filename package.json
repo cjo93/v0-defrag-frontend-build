@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "verify": "bash scripts/ci.sh"
+    "verify": "pnpm typecheck && pnpm lint && pnpm build"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

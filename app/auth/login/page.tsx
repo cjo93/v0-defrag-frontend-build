@@ -18,6 +18,7 @@ export default function LoginPage() {
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   if (!supabase) return <ServiceUnavailable />;
+  const sb = supabase;
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://defrag.app';
   const isTurnstileRequired = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
@@ -34,7 +35,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await sb.auth.signInWithPassword({ email, password });
       if (error) {
         if (error.message.includes('Invalid login credentials')) {
           toast({ title: "Invalid credentials", description: "Check your email and password.", variant: "destructive" });
@@ -57,7 +58,7 @@ export default function LoginPage() {
     }
 
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { error } = await sb.auth.signInWithOAuth({
         provider: 'apple',
         options: { redirectTo: `${siteUrl}/auth/callback` }
       });

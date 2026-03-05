@@ -147,12 +147,12 @@ export async function POST(req: NextRequest) {
     // ── 9. Fetch phase (parallel) ─────────────────────────────
     const [birthline, userProfile, anchor, timingInsight, relationshipMemory, memory] = await Promise.all([
       // Natal context
-      supabaseAdmin
+      Promise.resolve(supabaseAdmin
         .from('birthlines')
         .select('dob, birth_time, birth_city')
         .eq('user_id', userId)
         .single()
-        .then((r: { data: any }) => r.data)
+        .then((r: { data: any }) => r.data))
         .catch(() => null),
 
       // User relational profile
@@ -315,10 +315,10 @@ export async function POST(req: NextRequest) {
     // ── 15. Store pattern metadata on user message ────────────
     if (userMsg?.id) {
       safeAsync(
-        supabaseAdmin
+        Promise.resolve(supabaseAdmin
           .from('messages')
           .update({ relational_pattern: pattern.pattern, tension_type: pattern.tensionType })
-          .eq('id', userMsg.id)
+          .eq('id', userMsg.id))
           .then(() => {})
       );
     }

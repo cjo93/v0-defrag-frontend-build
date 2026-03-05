@@ -15,6 +15,7 @@ export default function ResetPasswordPage() {
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   if (!supabase) return <ServiceUnavailable />;
+  const sb = supabase;
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://defrag.app';
   const isTurnstileRequired = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
@@ -30,7 +31,7 @@ export default function ResetPasswordPage() {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      const { error } = await sb.auth.resetPasswordForEmail(email, {
         redirectTo: `${siteUrl}/auth/reset/confirm`,
       });
       if (error) throw error;

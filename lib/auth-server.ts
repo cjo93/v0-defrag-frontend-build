@@ -1,6 +1,15 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 
+/**
+ * Lightweight proxy type for supabaseAdmin.
+ * All lib functions should accept this instead of full SupabaseClient
+ * since the exported admin is a deploy-safe proxy that lazily resolves.
+ */
+export type SupabaseAdminProxy = {
+  from: (table: string) => ReturnType<SupabaseClient['from']>;
+};
+
 // Deploy-safe: never throw at module scope or during build.
 // All getters return null if env vars are missing.
 
@@ -48,7 +57,7 @@ const noopFrom = () => ({
   delete: () => ({ eq: () => ({ data: null, error: { message: 'Supabase not configured' } }) }),
 });
 
-export const supabaseAdmin = {
+export const supabaseAdmin: SupabaseAdminProxy = {
   from: (table: string) => {
     const admin = getSupabaseAdmin();
     if (!admin) return noopFrom() as any;

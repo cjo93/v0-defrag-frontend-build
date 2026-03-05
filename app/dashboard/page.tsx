@@ -56,8 +56,6 @@ export default function DashboardPage() {
   const [planActivated, setPlanActivated] = useState(false);
   const [dailyInsight, setDailyInsight] = useState<DailyInsightType | null>(null);
 
-  if (!supabase) return <ServiceUnavailable />;
-
   useEffect(() => {
     try {
       if (localStorage.getItem('defrag_plan_activated')) {
@@ -150,6 +148,8 @@ export default function DashboardPage() {
     }
     loadStatus();
   }, [router]);
+
+  if (!supabase) return <ServiceUnavailable />;
 
   const isTeamPlan = isTeam(status?.plan ?? null);
 
