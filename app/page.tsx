@@ -93,7 +93,7 @@ export default function LandingPage() {
             </Link>
           </div>
           <div className="border border-white/10 bg-white/[0.02] p-6 rounded-sm flex flex-col hover:border-white/20 hover:-translate-y-[1px] transition-all duration-200">
-            <h3 className="text-[20px] font-medium text-white mb-2">Circle</h3>
+            <h3 className="text-[20px] font-medium text-white mb-2">Team</h3>
             <p className="text-[28px] font-normal text-white mb-5">$33<span className="text-[14px] text-white/45 ml-1">/ month</span></p>
             <ul className="flex flex-col gap-2 text-[14px] text-white/65 mb-8 flex-1">
               <li>Add family or close relationships</li>
@@ -101,7 +101,7 @@ export default function LandingPage() {
               <li>Deeper context in chat</li>
             </ul>
             <Link href="/auth/login" className="inline-flex items-center justify-center h-[44px] px-6 border border-white/25 text-white/80 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/50 active:scale-[0.98] transition-all duration-200">
-              Choose Circle
+              Choose Team
             </Link>
           </div>
         </div>

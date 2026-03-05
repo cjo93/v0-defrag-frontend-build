@@ -8,6 +8,7 @@ import { supabase, getSession, signOut } from "@/lib/supabase";
 import { TopNav } from "@/components/top-nav";
 import Panel from "@/components/panel";
 import { Download, Loader2 } from "lucide-react";
+import { planLabel, isTeam } from "@/lib/plan-label";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -129,7 +130,7 @@ export default function SettingsPage() {
                   <p className="text-[14px] text-white/65">{accountEmail}</p>
                   {plan && (
                     <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-white/40 border border-white/10 px-2.5 py-1 rounded-sm">
-                      {plan}
+                      {planLabel(plan)}
                     </span>
                   )}
                 </div>
@@ -181,8 +182,8 @@ export default function SettingsPage() {
           <Panel title="BILLING">
             <div className="space-y-6">
               <p className="text-[14px] text-white/55 leading-[1.6]">
-                {plan === 'circle'
-                  ? 'You are on the Circle plan ($33/mo).'
+                {isTeam(plan)
+                  ? 'You are on the Team plan ($33/mo).'
                   : 'You are on the Solo plan ($19/mo).'}
               </p>
               <div className="flex gap-3">
@@ -190,7 +191,7 @@ export default function SettingsPage() {
                   href="/unlock"
                   className="inline-flex items-center justify-center h-[44px] px-6 border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:text-white hover:border-white/30 transition-all duration-200"
                 >
-                  {plan === 'circle' ? 'Manage Plan' : 'Upgrade to Circle'}
+                  {isTeam(plan) ? 'Manage Plan' : 'Upgrade to Team'}
                 </Link>
               </div>
             </div>

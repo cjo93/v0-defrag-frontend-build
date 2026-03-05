@@ -19,7 +19,7 @@ function getStripe(): Stripe {
 function getPriceIds(): Record<string, string> {
   return {
     solo: process.env.STRIPE_SOLO_PRICE_ID || '',
-    circle: process.env.STRIPE_PLUS_PRICE_ID || '',
+    team: process.env.STRIPE_PLUS_PRICE_ID || '',
   };
 }
 

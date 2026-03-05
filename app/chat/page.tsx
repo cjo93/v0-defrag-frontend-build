@@ -145,7 +145,7 @@ function ChatClient() {
                 Ask DEFRAG
               </p>
               <p className="text-[16px] text-white/45 leading-[1.6] mb-6">
-                Select someone from your circle to begin.
+                Select someone from your people to begin.
               </p>
               <Link
                 href="/relationships"

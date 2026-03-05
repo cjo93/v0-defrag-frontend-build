@@ -23,8 +23,8 @@ const plans = [
     cta: 'Start with Solo',
   },
   {
-    id: 'circle',
-    name: 'Circle',
+    id: 'team',
+    name: 'Team',
     price: '$33',
     period: '/month',
     description: 'Understand your relationships',
@@ -34,7 +34,7 @@ const plans = [
       'Relationship overlays',
       'Group dynamics insights',
     ],
-    cta: 'Upgrade to Circle',
+    cta: 'Upgrade to Team',
     highlighted: true,
   },
 ];

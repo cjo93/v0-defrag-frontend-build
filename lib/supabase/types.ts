@@ -12,7 +12,7 @@ export type StagedSession = {
 };
 
 // DEFRAG Core Types
-export type Plan = 'solo' | 'circle';
+export type Plan = 'solo' | 'team';
 
 export type SubscriptionStatus = 'active' | 'trialing' | 'canceled' | 'unlocked' | 'pending';
 
@@ -79,7 +79,7 @@ export type UserStatus = {
   has_birthline: boolean;
   has_relationships: boolean;
   is_solo_unlocked: boolean;
-  is_circle_unlocked: boolean;
+  is_team_unlocked: boolean;
   plan: Plan;
   subscription_status: SubscriptionStatus;
 };

@@ -11,11 +11,12 @@ import { useToast } from "@/hooks/use-toast";
 import RelationshipMap from "@/components/relationship-map/relationship-map";
 import Panel from "@/components/panel";
 import TodaySummary from "@/components/today-summary";
+import { planLabel, isTeam } from "@/lib/plan-label";
 import DailyInsight from "@/components/dashboard/daily-insight";
 import { computeDailyInsight, type DailyInsight as DailyInsightType } from "@/lib/daily-insight";
 
 type UserStatus = {
-  plan: 'solo' | 'circle';
+  plan: 'solo' | 'team';
   has_relationships: boolean;
 };
 
@@ -150,7 +151,7 @@ export default function DashboardPage() {
     loadStatus();
   }, [router]);
 
-  const isCircle = status?.plan === 'circle';
+  const isTeamPlan = isTeam(status?.plan ?? null);
 
   if (loading) {
     return (
@@ -212,7 +213,7 @@ export default function DashboardPage() {
         {/* Stripe confirmation banner */}
         {planActivated && (
           <div className="mb-8 flex items-center justify-between border border-green-400/15 bg-green-400/[0.04] px-5 py-3.5 rounded-sm animate-fade-in">
-            <p className="text-[14px] text-green-400/80">Your {status?.plan === 'circle' ? 'Circle' : 'Solo'} plan is active.</p>
+            <p className="text-[14px] text-green-400/80">Your {planLabel(status?.plan ?? null)} plan is active.</p>
             <button onClick={() => setPlanActivated(false)} className="text-white/30 hover:text-white/60 transition-colors">
               <X className="w-4 h-4" />
             </button>
@@ -245,7 +246,7 @@ export default function DashboardPage() {
 
           {/* ─── Panel 2: Relationship Map ─── */}
           <div className="col-span-12 lg:col-span-5 animate-fade-in delay-50">
-            {isCircle ? (
+            {isTeamPlan ? (
               <Panel title="RELATIONSHIP FIELD">
                 {/* Pending invites */}
                 {pendingInvites.length > 0 && (
@@ -291,7 +292,7 @@ export default function DashboardPage() {
                     href="/unlock"
                     className="inline-flex items-center justify-center h-[42px] px-5 border border-white/15 text-white/60 text-[13px] font-mono font-semibold uppercase tracking-[0.08em] hover:text-white hover:border-white/35 active:scale-[0.98] transition-all duration-200"
                   >
-                    Upgrade to Circle
+                    Upgrade to Team
                   </Link>
                 </div>
               </Panel>
@@ -416,14 +417,14 @@ export default function DashboardPage() {
           </div>
 
           {/* ─── Upgrade CTA (Solo only) ─── */}
-          {!isCircle && (
+          {!isTeamPlan && (
             <div className="col-span-12 animate-fade-in delay-200">
               <Link href="/unlock" className="block group">
                 <div className="border border-white/10 bg-white/[0.02] p-6 hover:border-white/20 hover:bg-white/[0.04] active:scale-[0.998] transition-all duration-200">
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="font-mono text-[11px] uppercase tracking-[0.28em] text-white/40 font-medium mb-2">
-                        Upgrade to Circle
+                        Upgrade to Team
                       </div>
                       <p className="text-[14px] text-white/65 leading-[1.6]">
                         Unlock relationship mapping, multi-person dynamics, and priority support.
@@ -521,7 +522,7 @@ function AddPersonModal({
         .limit(1);
 
       if (existing && existing.length > 0) {
-        toast({ title: "Already exists", description: `${name.trim()} is already in your circle.`, variant: "destructive" });
+        toast({ title: "Already exists", description: `${name.trim()} is already in your people.`, variant: "destructive" });
         setSubmitting(false);
         return;
       }
