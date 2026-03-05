@@ -95,8 +95,8 @@ export function HeroAnimation() {
         const curY = y1 + (y2 - y1) * lineProgress;
 
         const gradient = ctx.createLinearGradient(x1, y1, curX, curY);
-        gradient.addColorStop(0, `rgba(139, 92, 246, ${edge.opacity * 0.25 * ease})`);
-        gradient.addColorStop(1, `rgba(99, 102, 241, ${edge.opacity * 0.1 * ease})`);
+        gradient.addColorStop(0, `rgba(232, 97, 58, ${edge.opacity * 0.25 * ease})`);
+        gradient.addColorStop(1, `rgba(200, 80, 45, ${edge.opacity * 0.1 * ease})`);
 
         ctx.beginPath();
         ctx.moveTo(x1, y1);
@@ -127,9 +127,9 @@ export function HeroAnimation() {
         if (i === 0) {
           // Center "You" node — stronger glow
           const glow = ctx.createRadialGradient(x, y, 0, x, y, currentRadius * 6);
-          glow.addColorStop(0, `rgba(139, 92, 246, ${0.25 * currentOpacity})`);
-          glow.addColorStop(0.5, `rgba(99, 102, 241, ${0.08 * currentOpacity})`);
-          glow.addColorStop(1, 'rgba(99, 102, 241, 0)');
+          glow.addColorStop(0, `rgba(232, 97, 58, ${0.25 * currentOpacity})`);
+          glow.addColorStop(0.5, `rgba(200, 80, 45, ${0.08 * currentOpacity})`);
+          glow.addColorStop(1, 'rgba(200, 80, 45, 0)');
           ctx.beginPath();
           ctx.arc(x, y, currentRadius * 6, 0, Math.PI * 2);
           ctx.fillStyle = glow;
@@ -137,8 +137,8 @@ export function HeroAnimation() {
         } else {
           // Outer nodes — subtle glow
           const glow = ctx.createRadialGradient(x, y, 0, x, y, currentRadius * 4);
-          glow.addColorStop(0, `rgba(139, 92, 246, ${0.12 * currentOpacity})`);
-          glow.addColorStop(1, 'rgba(139, 92, 246, 0)');
+          glow.addColorStop(0, `rgba(232, 97, 58, ${0.12 * currentOpacity})`);
+          glow.addColorStop(1, 'rgba(232, 97, 58, 0)');
           ctx.beginPath();
           ctx.arc(x, y, currentRadius * 4, 0, Math.PI * 2);
           ctx.fillStyle = glow;
@@ -149,10 +149,10 @@ export function HeroAnimation() {
         const nodeGrad = ctx.createRadialGradient(x, y, 0, x, y, currentRadius);
         if (i === 0) {
           nodeGrad.addColorStop(0, `rgba(255, 255, 255, ${0.95 * currentOpacity})`);
-          nodeGrad.addColorStop(1, `rgba(139, 92, 246, ${0.6 * currentOpacity})`);
+          nodeGrad.addColorStop(1, `rgba(232, 97, 58, ${0.6 * currentOpacity})`);
         } else {
-          nodeGrad.addColorStop(0, `rgba(199, 175, 255, ${0.7 * currentOpacity})`);
-          nodeGrad.addColorStop(1, `rgba(139, 92, 246, ${0.3 * currentOpacity})`);
+          nodeGrad.addColorStop(0, `rgba(245, 180, 150, ${0.7 * currentOpacity})`);
+          nodeGrad.addColorStop(1, `rgba(232, 97, 58, ${0.3 * currentOpacity})`);
         }
         ctx.beginPath();
         ctx.arc(x, y, currentRadius, 0, Math.PI * 2);
@@ -177,7 +177,7 @@ export function HeroAnimation() {
           const pOpacity = (Math.sin(elapsed * 0.8 + p * 1.3) * 0.5 + 0.5) * 0.08 * ease;
           ctx.beginPath();
           ctx.arc(px, py, 1.5, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(139, 92, 246, ${pOpacity})`;
+          ctx.fillStyle = `rgba(232, 97, 58, ${pOpacity})`;
           ctx.fill();
         }
       }

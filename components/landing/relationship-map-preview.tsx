@@ -12,11 +12,11 @@ const PEOPLE = [
   { label: 'Ex', angle: 250, strength: 0.35 },
 ];
 
-/** Interpolate between purple and indigo based on strength */
+/** Interpolate orange shades based on strength */
 function accentColor(strength: number, alpha: number) {
-  const r = Math.round(139 + (99 - 139) * (1 - strength));
-  const g = Math.round(92 + (102 - 92) * (1 - strength));
-  const b = Math.round(246 + (241 - 246) * (1 - strength));
+  const r = Math.round(232 + (200 - 232) * (1 - strength));
+  const g = Math.round(97 + (80 - 97) * (1 - strength));
+  const b = Math.round(58 + (45 - 58) * (1 - strength));
   return `rgba(${r},${g},${b},${alpha})`;
 }
 
@@ -34,8 +34,8 @@ export function RelationshipMapPreview() {
       <defs>
         {/* Center glow */}
         <radialGradient id="rmp-center-glow">
-          <stop offset="0%" stopColor="rgba(139,92,246,0.25)" />
-          <stop offset="100%" stopColor="rgba(139,92,246,0)" />
+          <stop offset="0%" stopColor="rgba(232,97,58,0.25)" />
+          <stop offset="100%" stopColor="rgba(232,97,58,0)" />
         </radialGradient>
         {/* Line gradients per person */}
         {PEOPLE.map((n) => {
@@ -74,16 +74,16 @@ export function RelationshipMapPreview() {
       {/* Center node (You) */}
       <circle
         cx={cx} cy={cy} r={10}
-        fill="rgba(139,92,246,0.9)"
+        fill="rgba(232,97,58,0.9)"
         className="transition-all duration-500"
         style={{
           opacity: mounted ? 1 : 0,
           transform: mounted ? 'scale(1)' : 'scale(0.5)',
           transformOrigin: `${cx}px ${cy}px`,
-          filter: 'drop-shadow(0 0 6px rgba(139,92,246,0.5))',
+          filter: 'drop-shadow(0 0 6px rgba(232,97,58,0.5))',
         }}
       />
-      <text x={cx} y={cy + 24} fontSize="10" fill="rgba(139,92,246,0.45)" textAnchor="middle" fontFamily="monospace">
+      <text x={cx} y={cy + 24} fontSize="10" fill="rgba(232,97,58,0.45)" textAnchor="middle" fontFamily="monospace">
         YOU
       </text>
 
