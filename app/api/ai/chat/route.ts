@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { generateText } from 'ai';
 import { createServerClient, supabaseAdmin } from '@/lib/auth-server';
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/rate-limit';
 import { detectRelationalPattern } from '@/lib/relational-pattern';
@@ -8,15 +9,7 @@ import { maybeUpdateRelationshipMemory, getExistingMemory } from '@/lib/relation
 import { getUserRelationalProfile, updateUserRelationalProfile, inferRelationalStyles } from '@/lib/user-profile';
 import { getRelationshipAnchor, updateRelationshipAnchor } from '@/lib/relationship-anchor';
 import { updateRelationshipTiming, getTimingInsight } from '@/lib/relationship-timing';
-import OpenAI from 'openai';
-
-let _openai: OpenAI | null = null;
-function getOpenAI(): OpenAI {
-  if (!_openai) {
-    _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-  }
-  return _openai;
-}
+import { chatModel } from '@/lib/ai-model';
 
 // ── Helpers ───────────────────────────────────────────────────
 
@@ -174,11 +167,11 @@ export async function POST(req: NextRequest) {
         : Promise.resolve(''),
 
       // Conversation memory (compressed history)
-      buildConversationMemory(supabaseAdmin, conversationId, getOpenAI()),
+      buildConversationMemory(supabaseAdmin, conversationId),
     ]);
 
     // ── 6. Build prompt ────────────────────────────────────────
-    const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+    const messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
       { role: 'system', content: SYSTEM_PROMPT },
     ];
 
@@ -276,8 +269,8 @@ export async function POST(req: NextRequest) {
 
     try {
       const completion = await Promise.race([
-        getOpenAI().chat.completions.create({
-          model: 'gpt-4.1',
+        generateText({
+          model: chatModel,
           temperature: 0.4,
           messages,
         }),
@@ -286,7 +279,7 @@ export async function POST(req: NextRequest) {
         ),
       ]);
 
-      response = completion.choices[0]?.message?.content || '';
+      response = completion.text || '';
     } catch (err) {
       console.error('[DEFRAG_API] AI call failed:', err);
       response = "I'm having trouble generating insight right now. Please try again in a moment.";
@@ -325,7 +318,7 @@ export async function POST(req: NextRequest) {
 
     // ── 16. Fire-and-forget: relationship memory compression ──
     if (person_id) {
-      safeAsync(maybeUpdateRelationshipMemory(supabaseAdmin, getOpenAI(), person_id, userId));
+      safeAsync(maybeUpdateRelationshipMemory(supabaseAdmin, person_id, userId));
     }
 
     console.log('[DEFRAG_API] Chat response generated for conversation:', conversationId);

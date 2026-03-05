@@ -11,7 +11,8 @@
  *   - Reduces token usage while preserving context.
  */
 
-import OpenAI from "openai";
+import { generateText } from 'ai';
+import { utilityModel } from '@/lib/ai-model';
 
 const RECENT_WINDOW = 6; // keep last 6 messages verbatim
 const SUMMARY_TRIGGER = 12; // compress when history exceeds this
@@ -41,7 +42,6 @@ interface MemoryPayload {
 export async function buildConversationMemory(
   supabaseAdmin: { from: (table: string) => any },
   conversationId: string,
-  openai: OpenAI
 ): Promise<MemoryPayload> {
   // 1. Fetch all messages for this conversation
   const { data: allMessages } = await supabaseAdmin
@@ -83,7 +83,7 @@ export async function buildConversationMemory(
   // 5. Compress older turns into summary if not already compressed
   //    (We re-summarise when older messages exceed what the current summary covers)
   if (olderMessages.length > 0) {
-    summary = await compressTurns(openai, summary, olderMessages);
+    summary = await compressTurns(summary, olderMessages);
 
     // Persist the compressed summary
     await supabaseAdmin
@@ -104,7 +104,6 @@ export async function buildConversationMemory(
 // ── Compression ───────────────────────────────────────────────
 
 async function compressTurns(
-  openai: OpenAI,
   existingSummary: string,
   turns: MessageRow[]
 ): Promise<string> {
@@ -130,14 +129,14 @@ ${turnText}
 SUMMARY:`;
 
   try {
-    const result = await openai.chat.completions.create({
-      model: "gpt-4.1-mini",
+    const result = await generateText({
+      model: utilityModel,
       temperature: 0.2,
-      max_tokens: 300,
+      maxOutputTokens: 300,
       messages: [{ role: "user", content: prompt }],
     });
 
-    return result.choices[0]?.message?.content?.trim() || existingSummary;
+    return result.text?.trim() || existingSummary;
   } catch (err) {
     console.error("[DEFRAG] Conversation compression failed:", err);
     // Degrade gracefully — return whatever summary we had

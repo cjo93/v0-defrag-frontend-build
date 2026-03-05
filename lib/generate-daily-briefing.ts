@@ -1,23 +1,14 @@
 /**
  * Daily Relational Briefing — generates one daily summary per user.
  *
- * Uses gpt-4.1-mini to synthesize the user's relationship landscape
- * from relationship_state + relationship labels. Cached per day so
- * the AI is only called once regardless of dashboard reloads.
- *
- * Cost: ~120 tokens per user per day.
+ * Uses Vercel AI SDK + Google Gemini to synthesize the user's
+ * relationship landscape from relationship_state + relationship labels.
+ * Cached per day so the AI is only called once regardless of dashboard reloads.
  */
 
 import type { SupabaseAdminProxy } from './auth-server';
-import OpenAI from 'openai';
-
-let _openai: OpenAI | null = null;
-function getOpenAI(): OpenAI {
-  if (!_openai) {
-    _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-  }
-  return _openai;
-}
+import { generateText } from 'ai';
+import { utilityModel } from '@/lib/ai-model';
 
 /**
  * Get or generate the daily relational briefing for a user.
@@ -68,8 +59,8 @@ export async function generateDailyBriefing(
   const context = lines.join('\n');
 
   try {
-    const completion = await getOpenAI().chat.completions.create({
-      model: 'gpt-4.1-mini',
+    const completion = await generateText({
+      model: utilityModel,
       temperature: 0.3,
       messages: [
         {
@@ -84,7 +75,7 @@ export async function generateDailyBriefing(
       ],
     });
 
-    const summary = completion.choices[0]?.message?.content ?? '';
+    const summary = completion.text ?? '';
 
     if (summary) {
       // Cache for today

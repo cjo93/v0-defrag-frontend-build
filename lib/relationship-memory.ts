@@ -9,7 +9,8 @@
  */
 
 import type { SupabaseAdminProxy } from './auth-server';
-import type OpenAI from 'openai';
+import { generateText } from 'ai';
+import { utilityModel } from '@/lib/ai-model';
 
 const SUMMARY_INTERVAL = 12; // Update memory every N messages per person
 
@@ -19,7 +20,6 @@ const SUMMARY_INTERVAL = 12; // Update memory every N messages per person
  */
 export async function maybeUpdateRelationshipMemory(
   admin: SupabaseAdminProxy,
-  openai: OpenAI,
   personId: string,
   ownerUserId: string,
 ): Promise<string> {
@@ -33,7 +33,7 @@ export async function maybeUpdateRelationshipMemory(
 
   // Only regenerate summary on interval boundaries
   if (messageCount > 0 && messageCount % SUMMARY_INTERVAL === 0) {
-    return await regenerateMemory(admin, openai, personId, ownerUserId);
+    return await regenerateMemory(admin, personId, ownerUserId);
   }
 
   // Otherwise return existing summary
@@ -64,7 +64,6 @@ export async function getExistingMemory(
  */
 async function regenerateMemory(
   admin: SupabaseAdminProxy,
-  openai: OpenAI,
   personId: string,
   ownerUserId: string,
 ): Promise<string> {
@@ -86,8 +85,8 @@ async function regenerateMemory(
     .join('\n');
 
   try {
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4.1-mini',
+    const completion = await generateText({
+      model: utilityModel,
       temperature: 0.2,
       messages: [
         {
@@ -102,7 +101,7 @@ async function regenerateMemory(
       ],
     });
 
-    const summary = completion.choices[0]?.message?.content ?? '';
+    const summary = completion.text ?? '';
 
     // Upsert memory
     await admin
