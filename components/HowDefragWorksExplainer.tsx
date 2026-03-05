@@ -66,7 +66,7 @@ function SchematicSVG({ step, accent }: { step: number; accent?: boolean }) {
   return (
     <svg width="240" height="240" style={{ background: BG }}>
       <rect x="20" y="20" width="200" height="200" rx="24" fill={BG} stroke={accent ? ACCENT : LINE} strokeWidth="2" />
-      <text x="50%" y="50%" textAnchor="middle" fill={accent ? ACCENT : '#fff'}" dy=".3em" fontSize="20">{steps[step].visual}</text>
+      <text x="120" y="130" textAnchor="middle" fill={accent ? ACCENT : '#fff'} fontSize="20">{steps[step].visual}</text>
     </svg>
   );
 }
@@ -179,8 +179,8 @@ export default function HowDefragWorksExplainer() {
       </div>
       {/* Modal for sample loop / sample output */}
       <Dialog open={showModal} onClose={() => setShowModal(false)} className="fixed inset-0 z-50 flex items-center justify-center">
-        <Dialog.Overlay className="fixed inset-0 bg-black/80" />
-        <div className="bg-gray-950 border border-gray-800 rounded-2xl p-8 max-w-lg mx-auto">
+        <div className="fixed inset-0 bg-black/80" />
+        <div className="bg-gray-950 border border-gray-800 rounded-2xl p-8 max-w-lg mx-auto z-10">
           <h4 className="text-xl font-bold text-white mb-2">Sample Output</h4>
           <p className="text-gray-300 mb-4">This is a sample DEFRAG response card. (Replace with real sample data.)</p>
           <ul className="text-left text-gray-300 mb-4">
