@@ -9,7 +9,7 @@ import { maybeUpdateRelationshipMemory, getExistingMemory } from '@/lib/relation
 import { getUserRelationalProfile, updateUserRelationalProfile, inferRelationalStyles } from '@/lib/user-profile';
 import { getRelationshipAnchor, updateRelationshipAnchor } from '@/lib/relationship-anchor';
 import { updateRelationshipTiming, getTimingInsight } from '@/lib/relationship-timing';
-import { chatModel } from '@/lib/ai-model';
+import { callModel } from '@/lib/model-api';
 
 // ── Helpers ───────────────────────────────────────────────────
 
@@ -269,11 +269,7 @@ export async function POST(req: NextRequest) {
 
     try {
       const completion = await Promise.race([
-        generateText({
-          model: chatModel,
-          temperature: 0.4,
-          messages,
-        }),
+        callModel(messages, { model: 'mistral', temperature: 0.4, maxTokens: 300 }),
         new Promise<never>((_, reject) =>
           setTimeout(() => reject(new Error('AI timeout')), 15000)
         ),

@@ -9,8 +9,7 @@
  */
 
 import type { SupabaseAdminProxy } from './auth-server';
-import { generateText } from 'ai';
-import { utilityModel } from '@/lib/ai-model';
+import { callModel } from './model-api';
 
 const SUMMARY_INTERVAL = 12; // Update memory every N messages per person
 
@@ -85,21 +84,17 @@ async function regenerateMemory(
     .join('\n');
 
   try {
-    const completion = await generateText({
-      model: utilityModel,
-      temperature: 0.2,
-      messages: [
-        {
-          role: 'system',
-          content:
-            'Summarize the recurring relationship dynamic in under 120 words. Focus only on interaction patterns, communication tendencies, and recurring tension points. Do not include names or personal details. Write in third person.',
-        },
-        {
-          role: 'user',
-          content,
-        },
-      ],
-    });
+    const completion = await callModel([
+      {
+        role: 'system',
+        content:
+          'Summarize the recurring relationship dynamic in under 120 words. Focus only on interaction patterns, communication tendencies, and recurring tension points. Do not include names or personal details. Write in third person.',
+      },
+      {
+        role: 'user',
+        content,
+      },
+    ], { model: 'mistral', temperature: 0.2, maxTokens: 300 });
 
     const summary = completion.text ?? '';
 

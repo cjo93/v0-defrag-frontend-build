@@ -11,8 +11,7 @@
  *   - Reduces token usage while preserving context.
  */
 
-import { generateText } from 'ai';
-import { utilityModel } from '@/lib/ai-model';
+import { callModel } from './model-api';
 
 const RECENT_WINDOW = 6; // keep last 6 messages verbatim
 const SUMMARY_TRIGGER = 12; // compress when history exceeds this
@@ -129,12 +128,9 @@ ${turnText}
 SUMMARY:`;
 
   try {
-    const result = await generateText({
-      model: utilityModel,
-      temperature: 0.2,
-      maxOutputTokens: 300,
-      messages: [{ role: "user", content: prompt }],
-    });
+    const result = await callModel([
+      { role: 'user', content: prompt }
+    ], { model: 'mistral', temperature: 0.2, maxTokens: 300 });
 
     return result.text?.trim() || existingSummary;
   } catch (err) {

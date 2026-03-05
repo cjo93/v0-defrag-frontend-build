@@ -7,8 +7,7 @@
  */
 
 import type { SupabaseAdminProxy } from './auth-server';
-import { generateText } from 'ai';
-import { utilityModel } from '@/lib/ai-model';
+import { callModel } from './model-api';
 
 /**
  * Get or generate the daily relational briefing for a user.
@@ -59,21 +58,17 @@ export async function generateDailyBriefing(
   const context = lines.join('\n');
 
   try {
-    const completion = await generateText({
-      model: utilityModel,
-      temperature: 0.3,
-      messages: [
-        {
-          role: 'system',
-          content:
-            'Summarize the relational landscape for today in under 120 words. Explain observable patterns clearly. Do not ask questions. Do not suggest therapy. Write in calm, precise language. Use present tense.',
-        },
-        {
-          role: 'user',
-          content: context,
-        },
-      ],
-    });
+    const completion = await callModel([
+      {
+        role: 'system',
+        content:
+          'Summarize the relational landscape for today in under 120 words. Explain observable patterns clearly. Do not ask questions. Do not suggest therapy. Write in calm, precise language. Use present tense.',
+      },
+      {
+        role: 'user',
+        content: context,
+      },
+    ], { model: 'mistral', temperature: 0.3, maxTokens: 300 });
 
     const summary = completion.text ?? '';
 
