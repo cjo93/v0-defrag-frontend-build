@@ -671,7 +671,7 @@ function AddPersonModal({
                 Back
               </button>
               <button onClick={handleManualSubmit} disabled={!name.trim() || !birthDate || submitting}
-                className="flex-1 h-12 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200">
+                className="flex-1 h-12 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200">
                 {submitting ? 'Adding…' : 'Add person'}
               </button>
             </div>
@@ -710,7 +710,7 @@ function AddPersonModal({
                 Back
               </button>
               <button onClick={handleInviteSubmit} disabled={!name.trim() || submitting}
-                className="flex-1 h-12 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200">
+                className="flex-1 h-12 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200">
                 {submitting ? 'Creating…' : 'Create invite'}
               </button>
             </div>
@@ -733,6 +733,7 @@ function AddPersonModal({
                 type="text"
                 readOnly
                 value={inviteLink}
+                aria-label="Invite link"
                 className="flex-1 h-12 px-4 bg-white/[0.04] border border-white/10 rounded-sm text-[13px] text-white/60 font-mono outline-none truncate"
               />
               <button
@@ -744,7 +745,7 @@ function AddPersonModal({
             </div>
 
             <button onClick={onClose}
-              className="w-full h-12 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 transition-all duration-200">
+              className="w-full h-12 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 active:scale-[0.98] transition-all duration-200">
               Done
             </button>
           </div>

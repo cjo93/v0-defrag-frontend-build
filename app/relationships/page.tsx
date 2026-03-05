@@ -101,7 +101,7 @@ export default function RelationshipsPage() {
             <input type="date" className="w-full bg-transparent border border-white/10 px-5 py-3.5 text-[14px] text-white focus:border-white/30 transition-colors duration-200 focus:outline-none rounded-sm" value={manual.dob} onChange={(e) => setManual({ ...manual, dob: e.target.value })} required />
             <input type="time" className="w-full bg-transparent border border-white/10 px-5 py-3.5 text-[14px] text-white focus:border-white/30 transition-colors duration-200 focus:outline-none rounded-sm" value={manual.time} onChange={(e) => setManual({ ...manual, time: e.target.value })} required />
             <input type="text" placeholder="Location" className="w-full bg-transparent border border-white/10 px-5 py-3.5 text-[14px] text-white placeholder:text-white/30 focus:border-white/30 transition-colors duration-200 focus:outline-none rounded-sm" value={manual.location} onChange={(e) => setManual({ ...manual, location: e.target.value })} required />
-            <button type="submit" className="w-full h-12 bg-white text-black rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] hover:bg-white/90 transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed" disabled={loading}>
+            <button type="submit" className="w-full h-12 bg-white text-black rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] hover:bg-white/90 active:scale-[0.98] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed" disabled={loading}>
               {loading ? "Adding..." : "Add Relationship"}
             </button>
           </form>

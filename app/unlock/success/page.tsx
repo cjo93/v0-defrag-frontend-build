@@ -93,7 +93,7 @@ function SuccessContent() {
 
         <Link
           href="/dashboard"
-          className="inline-flex items-center justify-center h-12 px-9 bg-white text-black rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] hover:bg-white/90 transition-colors duration-200"
+          className="inline-flex items-center justify-center h-12 px-9 bg-white text-black rounded-sm font-mono text-[13px] font-semibold uppercase tracking-[0.08em] hover:bg-white/90 active:scale-[0.98] transition-all duration-200"
         >
           Go to Dashboard
         </Link>

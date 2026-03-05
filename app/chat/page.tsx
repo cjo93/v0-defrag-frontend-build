@@ -243,7 +243,7 @@ function ChatClient() {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder={personContext ? `Ask about ${personContext.name}...` : "Ask about a relationship dynamic"}
                 disabled={isLoading}
-                aria-label="Message input"
+                aria-label="Chat message"
                 className="w-full bg-transparent border border-white/10 rounded-sm h-12 px-5 text-[14px] text-white focus:border-white/30 focus:outline-none transition-colors duration-200 placeholder:text-white/30"
               />
             </div>

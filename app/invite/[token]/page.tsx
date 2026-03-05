@@ -189,7 +189,7 @@ export default function InvitePage() {
                 if (name.trim() && birthDate) setStep(2);
               }}
               disabled={!name.trim() || !birthDate}
-              className="w-full h-12 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200"
+              className="w-full h-12 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200"
             >
               Continue
             </button>
@@ -230,7 +230,7 @@ export default function InvitePage() {
               </button>
               <button
                 onClick={() => setStep(3)}
-                className="flex-1 h-12 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 transition-all duration-200"
+                className="flex-1 h-12 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 active:scale-[0.98] transition-all duration-200"
               >
                 Continue
               </button>
@@ -274,7 +274,7 @@ export default function InvitePage() {
               <button
                 onClick={handleSubmit}
                 disabled={state === "submitting"}
-                className="flex-1 h-12 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 disabled:opacity-50 transition-all duration-200"
+                className="flex-1 h-12 bg-white text-black text-[13px] font-mono font-semibold uppercase tracking-[0.08em] rounded-sm hover:bg-white/90 active:scale-[0.98] disabled:opacity-50 transition-all duration-200"
               >
                 {state === "submitting" ? "Submitting…" : "Submit"}
               </button>
