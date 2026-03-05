@@ -1,7 +1,8 @@
 /**
  * AI Model Configuration — single source of truth.
  *
- * Default: Google Gemini 2.0 Flash (free tier: 15 RPM, 1M tokens/day).
+ * Default: Groq + Llama 3.3 70B (free tier: 30 RPM, 14,400 req/day).
+ * Open-source models, independent infrastructure.
  * Override via env vars: AI_CHAT_MODEL, AI_UTILITY_MODEL.
  *
  * To switch providers later, install the provider package and change
@@ -15,10 +16,10 @@
  *   export const chatModel = anthropic('claude-sonnet-4-20250514');
  */
 
-import { google } from '@ai-sdk/google';
+import { groq } from '@ai-sdk/groq';
 
 /** Primary model — used for the main chat intelligence pipeline. */
-export const chatModel = google(process.env.AI_CHAT_MODEL || 'gemini-2.0-flash');
+export const chatModel = groq(process.env.AI_CHAT_MODEL || 'llama-3.3-70b-versatile');
 
 /** Lightweight model — used for compression and summarisation tasks. */
-export const utilityModel = google(process.env.AI_UTILITY_MODEL || 'gemini-2.0-flash');
+export const utilityModel = groq(process.env.AI_UTILITY_MODEL || 'llama-3.1-8b-instant');
