@@ -1,0 +1,15 @@
+
+> my-project@0.1.0 dev /app
+> next dev
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 1495ms
+○ Compiling / ...
+[Auth] Supabase not configured - auth features disabled
+ GET / 200 in 5.7s (compile: 5.0s, proxy.ts: 140ms, render: 562ms)
+ GET / 200 in 173ms (compile: 8ms, proxy.ts: 9ms, render: 157ms)
