@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { motion, useInView, useScroll, useTransform, useMotionValue } from 'framer-motion';
 import { useAuth } from '@/lib/auth-context';
 import SystemMapHero from './components/landing/SystemMapHero';
+import { InsightTiles } from './components/landing/InsightTiles';
 
 
 /* ─── Data ────────────────────────────────────────────────────── */
@@ -53,25 +54,6 @@ const ENGINE_STEPS = [
   },
 ];
 
-const EXAMPLE_OUTPUTS = [
-  {
-    context: 'You asked: "Why does every conversation with my mom turn into a fight?"',
-    sections: [
-      {
-        heading: 'The pattern',
-        body: 'Your mom reads emotional space as disconnection. When you pull back to reset, she escalates — not to ignore your boundary, but to close the gap fast.',
-      },
-      {
-        heading: 'Why it cycles',
-        body: 'This spikes during transitions — holidays, moves, big life changes. Her need for closeness rises exactly when your need for space does. Neither of you is wrong. The mismatch is the timing.',
-      },
-      {
-        heading: 'Your next move',
-        body: '"I need a couple days to reset — it\'s not about you." Short. Direct. Said early, before tension builds. Timing often beats wording.',
-      },
-    ],
-  },
-];
 
 const VALUE_PROPS = [
   {
@@ -416,67 +398,22 @@ export default function LandingPage() {
         </motion.div>
       </section>
 
-      {/* ── FEATURE CARDS ── */}
+      {/* ── EXAMPLE OUTPUT ── */}
       <SectionDivider />
-      <section>
-        <div className="mx-auto max-w-[1200px] px-6 md:px-10 py-24 md:py-32">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {/* Relationship Map (dark card) */}
-            <FadeIn>
-              <SpotlightCard className="group bg-[#111113] border border-white/[0.06] rounded-2xl p-8 md:p-10 h-full flex flex-col overflow-hidden">
-                <span className="text-[11px] uppercase tracking-[0.25em] text-white/30 mb-5 font-medium">Your relationship map</span>
-                <h2 className="text-[36px] md:text-[48px] font-bold tracking-[-0.03em] leading-none text-white mb-4">
-                  See every dynamic at a glance.
-                </h2>
-                <p className="text-[15px] text-white/50 leading-[1.75] mb-6 max-w-sm">
-                  A living constellation of your relationships. Watch tension and alignment shift in real time. Know where to focus your energy.
-                </p>
-                <div className="mt-auto">
-                  <RelationshipDemo />
-                </div>
-              </SpotlightCard>
-            </FadeIn>
-
-            {/* Chat output (light card) */}
-            <FadeIn delay={0.1}>
-              <div id="see-output" className="relative bg-[#f0eeeb] border border-white/[0.06] rounded-2xl p-8 md:p-10 h-full flex flex-col overflow-hidden">
-                <span className="text-[11px] uppercase tracking-[0.25em] text-black/30 mb-5 font-medium">Real DEFRAG output</span>
-                <h2 className="text-[36px] md:text-[48px] font-bold tracking-[-0.03em] leading-none text-[#09090b] mb-2">
-                  Ask anything.
-                </h2>
-                <p className="text-[14px] text-black/40 leading-[1.6] mb-5 max-w-sm italic">
-                  &ldquo;Why does every conversation with my mom turn into a fight?&rdquo;
-                </p>
-                <motion.div
-                  className="mt-auto space-y-3"
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, margin: '-40px' }}
-                  variants={{ visible: { transition: { staggerChildren: 0.12 } } }}
-                >
-                  {EXAMPLE_OUTPUTS[0].sections.map((block, i) => (
-                    <motion.div
-                      key={block.heading}
-                      variants={{
-                        hidden: { opacity: 0, y: 14 },
-                        visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE } },
-                      }}
-                      className={`rounded-xl p-5 ${i === 0 ? 'bg-[#e8e5e0] text-[#09090b]' : 'bg-[#09090b] text-white'}`}
-                    >
-                      <span className={`text-[11px] uppercase tracking-[0.2em] font-semibold ${i === 0 ? 'text-black/35' : 'text-white/30'} block mb-2`}>
-                        {block.heading}
-                      </span>
-                      <p className={`text-[14px] leading-[1.7] ${i === 0 ? 'text-[#09090b]/80' : 'text-white/75'}`}>
-                        {block.body}
-                      </p>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              </div>
-            </FadeIn>
-          </div>
+      <section className="py-24 md:py-32 overflow-hidden px-6 md:px-10">
+        <div className="mx-auto max-w-[1200px] mb-12 text-center md:text-left">
+          <FadeIn>
+            <p className="text-[11px] uppercase tracking-[0.25em] text-white/30 mb-4 font-semibold">
+              EXAMPLE OUTPUT
+            </p>
+            <h2 className="text-[28px] md:text-[36px] font-bold tracking-[-0.03em] leading-tight text-white">
+              What Defrag gives you when the pattern is clear.
+            </h2>
+          </FadeIn>
         </div>
+        <InsightTiles />
       </section>
+
 
       {/* ── RELATIONAL ENGINE ── */}
       <SectionDivider />
