@@ -53,6 +53,14 @@ export interface Message {
   content: string;
   tier?: 'GREEN' | 'YELLOW' | 'RED'; // Only for assistant messages, never shown to user
   created_at: string;
+  timestamp?: Date;
+  evidence?: {
+    framework: string;
+    label: string;
+    data: any;
+    why_it_matters: string;
+  }[];
+  confidence?: 'low' | 'medium' | 'high';
 }
 
 export interface ReadoutInsight {
