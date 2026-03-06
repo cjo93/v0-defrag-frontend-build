@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef, useCallback } from 'react';
+import { RelationshipDemo } from "./components/landing/RelationshipDemo";
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion, useInView, useScroll, useTransform, useMotionValue } from 'framer-motion';
@@ -176,179 +177,6 @@ function SpotlightCard({
   );
 }
 
-/* ─── Constellation Map ─── */
-
-function ConstellationMap() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-40px' });
-
-  const nodes = [
-    { label: 'You', x: 50, y: 42, size: 14, delay: 0, state: 'center' as const },
-    { label: 'Mom', x: 20, y: 18, size: 8, delay: 0.2, state: 'tension' as const },
-    { label: 'Partner', x: 80, y: 22, size: 9, delay: 0.35, state: 'aligned' as const },
-    { label: 'Dad', x: 28, y: 72, size: 7, delay: 0.5, state: 'neutral' as const },
-    { label: 'Sister', x: 72, y: 68, size: 7.5, delay: 0.65, state: 'aligned' as const },
-    { label: 'Best Friend', x: 12, y: 48, size: 6, delay: 0.8, state: 'aligned' as const },
-    { label: 'Coworker', x: 88, y: 50, size: 5.5, delay: 0.95, state: 'tension' as const },
-    { label: 'Ex', x: 40, y: 85, size: 5, delay: 1.1, state: 'tension' as const },
-    { label: 'Boss', x: 65, y: 88, size: 5, delay: 1.2, state: 'neutral' as const },
-  ];
-
-  const edges = [
-    { from: 0, to: 1, strength: 0.25, state: 'tension' as const },
-    { from: 0, to: 2, strength: 0.3, state: 'aligned' as const },
-    { from: 0, to: 3, strength: 0.15, state: 'neutral' as const },
-    { from: 0, to: 4, strength: 0.2, state: 'aligned' as const },
-    { from: 0, to: 5, strength: 0.18, state: 'aligned' as const },
-    { from: 0, to: 6, strength: 0.12, state: 'tension' as const },
-    { from: 0, to: 7, strength: 0.08, state: 'tension' as const },
-    { from: 0, to: 8, strength: 0.1, state: 'neutral' as const },
-    { from: 1, to: 3, strength: 0.1, state: 'neutral' as const },
-    { from: 1, to: 4, strength: 0.08, state: 'neutral' as const },
-    { from: 2, to: 4, strength: 0.06, state: 'aligned' as const },
-    { from: 3, to: 7, strength: 0.05, state: 'tension' as const },
-  ];
-
-  const stateOpacity = { center: 1, aligned: 0.45, tension: 0.3, neutral: 0.2 };
-
-  return (
-    <div ref={ref} className="relative w-full h-[320px] md:h-[380px]">
-      {/* Layered orbital rings */}
-      {[160, 240, 340].map((size, ri) => (
-        <motion.div
-          key={size}
-          className="absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none rounded-full border border-white/[0.04]"
-          style={{ width: size, height: size }}
-          initial={{ opacity: 0, scale: 0.7 }}
-          animate={inView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 1.4, delay: 0.2 + ri * 0.15, ease: EASE }}
-        />
-      ))}
-
-      {/* Ambient center glow */}
-      <motion.div
-        className="absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] pointer-events-none"
-        style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.07), transparent 60%)' }}
-        animate={inView ? { opacity: [0.4, 0.75, 0.4], scale: [0.95, 1.08, 0.95] } : {}}
-        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-      />
-
-      {/* Edges with animated pulse */}
-      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-        <defs>
-          <linearGradient id="edgeAligned" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="white" stopOpacity="0.2" />
-            <stop offset="50%" stopColor="white" stopOpacity="0.08" />
-            <stop offset="100%" stopColor="white" stopOpacity="0.2" />
-          </linearGradient>
-          <linearGradient id="edgeTension" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="white" stopOpacity="0.12" />
-            <stop offset="50%" stopColor="white" stopOpacity="0.04" />
-            <stop offset="100%" stopColor="white" stopOpacity="0.12" />
-          </linearGradient>
-        </defs>
-        {edges.map((edge, i) => {
-          const a = nodes[edge.from];
-          const b = nodes[edge.to];
-          const isAligned = edge.state === 'aligned';
-          return (
-            <motion.line
-              key={i}
-              x1={a.x} y1={a.y} x2={b.x} y2={b.y}
-              stroke={isAligned ? 'url(#edgeAligned)' : 'url(#edgeTension)'}
-              strokeWidth={isAligned ? '0.25' : '0.15'}
-              strokeDasharray={edge.state === 'tension' ? '1 1.5' : undefined}
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={inView ? { pathLength: 1, opacity: edge.strength } : {}}
-              transition={{ duration: 1.4, delay: 0.3 + i * 0.08, ease: EASE }}
-            />
-          );
-        })}
-      </svg>
-
-      {/* Nodes */}
-      {nodes.map((node, i) => {
-        const isCenter = node.state === 'center';
-        const isTension = node.state === 'tension';
-        return (
-          <motion.div
-            key={node.label}
-            className="absolute flex flex-col items-center"
-            style={{ left: `${node.x}%`, top: `${node.y}%` }}
-            initial={{ opacity: 0, scale: 0.2, x: '-50%', y: '-50%' }}
-            animate={inView ? { opacity: 1, scale: 1, x: '-50%', y: '-50%' } : {}}
-            transition={{ duration: 0.9, delay: 0.15 + node.delay, ease: EASE }}
-          >
-            {/* Pulse ring for center */}
-            {isCenter && (
-              <motion.div
-                className="absolute rounded-full border border-white/[0.1]"
-                style={{ width: node.size * 5.5, height: node.size * 5.5 }}
-                animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.08, 0.3] }}
-                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              />
-            )}
-            {/* Tension indicator ring */}
-            {isTension && (
-              <motion.div
-                className="absolute rounded-full border border-white/[0.06]"
-                style={{ width: node.size * 4, height: node.size * 4 }}
-                animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.05, 0.15] }}
-                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: node.delay }}
-              />
-            )}
-            <motion.div
-              className="rounded-full relative"
-              style={{
-                width: node.size * 2,
-                height: node.size * 2,
-                background: isCenter
-                  ? 'radial-gradient(circle, rgba(255,255,255,0.95), rgba(255,255,255,0.4))'
-                  : isTension
-                    ? 'radial-gradient(circle, rgba(255,255,255,0.4), rgba(255,255,255,0.12))'
-                    : 'radial-gradient(circle, rgba(255,255,255,0.6), rgba(255,255,255,0.2))',
-                boxShadow: isCenter
-                  ? '0 0 32px rgba(255,255,255,0.25), 0 0 64px rgba(255,255,255,0.1)'
-                  : `0 0 ${isTension ? 12 : 20}px rgba(255,255,255,${isTension ? 0.06 : 0.12})`,
-              }}
-              animate={{ scale: [1, isCenter ? 1.12 : 1.08, 1] }}
-              transition={{ duration: 3 + i * 0.4, repeat: Infinity, ease: 'easeInOut', delay: node.delay }}
-            />
-            <motion.span
-              className={`text-[10px] tracking-wide whitespace-nowrap mt-1.5 ${isCenter ? 'text-white/80 font-semibold' : isTension ? 'text-white/25' : 'text-white/40'}`}
-              style={{ opacity: stateOpacity[node.state] }}
-              animate={{ y: [0, -1.5, 0] }}
-              transition={{ duration: 4.5 + i * 0.3, repeat: Infinity, ease: 'easeInOut', delay: node.delay }}
-            >
-              {node.label}
-            </motion.span>
-          </motion.div>
-        );
-      })}
-
-      {/* Legend */}
-      <motion.div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 flex items-center gap-5"
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : {}}
-        transition={{ duration: 0.6, delay: 1.6, ease: EASE }}
-      >
-        <span className="flex items-center gap-1.5 text-[10px] text-white/25">
-          <span className="w-1.5 h-1.5 rounded-full bg-white/60" />
-          Aligned
-        </span>
-        <span className="flex items-center gap-1.5 text-[10px] text-white/25">
-          <span className="w-1.5 h-1.5 rounded-full bg-white/25" />
-          Tension
-        </span>
-        <span className="flex items-center gap-1.5 text-[10px] text-white/25">
-          <span className="w-1.5 h-1.5 rounded-full bg-white/15 border border-white/10" />
-          Neutral
-        </span>
-      </motion.div>
-    </div>
-  );
-}
 
 /* ─── Gradient section divider ─── */
 
@@ -622,7 +450,7 @@ export default function LandingPage() {
                   A living constellation of your relationships. Watch tension and alignment shift in real time. Know where to focus your energy.
                 </p>
                 <div className="mt-auto">
-                  <ConstellationMap />
+                  <RelationshipDemo />
                 </div>
               </SpotlightCard>
             </FadeIn>
