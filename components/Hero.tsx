@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from './ui/button';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 export default function Hero() {
   return (
@@ -19,8 +20,12 @@ export default function Hero() {
           DEFRAG reveals patterns, triggers, and timing that shape connection — so you can respond with clarity instead of guesswork.
         </motion.p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-9">
-          <Button variant="default" size="lg" asChild><a href="/auth/signup">Start free</a></Button>
-          <Button variant="secondary" size="lg" asChild><a href="#how-it-works">See how it works</a></Button>
+          <Button variant="default" size="lg" asChild>
+            <Link href="/auth/signup">Start free</Link>
+          </Button>
+          <Button variant="secondary" size="lg" asChild>
+            <Link href="#how-it-works">See how it works</Link>
+          </Button>
         </div>
       </div>
     </section>
