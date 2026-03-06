@@ -1,145 +1,42 @@
-<file name=components/HowItWorksExplainer.tsx>
-import React from "react";
-
-const steps = [
-  {
-    k: "synthesis",
-    title: "Three inputs. One clear view.",
-    body: "DEFRAG combines Astrology, Human Design, and Gene Keys into a single, plain-language view of how you tend to respond.",
-    mode: "synthesis",
-    note: "If you want it: you can open the details. If not: you still get the guidance.",
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    }
   },
-  {
-    k: "guidance",
-    title: "Turn complexity into guidance.",
-    body: "You get a clear read of what’s happening, one action to take now, and one line to say that keeps the conversation open.",
-    mode: "guidance",
-  },
-  // other steps...
-];
-
-export default function HowItWorksExplainer() {
-  return (
-    <section>
-      <h2>How DEFRAG works</h2>
-      <p>
-        DEFRAG turns personal patterns, relationship dynamics, and family history into simple guidance you can use immediately.
-      </p>
-      {/* render steps */}
-    </section>
-  );
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
-</file>
-
-<file name=components/SchematicVisual.tsx>
-import React from "react";
-
-export default function SchematicVisual({ mode }: { mode: string }) {
-  return (
-    <svg>
-      {mode === "synthesis" && (
-        <>
-          <text className="t" x={50} y={20}>
-            COMBINES
-          </text>
-          <text x={50} y={40}>DEFRAG VIEW</text>
-        </>
-      )}
-      {mode === "blueprint" && (
-        <>
-          <text className="t" x={50} y={20}>
-            YOUR PATTERN MAP
-          </text>
-          {/* other blueprint content */}
-        </>
-      )}
-      {mode === "loop" && (
-        <>
-          <text className="t" x={50} y={20}>
-            THE LOOP
-          </text>
-          {/* other loop content */}
-        </>
-      )}
-      {/* rest of the SVG */}
-    </svg>
-  );
-}
-</file>
-
-<file name=styles/globals.css>
-/* existing CSS content */
-
-/* Premium, restrained motion */
-@media (prefers-reduced-motion: no-preference) {
-  .df-reveal {
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 700ms ease, transform 900ms ease;
-  }
-  .df-reveal.is-on {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .df-vibrate {
-    animation: df-vibrate 2.8s ease-in-out infinite;
-    transform-origin: center;
-  }
-  @keyframes df-vibrate {
-    0%, 100% { transform: translateX(0); opacity: 0.55; }
-    50% { transform: translateX(1.5px); opacity: 0.85; }
-  }
-}
-</file>
-
-<file name=components/Landing.tsx>
-"use client";
-import React, { useEffect } from "react";
-
-export default function Landing() {
-  useEffect(() => {
-    const els = Array.from(document.querySelectorAll<HTMLElement>(".df-reveal"));
-    if (!els.length) return;
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          const el = e.target as HTMLElement;
-          if (e.isIntersecting) el.classList.add("is-on");
-        }
-      },
-      { threshold: 0.15, rootMargin: "0px 0px -10% 0px" }
-    );
-
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, []);
-
-  return (
-    <main>
-      <div className="md:col-span-7 df-reveal">
-        <h1>Welcome to DEFRAG</h1>
-        <p>
-          DEFRAG shows you what’s happening between people — including what repeats in families — then gives you simple guidance for what to do next.
-        </p>
-      </div>
-
-      <div className="md:col-span-5 df-reveal">
-        <svg>
-          <path
-            d="M140 300 C220 220 ..."
-            className="df-vibrate"
-          />
-          {/* other SVG elements */}
-        </svg>
-      </div>
-
-      <div className="mt-10 grid df-reveal">
-        <h2>Different topic. Same argument.</h2>
-        {/* content */}
-      </div>
-    </main>
-  );
-}
-</file>
