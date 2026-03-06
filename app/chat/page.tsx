@@ -206,8 +206,8 @@ function ChatClient() {
                           {message.content}
                         </div>
                       </div>
-                      {message.role === 'assistant' && message.evidence && (
-                        <InsightEvidence evidence={message.evidence} confidence={message.confidence} />
+                      {message.role === 'assistant' && (message as any).evidence && (
+                        <InsightEvidence evidence={(message as any).evidence} confidence={(message as any).confidence} />
                       )}
                     </>
                   )}
