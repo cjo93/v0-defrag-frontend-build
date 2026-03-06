@@ -1,34 +1,65 @@
+import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+
+  // Create an unmodified response
+  let response = NextResponse.next({
+    request: {
+      headers: req.headers,
+    },
+  });
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return response;
+  }
+
+  const supabase = createServerClient(
+    supabaseUrl,
+    supabaseAnonKey,
+    {
+      cookies: {
+        getAll() {
+          return req.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => req.cookies.set(name, value));
+          response = NextResponse.next({
+            request: {
+              headers: req.headers,
+            },
+          });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          );
+        },
+      },
+    }
+  );
 
   // Routes that require authentication
   const protectedRoutes = ['/dashboard', '/onboarding', '/settings', '/relationships', '/unlock', '/chat'];
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
 
   if (!isProtectedRoute) {
-    return NextResponse.next();
+    return response;
   }
 
-  // Heuristic session check via cookies (edge-compatible, no DB call)
-  const projectRef = supabaseUrl.split('//')[1]?.split('.')[0] || '';
-  const hasSession =
-    req.cookies.has(`sb-${projectRef}-auth-token`) ||
-    req.cookies.has('supabase-auth-token') ||
-    Array.from(req.cookies.getAll()).some(c => c.name.includes('auth-token'));
+  // If we have a session, getSession() will refresh it if necessary, setting cookies
+  const { data: { session } } = await supabase.auth.getSession();
 
-  if (!hasSession) {
+  if (!session) {
     const loginUrl = new URL('/auth/login', req.url);
     loginUrl.searchParams.set('next', pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  // Authenticated — allow through. Client-side pages enforce onboarding/unlock gating.
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {
