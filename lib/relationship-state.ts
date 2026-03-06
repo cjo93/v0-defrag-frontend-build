@@ -7,7 +7,7 @@
  * No LLM calls. Pure heuristic, explainable, cheap.
  */
 
-import type { SupabaseAdminProxy } from './auth-server';
+import { SupabaseClient } from '@supabase/supabase-js';
 import { detectRelationalPattern, type RelationalSignal } from './relational-pattern';
 
 export type RelationshipState = 'stable' | 'strained' | 'cooling' | 'improving' | 'unclear';
@@ -152,7 +152,7 @@ export function decayState(previousState: RelationshipState, daysSinceInteractio
  * Returns the new state and updates the people table.
  */
 export async function updatePersonRelationshipState(
-  admin: SupabaseAdminProxy,
+  admin: SupabaseClient,
   personId: string,
   ownerUserId: string,
 ): Promise<RelationshipState> {
@@ -227,7 +227,7 @@ export async function updatePersonRelationshipState(
  * Lighter variant used inline during chat — avoids re-querying all messages.
  */
 export async function updatePersonStateFromChat(
-  admin: SupabaseAdminProxy,
+  admin: SupabaseClient,
   personId: string,
   currentPattern: RelationalSignal,
 ): Promise<RelationshipState> {

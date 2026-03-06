@@ -8,7 +8,7 @@
  * Updated on every pattern detection (cheap — no LLM call).
  */
 
-import type { SupabaseAdminProxy } from './auth-server';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 const MAX_PATTERNS = 20; // Cap stored patterns to prevent unbounded growth
 
@@ -22,7 +22,7 @@ export interface UserRelationalProfile {
  * Fetch the user's relational profile.
  */
 export async function getUserRelationalProfile(
-  admin: SupabaseAdminProxy,
+  admin: SupabaseClient,
   userId: string,
 ): Promise<UserRelationalProfile | null> {
   const { data } = await admin
@@ -39,7 +39,7 @@ export async function getUserRelationalProfile(
  * Deduplicates and caps at MAX_PATTERNS.
  */
 export async function updateUserRelationalProfile(
-  admin: SupabaseAdminProxy,
+  admin: SupabaseClient,
   userId: string,
   pattern: string,
 ): Promise<void> {
@@ -74,7 +74,7 @@ export async function updateUserRelationalProfile(
  * Lightweight heuristic — no LLM call.
  */
 export async function inferRelationalStyles(
-  admin: SupabaseAdminProxy,
+  admin: SupabaseClient,
   userId: string,
 ): Promise<void> {
   const { data } = await admin

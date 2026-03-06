@@ -8,13 +8,13 @@
  * Cost: 1 DB read + 1 DB write per chat with a person. Zero LLM cost.
  */
 
-import type { SupabaseAdminProxy } from './auth-server';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * Record a pattern occurrence at the current time.
  */
 export async function updateRelationshipTiming(
-  admin: SupabaseAdminProxy,
+  admin: SupabaseClient,
   userId: string,
   personId: string,
   pattern: string,
@@ -74,7 +74,7 @@ export async function updateRelationshipTiming(
  * Returns null if no timing data exists yet.
  */
 export async function getTimingInsight(
-  admin: SupabaseAdminProxy,
+  admin: SupabaseClient,
   userId: string,
   personId: string,
 ): Promise<{ pattern: string; occurrence_count: number } | null> {

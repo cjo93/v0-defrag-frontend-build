@@ -8,7 +8,7 @@
  * Triggered every ~12 messages per person, not on every chat.
  */
 
-import type { SupabaseAdminProxy } from './auth-server';
+import { SupabaseClient } from '@supabase/supabase-js';
 import { callModel } from './model-api';
 
 const SUMMARY_INTERVAL = 12; // Update memory every N messages per person
@@ -18,7 +18,7 @@ const SUMMARY_INTERVAL = 12; // Update memory every N messages per person
  * Returns the current summary (fresh or existing).
  */
 export async function maybeUpdateRelationshipMemory(
-  admin: SupabaseAdminProxy,
+  admin: SupabaseClient,
   personId: string,
   ownerUserId: string,
 ): Promise<string> {
@@ -43,7 +43,7 @@ export async function maybeUpdateRelationshipMemory(
  * Fetch existing relationship memory summary.
  */
 export async function getExistingMemory(
-  admin: SupabaseAdminProxy,
+  admin: SupabaseClient,
   personId: string,
   ownerUserId: string,
 ): Promise<string> {
@@ -62,7 +62,7 @@ export async function getExistingMemory(
  * Reads up to 30 recent user messages, compresses into ~120 words.
  */
 async function regenerateMemory(
-  admin: SupabaseAdminProxy,
+  admin: SupabaseClient,
   personId: string,
   ownerUserId: string,
 ): Promise<string> {

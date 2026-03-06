@@ -6,7 +6,7 @@
  * Cached per day so the AI is only called once regardless of dashboard reloads.
  */
 
-import type { SupabaseAdminProxy } from './auth-server';
+import { SupabaseClient } from '@supabase/supabase-js';
 import { callModel } from './model-api';
 
 /**
@@ -14,7 +14,7 @@ import { callModel } from './model-api';
  * Returns the cached version if one already exists for today.
  */
 export async function generateDailyBriefing(
-  admin: SupabaseAdminProxy,
+  admin: SupabaseClient,
   userId: string,
 ): Promise<string | null> {
   const today = new Date().toISOString().slice(0, 10);
