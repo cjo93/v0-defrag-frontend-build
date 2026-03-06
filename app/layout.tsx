@@ -6,8 +6,6 @@ import './globals.css';
 const geist = Geist({ subsets: ["latin"], variable: '--font-sans' });
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: '--font-mono' });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://defrag.app';
-
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -18,54 +16,9 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: {
-    default: 'DEFRAG — Clarity for hard relationships',
-    template: '%s | DEFRAG',
-  },
-  description: 'DEFRAG helps you understand tension, timing, and patterns in relationships — so you can choose a calmer next step.',
+  title: 'DEFRAG',
+  description: 'The user manual for you, and your people.',
   applicationName: 'DEFRAG',
-  keywords: ['relationships', 'self-understanding', 'astrology', 'natal chart', 'communication', 'relational intelligence'],
-  authors: [{ name: 'DEFRAG' }],
-  creator: 'DEFRAG',
-  publisher: 'DEFRAG',
-  metadataBase: new URL(siteUrl),
-  alternates: {
-    canonical: '/',
-  },
-  openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: siteUrl,
-    siteName: 'DEFRAG',
-    title: 'DEFRAG',
-    description: 'Clarity for hard relationships.',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'DEFRAG — Clarity for hard relationships',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'DEFRAG — Clarity for hard relationships',
-    description: 'DEFRAG helps you understand tension, timing, and patterns in relationships — so you can choose a calmer next step.',
-    images: ['/og-image.png'],
-    creator: '@defragapp',
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
@@ -77,11 +30,12 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   icons: {
     icon: [
-      { url: '/favicon.ico', sizes: 'any' },
-      { url: '/icon.svg', type: 'image/svg+xml' },
+      {
+        url: '/icon.svg',
+        type: 'image/svg+xml',
+      },
     ],
     apple: '/apple-icon.png',
-    shortcut: '/favicon.ico',
   },
 };
 
@@ -93,36 +47,35 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const buildSha = process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA || process.env.VERCEL_GIT_COMMIT_SHA || 'LOCAL';
-  const buildTimestamp = process.env.NEXT_PUBLIC_BUILD_TIMESTAMP;
-  const buildDate = buildTimestamp ? buildTimestamp.split('T')[0] : new Date().toISOString().split('T')[0];
+  const isProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
+  const buildSha = process.env.VERCEL_GIT_COMMIT_SHA || 'LOCAL';
 
   return (
-    <html lang="en" className={`${geist.variable} ${geistMono.variable} bg-[#09090b] text-white`}>
-      <body className="min-h-[100dvh] bg-[#09090b] text-white font-sans antialiased [touch-action:manipulation] [-webkit-tap-highlight-color:transparent]">
+    <html lang="en" className={`${geist.variable} ${geistMono.variable} bg-black text-white`}>
+      <body className="min-h-[100dvh] bg-black text-white font-sans antialiased">
         <AuthProvider>
-          <div className="min-h-screen bg-[#09090b] text-white">
-            {children}
-          </div>
+          {children}
           <AddToHomePrompt />
         </AuthProvider>
         <Analytics />
         
-        <div
-          style={{
-            position: 'fixed',
-            right: 16,
-            bottom: 12,
-            fontSize: 10,
-            opacity: 0.35,
-            fontFamily: 'var(--font-mono)',
-            color: '#fff',
-            pointerEvents: 'none',
-            zIndex: 9999
-          }}
-        >
-          Build: {buildDate} / {buildSha.slice(0, 7)}
-        </div>
+        {!isProduction && (
+          <div
+            style={{
+              position: 'fixed',
+              right: 16,
+              bottom: 12,
+              fontSize: 10,
+              opacity: 0.35,
+              fontFamily: 'var(--font-mono)',
+              color: '#fff',
+              pointerEvents: 'none',
+              zIndex: 9999
+            }}
+          >
+            BUILD: {buildSha.slice(0, 7)}
+          </div>
+        )}
       </body>
     </html>
   )
