@@ -1,5 +1,5 @@
 import React from 'react';
-import Button from './ui/Button';
+import { Button } from './ui/button';
 import { motion } from 'framer-motion';
 
 export default function Hero() {
@@ -19,8 +19,8 @@ export default function Hero() {
           DEFRAG reveals patterns, triggers, and timing that shape connection — so you can respond with clarity instead of guesswork.
         </motion.p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-9">
-          <Button variant="primary" size="lg" href="/auth/signup">Start free</Button>
-          <Button variant="secondary" size="lg" href="#how-it-works">See how it works</Button>
+          <Button variant="default" size="lg" asChild><a href="/auth/signup">Start free</a></Button>
+          <Button variant="secondary" size="lg" asChild><a href="#how-it-works">See how it works</a></Button>
         </div>
       </div>
     </section>

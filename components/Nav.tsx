@@ -1,5 +1,5 @@
 import React from 'react';
-import Button from './ui/Button';
+import { Button } from './ui/button';
 
 export default function Nav() {
   return (
@@ -10,7 +10,7 @@ export default function Nav() {
           <a href="#pricing" className="text-[var(--text-1)] text-[15px] px-3 py-2 rounded focus-visible:outline focus-visible:outline-2">Pricing</a>
           <a href="#how-it-works" className="text-[var(--text-1)] text-[15px] px-3 py-2 rounded focus-visible:outline focus-visible:outline-2">How it works</a>
           <a href="/auth/login" className="text-[var(--text-1)] text-[15px] px-3 py-2 rounded focus-visible:outline focus-visible:outline-2">Log in</a>
-          <Button variant="primary" size="md" href="/auth/signup">Start free</Button>
+          <Button variant="default" size="default" asChild><a href="/auth/signup">Start free</a></Button>
         </div>
       </div>
     </nav>
