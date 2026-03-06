@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { Turnstile } from "@/components/turnstile";
 import { ServiceUnavailable } from "@/components/service-unavailable";
+import { getSiteUrl } from "@/lib/utils";
 
 export default function ResetPasswordPage() {
   const { toast } = useToast();
@@ -17,7 +18,7 @@ export default function ResetPasswordPage() {
   if (!supabase) return <ServiceUnavailable />;
   const sb = supabase;
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://defrag.app';
+  const siteUrl = getSiteUrl();
   const isTurnstileRequired = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
   const handleReset = async (e: React.FormEvent) => {
