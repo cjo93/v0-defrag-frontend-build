@@ -1,13 +1,17 @@
-with open('app/chat/page.tsx', 'r') as f:
+import re
+
+with open('lib/me-status.ts', 'r') as f:
     content = f.read()
 
-target = """                      "{suggestion}"
-"""
+content = content.replace(
+"""    return {
+      profile_ready: !!profile,
+      has_birthline: !!birthline,
+      has_relationships: (connectionCount || 0) > 0,""",
+"""    return {
+      profile_ready: !!profile,
+      has_birthline: !!birthline,
+      has_relationships: (connectionCount ?? 0) > 0,""")
 
-replacement = """                      &quot;{suggestion}&quot;
-"""
-
-content = content.replace(target, replacement)
-
-with open('app/chat/page.tsx', 'w') as f:
+with open('lib/me-status.ts', 'w') as f:
     f.write(content)
