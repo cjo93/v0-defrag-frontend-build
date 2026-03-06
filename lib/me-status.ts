@@ -5,7 +5,7 @@ import type { UserStatus, Plan, SubscriptionStatus } from './supabase/types';
 const ALLOWLIST_EMAILS = [
   'info@defrag.app',
   'chadowen93@gmail.com',
-];
+].map(e => e.toLowerCase());
 
 /**
  * Get user status for routing decisions.
@@ -23,24 +23,24 @@ export async function getUserStatus(): Promise<UserStatus | null> {
     }
 
     const userId = session.user.id;
-    const userEmail = session.user.email || '';
+    const userEmail = (session.user.email || '').toLowerCase();
 
     // Check allowlist for forced team unlock
-    const isAllowlisted = ALLOWLIST_EMAILS.includes(userEmail.toLowerCase());
+    const isAllowlisted = ALLOWLIST_EMAILS.includes(userEmail);
 
     // Fetch profile
     const { data: profile } = await supabase
       .from('profiles')
       .select('plan, subscription_status, email')
       .eq('user_id', userId)
-      .single();
+      .maybeSingle();
 
     // Fetch birthline
     const { data: birthline } = await supabase
       .from('birthlines')
       .select('id')
       .eq('user_id', userId)
-      .single();
+      .maybeSingle();
 
     // Count connections
     const { count: connectionCount } = await supabase
@@ -60,7 +60,7 @@ export async function getUserStatus(): Promise<UserStatus | null> {
     return {
       profile_ready: !!profile,
       has_birthline: !!birthline,
-      has_relationships: (connectionCount || 0) > 0,
+      has_relationships: (connectionCount ?? 0) > 0,
       is_free_unlocked: isAllowlisted || isFreeOrAbove,
       is_solo_unlocked: isSoloUnlocked,
       is_team_unlocked: isTeamUnlocked,

@@ -1,44 +1,29 @@
-with open('app/chat/page.tsx', 'r') as f:
+import re
+
+with open('lib/me-status.ts', 'r') as f:
     content = f.read()
 
-target = """            <>
-              <MicroLabel>Intelligence Console</MicroLabel>
-              <Spacer size="s" />
-              <H1>Ask about a real relationship or situation in your life.</H1>
-              <Spacer size="m" />
-              <Body>DEFRAG analyzes relational dynamics through your natal structure.</Body>
-            </>"""
+content = content.replace(
+"""const ALLOWLIST_EMAILS = [
+  'info@defrag.app',
+  'chadowen93@gmail.com',
+];""",
+"""const ALLOWLIST_EMAILS = [
+  'info@defrag.app',
+  'chadowen93@gmail.com',
+].map(e => e.toLowerCase());""")
 
-replacement = """            <>
-              <MicroLabel>Intelligence Console</MicroLabel>
-              <Spacer size="s" />
-              <H1>Ask about a real relationship or situation in your life.</H1>
-              <Spacer size="m" />
-              <Body>DEFRAG analyzes relational dynamics through your natal structure.</Body>
+content = content.replace(
+"""    const userId = session.user.id;
+    const userEmail = session.user.email || '';
 
-              <Spacer size="xl" />
+    // Check allowlist for forced team unlock
+    const isAllowlisted = ALLOWLIST_EMAILS.includes(userEmail.toLowerCase());""",
+"""    const userId = session.user.id;
+    const userEmail = (session.user.email || '').toLowerCase();
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[
-                  "Why doesn't my mom understand when I need space?",
-                  "Why does my dad push me so hard to succeed?",
-                  "Why do people expect me to carry the emotional weight in relationships?",
-                  "Why do I feel responsible for fixing other people's problems?"
-                ].map((suggestion, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setInput(suggestion)}
-                    className="text-left p-4 border border-white/10 hover:border-white/40 transition-colors duration-200 bg-black group"
-                  >
-                    <Body className="text-white/70 group-hover:text-white transition-colors duration-200">
-                      "{suggestion}"
-                    </Body>
-                  </button>
-                ))}
-              </div>
-            </>"""
+    // Check allowlist for forced team unlock
+    const isAllowlisted = ALLOWLIST_EMAILS.includes(userEmail);""")
 
-content = content.replace(target, replacement)
-
-with open('app/chat/page.tsx', 'w') as f:
+with open('lib/me-status.ts', 'w') as f:
     f.write(content)

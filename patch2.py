@@ -1,27 +1,35 @@
-with open('app/chat/page.tsx', 'r') as f:
+import re
+
+with open('lib/me-status.ts', 'r') as f:
     content = f.read()
 
-target = """                  <button
-                    key={i}
-                    onClick={() => setInput(suggestion)}
-                    className="text-left p-4 border border-white/10 hover:border-white/40 transition-colors duration-200 bg-black group"
-                  >
-                    <Body className="text-white/70 group-hover:text-white transition-colors duration-200">
-                      "{suggestion}"
-                    </Body>
-                  </button>"""
+content = content.replace(
+"""    // Fetch profile
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('plan, subscription_status, email')
+      .eq('user_id', userId)
+      .single();
 
-replacement = """                  <button
-                    key={i}
-                    onClick={() => setInput(suggestion)}
-                    className="text-left p-5 border border-white/10 hover:border-white/40 transition-colors duration-200 bg-black group"
-                  >
-                    <p className="text-[14px] leading-[1.6] text-white/50 group-hover:text-white/80 transition-colors duration-200">
-                      "{suggestion}"
-                    </p>
-                  </button>"""
+    // Fetch birthline
+    const { data: birthline } = await supabase
+      .from('birthlines')
+      .select('id')
+      .eq('user_id', userId)
+      .single();""",
+"""    // Fetch profile
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('plan, subscription_status, email')
+      .eq('user_id', userId)
+      .maybeSingle();
 
-content = content.replace(target, replacement)
+    // Fetch birthline
+    const { data: birthline } = await supabase
+      .from('birthlines')
+      .select('id')
+      .eq('user_id', userId)
+      .maybeSingle();""")
 
-with open('app/chat/page.tsx', 'w') as f:
+with open('lib/me-status.ts', 'w') as f:
     f.write(content)
