@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
         status: 'pending',
       })
       .select('id, token, invitee_name, relationship_label, expires_at, status, created_at')
-      .single();
+      .maybeSingle();
 
     if (insertError) {
       console.error('[DEFRAG_API] Invite insert error:', insertError);
@@ -60,12 +60,12 @@ export async function POST(req: NextRequest) {
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://defrag.app';
     const inviteLink = `${siteUrl}/invite/${token}`;
 
-    console.log('[DEFRAG_API] Invite created:', invite.id, 'for user:', userId);
+    console.log('[DEFRAG_API] Invite created:', invite?.id, 'for user:', userId);
 
     return NextResponse.json({
       ok: true,
       invite: {
-        ...invite,
+        ...(invite || {}),
         link: inviteLink,
       },
     });

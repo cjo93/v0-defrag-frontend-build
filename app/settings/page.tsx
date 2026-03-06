@@ -34,7 +34,7 @@ export default function SettingsPage() {
         .from('profiles')
         .select('plan')
         .eq('user_id', session.user.id)
-        .single();
+        .maybeSingle();
       if (data) setPlan(data.plan);
     });
   }, []);
@@ -82,7 +82,7 @@ export default function SettingsPage() {
 
       // Gather user data
       const [{ data: birthline }, { data: people }, { data: conversations }] = await Promise.all([
-        supabase.from('birthlines').select('*').eq('user_id', session.user.id).single(),
+        supabase.from('birthlines').select('*').eq('user_id', session.user.id).maybeSingle(),
         supabase.from('people').select('*').eq('owner_user_id', session.user.id),
         supabase.from('conversations').select('id, person_id, created_at').eq('user_id', session.user.id),
       ]);

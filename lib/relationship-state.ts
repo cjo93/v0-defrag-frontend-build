@@ -198,7 +198,7 @@ export async function updatePersonRelationshipState(
     .from('people')
     .select('relationship_state, created_at')
     .eq('id', personId)
-    .single();
+    .maybeSingle();
 
   const lastInteractionAt = recentPatterns.length > 0
     ? recentPatterns[0].createdAt
@@ -236,7 +236,7 @@ export async function updatePersonStateFromChat(
     .from('people')
     .select('relationship_state')
     .eq('id', personId)
-    .single();
+    .maybeSingle();
 
   const previousState = (person?.relationship_state as RelationshipState) || null;
 

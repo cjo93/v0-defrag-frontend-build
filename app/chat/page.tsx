@@ -8,6 +8,8 @@ import { TopNav } from '@/components/top-nav';
 import { supabase } from '@/lib/supabase';
 
 interface Message {
+  evidence?: any[];
+  confidence?: any;
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
@@ -47,7 +49,7 @@ function ChatClient() {
         .from('people')
         .select('id, name, relationship_label')
         .eq('id', personId)
-        .single()
+        .maybeSingle()
         .then(({ data }) => {
           if (data) setPersonContext(data);
         });

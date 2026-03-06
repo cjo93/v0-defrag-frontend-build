@@ -29,7 +29,7 @@ export async function getUserRelationalProfile(
     .from('user_relational_profile')
     .select('dominant_patterns, boundary_style, conflict_style')
     .eq('user_id', userId)
-    .single();
+    .maybeSingle();
 
   return data || null;
 }
@@ -49,7 +49,7 @@ export async function updateUserRelationalProfile(
     .from('user_relational_profile')
     .select('dominant_patterns')
     .eq('user_id', userId)
-    .single();
+    .maybeSingle();
 
   const existing = new Set<string>(data?.dominant_patterns || []);
   existing.add(pattern);
@@ -81,7 +81,7 @@ export async function inferRelationalStyles(
     .from('user_relational_profile')
     .select('dominant_patterns')
     .eq('user_id', userId)
-    .single();
+    .maybeSingle();
 
   if (!data?.dominant_patterns || data.dominant_patterns.length < 5) return;
 
