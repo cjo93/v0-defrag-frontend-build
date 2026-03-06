@@ -1,10 +1,13 @@
 'use client';
 
 import { useEffect, useState, useRef, useCallback } from 'react';
+import { RelationshipDemo } from "./components/landing/RelationshipDemo";
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion, useInView, useScroll, useTransform, useMotionValue } from 'framer-motion';
 import { useAuth } from '@/lib/auth-context';
+import SystemMapHero from './components/landing/SystemMapHero';
+
 
 /* ─── Data ────────────────────────────────────────────────────── */
 
@@ -176,179 +179,6 @@ function SpotlightCard({
   );
 }
 
-/* ─── Constellation Map ─── */
-
-function ConstellationMap() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-40px' });
-
-  const nodes = [
-    { label: 'You', x: 50, y: 42, size: 14, delay: 0, state: 'center' as const },
-    { label: 'Mom', x: 20, y: 18, size: 8, delay: 0.2, state: 'tension' as const },
-    { label: 'Partner', x: 80, y: 22, size: 9, delay: 0.35, state: 'aligned' as const },
-    { label: 'Dad', x: 28, y: 72, size: 7, delay: 0.5, state: 'neutral' as const },
-    { label: 'Sister', x: 72, y: 68, size: 7.5, delay: 0.65, state: 'aligned' as const },
-    { label: 'Best Friend', x: 12, y: 48, size: 6, delay: 0.8, state: 'aligned' as const },
-    { label: 'Coworker', x: 88, y: 50, size: 5.5, delay: 0.95, state: 'tension' as const },
-    { label: 'Ex', x: 40, y: 85, size: 5, delay: 1.1, state: 'tension' as const },
-    { label: 'Boss', x: 65, y: 88, size: 5, delay: 1.2, state: 'neutral' as const },
-  ];
-
-  const edges = [
-    { from: 0, to: 1, strength: 0.25, state: 'tension' as const },
-    { from: 0, to: 2, strength: 0.3, state: 'aligned' as const },
-    { from: 0, to: 3, strength: 0.15, state: 'neutral' as const },
-    { from: 0, to: 4, strength: 0.2, state: 'aligned' as const },
-    { from: 0, to: 5, strength: 0.18, state: 'aligned' as const },
-    { from: 0, to: 6, strength: 0.12, state: 'tension' as const },
-    { from: 0, to: 7, strength: 0.08, state: 'tension' as const },
-    { from: 0, to: 8, strength: 0.1, state: 'neutral' as const },
-    { from: 1, to: 3, strength: 0.1, state: 'neutral' as const },
-    { from: 1, to: 4, strength: 0.08, state: 'neutral' as const },
-    { from: 2, to: 4, strength: 0.06, state: 'aligned' as const },
-    { from: 3, to: 7, strength: 0.05, state: 'tension' as const },
-  ];
-
-  const stateOpacity = { center: 1, aligned: 0.45, tension: 0.3, neutral: 0.2 };
-
-  return (
-    <div ref={ref} className="relative w-full h-[320px] md:h-[380px]">
-      {/* Layered orbital rings */}
-      {[160, 240, 340].map((size, ri) => (
-        <motion.div
-          key={size}
-          className="absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none rounded-full border border-white/[0.04]"
-          style={{ width: size, height: size }}
-          initial={{ opacity: 0, scale: 0.7 }}
-          animate={inView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 1.4, delay: 0.2 + ri * 0.15, ease: EASE }}
-        />
-      ))}
-
-      {/* Ambient center glow */}
-      <motion.div
-        className="absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] pointer-events-none"
-        style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.07), transparent 60%)' }}
-        animate={inView ? { opacity: [0.4, 0.75, 0.4], scale: [0.95, 1.08, 0.95] } : {}}
-        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-      />
-
-      {/* Edges with animated pulse */}
-      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-        <defs>
-          <linearGradient id="edgeAligned" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="white" stopOpacity="0.2" />
-            <stop offset="50%" stopColor="white" stopOpacity="0.08" />
-            <stop offset="100%" stopColor="white" stopOpacity="0.2" />
-          </linearGradient>
-          <linearGradient id="edgeTension" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="white" stopOpacity="0.12" />
-            <stop offset="50%" stopColor="white" stopOpacity="0.04" />
-            <stop offset="100%" stopColor="white" stopOpacity="0.12" />
-          </linearGradient>
-        </defs>
-        {edges.map((edge, i) => {
-          const a = nodes[edge.from];
-          const b = nodes[edge.to];
-          const isAligned = edge.state === 'aligned';
-          return (
-            <motion.line
-              key={i}
-              x1={a.x} y1={a.y} x2={b.x} y2={b.y}
-              stroke={isAligned ? 'url(#edgeAligned)' : 'url(#edgeTension)'}
-              strokeWidth={isAligned ? '0.25' : '0.15'}
-              strokeDasharray={edge.state === 'tension' ? '1 1.5' : undefined}
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={inView ? { pathLength: 1, opacity: edge.strength } : {}}
-              transition={{ duration: 1.4, delay: 0.3 + i * 0.08, ease: EASE }}
-            />
-          );
-        })}
-      </svg>
-
-      {/* Nodes */}
-      {nodes.map((node, i) => {
-        const isCenter = node.state === 'center';
-        const isTension = node.state === 'tension';
-        return (
-          <motion.div
-            key={node.label}
-            className="absolute flex flex-col items-center"
-            style={{ left: `${node.x}%`, top: `${node.y}%` }}
-            initial={{ opacity: 0, scale: 0.2, x: '-50%', y: '-50%' }}
-            animate={inView ? { opacity: 1, scale: 1, x: '-50%', y: '-50%' } : {}}
-            transition={{ duration: 0.9, delay: 0.15 + node.delay, ease: EASE }}
-          >
-            {/* Pulse ring for center */}
-            {isCenter && (
-              <motion.div
-                className="absolute rounded-full border border-white/[0.1]"
-                style={{ width: node.size * 5.5, height: node.size * 5.5 }}
-                animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.08, 0.3] }}
-                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              />
-            )}
-            {/* Tension indicator ring */}
-            {isTension && (
-              <motion.div
-                className="absolute rounded-full border border-white/[0.06]"
-                style={{ width: node.size * 4, height: node.size * 4 }}
-                animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.05, 0.15] }}
-                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: node.delay }}
-              />
-            )}
-            <motion.div
-              className="rounded-full relative"
-              style={{
-                width: node.size * 2,
-                height: node.size * 2,
-                background: isCenter
-                  ? 'radial-gradient(circle, rgba(255,255,255,0.95), rgba(255,255,255,0.4))'
-                  : isTension
-                    ? 'radial-gradient(circle, rgba(255,255,255,0.4), rgba(255,255,255,0.12))'
-                    : 'radial-gradient(circle, rgba(255,255,255,0.6), rgba(255,255,255,0.2))',
-                boxShadow: isCenter
-                  ? '0 0 32px rgba(255,255,255,0.25), 0 0 64px rgba(255,255,255,0.1)'
-                  : `0 0 ${isTension ? 12 : 20}px rgba(255,255,255,${isTension ? 0.06 : 0.12})`,
-              }}
-              animate={{ scale: [1, isCenter ? 1.12 : 1.08, 1] }}
-              transition={{ duration: 3 + i * 0.4, repeat: Infinity, ease: 'easeInOut', delay: node.delay }}
-            />
-            <motion.span
-              className={`text-[10px] tracking-wide whitespace-nowrap mt-1.5 ${isCenter ? 'text-white/80 font-semibold' : isTension ? 'text-white/25' : 'text-white/40'}`}
-              style={{ opacity: stateOpacity[node.state] }}
-              animate={{ y: [0, -1.5, 0] }}
-              transition={{ duration: 4.5 + i * 0.3, repeat: Infinity, ease: 'easeInOut', delay: node.delay }}
-            >
-              {node.label}
-            </motion.span>
-          </motion.div>
-        );
-      })}
-
-      {/* Legend */}
-      <motion.div
-        className="absolute bottom-0 left-1/2 -translate-x-1/2 flex items-center gap-5"
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : {}}
-        transition={{ duration: 0.6, delay: 1.6, ease: EASE }}
-      >
-        <span className="flex items-center gap-1.5 text-[10px] text-white/25">
-          <span className="w-1.5 h-1.5 rounded-full bg-white/60" />
-          Aligned
-        </span>
-        <span className="flex items-center gap-1.5 text-[10px] text-white/25">
-          <span className="w-1.5 h-1.5 rounded-full bg-white/25" />
-          Tension
-        </span>
-        <span className="flex items-center gap-1.5 text-[10px] text-white/25">
-          <span className="w-1.5 h-1.5 rounded-full bg-white/15 border border-white/10" />
-          Neutral
-        </span>
-      </motion.div>
-    </div>
-  );
-}
 
 /* ─── Gradient section divider ─── */
 
@@ -446,55 +276,43 @@ export default function LandingPage() {
     <main className="min-h-screen font-sans antialiased overflow-x-hidden" style={{ background: 'var(--bg-premium-gradient)', color: 'var(--text-primary)' }}>
       {/* Subtle noise overlay */}
       <div
-        className="fixed inset-0 pointer-events-none z-[60] opacity-[0.04]"
+        className="fixed inset-0 pointer-events-none z-[60] opacity-[0.03]"
         style={{
-          background: 'radial-gradient(ellipse 80% 60% at 50% 20%, #f8f6f2 0%, transparent 70%)',
+          backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.85\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")',
           backgroundRepeat: 'repeat',
-          backgroundSize: '128px 128px',
+          mixBlendMode: 'overlay',
         }}
       />
 
       {/* ── NAV ── */}
       <motion.nav
-        className="fixed top-0 left-0 right-0 z-50"
+        className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
         style={{
-          backdropFilter: 'blur(20px) saturate(1.4)',
-          borderBottom: '1px solid var(--panel-border)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          borderBottom: '1px solid rgba(255,255,255,0.06)'
         }}
         animate={{
-          backgroundColor: scrolled ? 'rgba(10,10,12,0.97)' : 'rgba(10,10,12,0.7)',
+          backgroundColor: scrolled ? 'rgba(15,15,16,0.85)' : 'rgba(15,15,16,0.5)',
         }}
-        transition={{ duration: 0.3 }}
       >
-        <div className="mx-auto max-w-[1200px] px-6 md:px-10 h-16 flex items-center justify-between">
-          <Link href="/" className="text-[14px] font-bold tracking-[0.2em]" style={{ color: 'var(--accent-cream)' }}>
+        <div className="mx-auto max-w-[1200px] px-6 md:px-10 h-[64px] flex items-center justify-between">
+          <Link href="/" className="text-[14px] font-[700] tracking-[0.2em]" style={{ color: 'var(--accent-cream)' }}>
             DEFRAG
           </Link>
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
-              className="hidden md:inline-flex items-center h-10 px-4 text-[13px] text-white/35 hover:text-white/60 transition-colors duration-200 tracking-wide"
-            >
-              Pricing
-            </button>
-            <button
-              onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
-              className="hidden md:inline-flex items-center h-10 px-4 text-[13px] text-white/35 hover:text-white/60 transition-colors duration-200 tracking-wide"
-            >
-              How it works
-            </button>
+          <div className="flex items-center gap-[12px]">
             <Link
               href="/auth/login"
-              className="inline-flex items-center h-10 px-4 text-[13px] text-white/35 hover:text-white/60 transition-colors duration-200 tracking-wide"
+              className="inline-flex items-center h-[40px] px-4 text-[13px] text-white/50 hover:text-white/90 transition-colors duration-200 tracking-[0.02em] font-[500]"
             >
               Log in
             </Link>
             <Link
               href="/auth/signup"
-              className="group relative inline-flex items-center justify-center h-10 px-5 bg-[var(--accent-cream)] text-[#18181b] text-[12px] font-bold uppercase tracking-[0.06em] rounded-lg shadow-[0_0_24px_rgba(248,246,242,0.12)] motion-safe:active:scale-[0.97] transition-all duration-150 hover:bg-[var(--accent-cream-dim)] overflow-hidden border border-[var(--panel-border)]"
+              className="group relative inline-flex items-center justify-center h-[40px] px-6 bg-[var(--accent-cream)] text-[#18181b] text-[12px] font-[600] uppercase tracking-[0.03em] rounded-[8px] shadow-[0_0_24px_rgba(248,246,242,0.12)] motion-safe:active:scale-[0.97] transition-all duration-150 hover:bg-[var(--accent-cream-dim)] overflow-hidden border border-[var(--panel-border)]"
             >
               <span className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--accent-cream)] to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
-              <span className="relative">Get started</span>
+              <span className="relative">GET STARTED</span>
             </Link>
           </div>
         </div>
@@ -502,20 +320,7 @@ export default function LandingPage() {
 
       {/* ── HERO ── */}
       <section ref={heroRef} className="relative pt-32 md:pt-44 pb-20 md:pb-32 overflow-hidden">
-        {/* Dramatic radial glow */}
-        <motion.div
-          className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[1200px] h-[800px] pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 20%, #f5eee6 0%, transparent 70%)' }}
-          animate={{ opacity: [0.7, 1, 0.7] }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        {/* Floating accent glow */}
-        <motion.div
-          className="absolute top-[15%] left-[35%] w-[600px] h-[500px] pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at center, #eae4db 0%, transparent 65%)' }}
-          animate={{ x: [0, 40, 0], y: [0, -20, 0], opacity: [0.3, 0.6, 0.3] }}
-          transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
-        />
+
 
         <motion.div style={{ opacity: heroOpacity, scale: heroScale }} className="relative mx-auto max-w-[1200px] px-6 md:px-10 text-center">
           <motion.div
@@ -528,50 +333,46 @@ export default function LandingPage() {
             <span className="text-[12px] uppercase tracking-[0.2em] text-white/35">Relational intelligence platform</span>
           </motion.div>
 
-          <motion.h1
+                    <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={mounted ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 1, delay: 0.2, ease: EASE }}
-            className="text-[46px] md:text-[68px] lg:text-[82px] font-bold tracking-[-0.04em] leading-[0.95] mb-7"
-            style={{ color: 'var(--accent-cream)' }}
+            className="text-[44px] sm:text-[52px] md:text-[72px] lg:text-[84px] font-semibold md:font-bold tracking-[-0.02em] leading-[1.05] md:leading-tight mb-7"
+            style={{ color: 'var(--text-primary)' }}
           >
-            <span className="bg-clip-text text-transparent bg-gradient-to-b from-[var(--accent-cream)] via-white/95 to-white/30">
-              Finally understand
-            </span>
-            <br />
-            <span className="bg-clip-text text-transparent bg-gradient-to-b from-[var(--accent-cream)] via-white/90 to-white/25">
-              why it keeps happening.
-            </span>
+            <span className="block">UNDERSTAND</span>
+            <span className="block">WHY IT</span>
+            <span className="block">KEEPS HAPPENING.</span>
           </motion.h1>
 
-          <motion.p
+                    <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={mounted ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.4, ease: EASE }}
-            className="text-[18px] md:text-[21px] leading-[1.65] mb-11 max-w-[560px] mx-auto"
-            style={{ color: 'var(--text-secondary)' }}
+            className="text-[18px] md:text-[20px] leading-[1.65] mb-11 max-w-[520px] mx-auto text-neutral-300"
           >
-            DEFRAG helps you see what\u2019s happening between people \u2014 then gives you clear next steps.
+            See the system behind your relationships.<br />
+            DEFRAG shows you what’s actually happening — and where change becomes possible.
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={mounted ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.6, ease: EASE }}
-            className="flex flex-col sm:flex-row gap-4 justify-center mb-9"
+            className="flex flex-col sm:flex-row gap-[12px] justify-center mt-[40px] mb-9"
           >
             <Link
               href="/auth/signup"
-              className="group relative inline-flex items-center justify-center h-14 px-9 bg-[var(--accent-cream)] text-[#18181b] text-[13px] font-bold uppercase tracking-[0.08em] rounded-xl shadow-[0_0_50px_rgba(248,246,242,0.12),0_4px_24px_rgba(0,0,0,0.4)] motion-safe:active:scale-[0.97] transition-all duration-150 hover:bg-[var(--accent-cream-dim)] overflow-hidden border border-[var(--panel-border)]"
+              className="group relative inline-flex items-center justify-center h-[56px] px-9 bg-[var(--accent-cream)] text-[#18181b] text-[13px] font-[600] uppercase tracking-[0.03em] rounded-[14px] shadow-[0_0_50px_rgba(248,246,242,0.12),0_4px_24px_rgba(0,0,0,0.4)] motion-safe:active:scale-[0.97] transition-all duration-150 hover:bg-[var(--accent-cream-dim)] overflow-hidden border border-[var(--panel-border)]"
             >
               <span className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--accent-cream)] to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
-              <span className="relative">Start free &mdash; no card required</span>
+              <span className="relative">START FREE — NO CARD REQUIRED</span>
             </Link>
             <button
               onClick={() => document.getElementById('see-output')?.scrollIntoView({ behavior: 'smooth' })}
-              className="inline-flex items-center justify-center h-14 px-9 border border-[var(--panel-border)] text-[var(--text-muted)] text-[13px] font-bold uppercase tracking-[0.08em] rounded-xl hover:text-[var(--accent-cream)] hover:border-[var(--panel-border-hover)] hover:bg-[var(--panel-bg-cream)] motion-safe:active:scale-[0.97] transition-all duration-200"
+              className="inline-flex items-center justify-center h-[56px] px-9 border border-white/[0.1] text-white/50 text-[13px] font-[600] uppercase tracking-[0.03em] rounded-[14px] hover:text-white/90 hover:border-white/[0.2] hover:bg-white/[0.02] hover:shadow-[0_0_20px_rgba(255,255,255,0.05)] motion-safe:active:scale-[0.97] transition-all duration-200"
             >
-              See what DEFRAG outputs
+              SEE WHAT DEFRAG OUTPUTS
             </button>
           </motion.div>
 
@@ -588,6 +389,15 @@ export default function LandingPage() {
             <span>No social feed</span>
             <span className="text-white/8">&middot;</span>
             <span>Free tier available</span>
+          </motion.div>
+
+          {/* System Map Hero Placeholder */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={mounted ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 1.0, ease: EASE }}
+          >
+            <SystemMapHero />
           </motion.div>
         </motion.div>
 
@@ -622,7 +432,7 @@ export default function LandingPage() {
                   A living constellation of your relationships. Watch tension and alignment shift in real time. Know where to focus your energy.
                 </p>
                 <div className="mt-auto">
-                  <ConstellationMap />
+                  <RelationshipDemo />
                 </div>
               </SpotlightCard>
             </FadeIn>

@@ -12,6 +12,13 @@ export interface RelationalSignal {
   relationshipState: "stable" | "strained" | "cooling" | "improving" | "unclear";
   pattern: string;
   guidanceMode: string;
+  leverage?: {
+    type: string;
+    point: string;
+    opening: string;
+    move: string;
+    line: string;
+  };
 }
 
 // ── Keyword maps ──────────────────────────────────────────────
@@ -95,6 +102,61 @@ const PATTERN_KEYWORDS: Record<string, string[]> = {
     "repeating", "déjà vu", "again and again",
   ],
 };
+
+// ── Guidance mode inference ───────────────────────────────────
+
+function inferLeverage(
+  tensionType: string,
+  pattern: string,
+  relationshipState: string
+): RelationalSignal['leverage'] | undefined {
+  if (pattern === "pursue_withdraw") {
+    return {
+      type: "pursuit_withdrawal",
+      point: "Pause during withdrawal phase",
+      opening: "After decompression",
+      move: "Stop pursuing",
+      line: "I'll give us some space. Let's talk later."
+    };
+  }
+  if (tensionType === "boundary_setting") {
+    return {
+      type: "boundary_signaling",
+      point: "Signal connection before limit",
+      opening: "When calm, before a break",
+      move: "Affirm bond, then set boundary",
+      line: "I care about you. I just need a little space right now."
+    };
+  }
+  if (pattern === "triangulation" || tensionType === "role_confusion") {
+    return {
+      type: "role",
+      point: "Step out of the regulator role",
+      opening: "When asked to mediate",
+      move: "Direct them to each other",
+      line: "This sounds like something you two need to discuss directly."
+    };
+  }
+  if (pattern === "repetition_compulsion" || pattern === "enmeshment") {
+    return {
+      type: "generational",
+      point: "Break the inherited repetition",
+      opening: "When the cycle starts again",
+      move: "Recognize the pattern and pause",
+      line: "We're doing that thing again. Let's stop."
+    };
+  }
+  if (relationshipState === "strained" || tensionType === "communication_mismatch") {
+    return {
+      type: "timing",
+      point: "Wait for the right moment",
+      opening: "When the system is open",
+      move: "Delay resolution until calm",
+      line: "Let's pause. We can figure this out when we're both settled."
+    };
+  }
+  return undefined;
+}
 
 // ── Guidance mode inference ───────────────────────────────────
 
@@ -203,6 +265,7 @@ export function detectRelationalPattern(
 
   // Guidance mode
   const guidanceMode = inferGuidanceMode(tensionType, relationshipState, pattern);
+  const leverage = inferLeverage(tensionType, pattern, relationshipState);
 
   return {
     relationshipType,
@@ -210,5 +273,6 @@ export function detectRelationalPattern(
     relationshipState,
     pattern,
     guidanceMode,
+    ...(leverage ? { leverage } : {}),
   };
 }

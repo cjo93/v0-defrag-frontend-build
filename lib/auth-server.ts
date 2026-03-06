@@ -1,3 +1,4 @@
+import { createServerClient as createSsrServerClient } from '@supabase/ssr';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 
@@ -76,13 +77,24 @@ export async function createServerClient(): Promise<SupabaseClient | null> {
   }
 
   const cookieStore = await cookies();
-  
-  return createClient(url, anonKey, {
-    global: {
-      headers: {
-        Cookie: cookieStore.toString()
-      }
-    }
+
+  return createSsrServerClient(url, anonKey, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll()
+      },
+      setAll(cookiesToSet) {
+        try {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            cookieStore.set(name, value, options)
+          )
+        } catch {
+          // The `setAll` method was called from a Server Component.
+          // This can be ignored if you have middleware refreshing
+          // user sessions.
+        }
+      },
+    },
   });
 }
 

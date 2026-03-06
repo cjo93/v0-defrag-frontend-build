@@ -1,4 +1,5 @@
 'use client';
+import { InsightEvidence } from '@/components/InsightEvidence';
 
 import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -105,7 +106,9 @@ function ChatClient() {
       setMessages(prev => [...prev, { 
         role: 'assistant', 
         content: data.response,
-        timestamp: new Date()
+        timestamp: new Date(),
+        evidence: data.evidence,
+        confidence: data.confidence
       }]);
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to send message';
@@ -197,11 +200,16 @@ function ChatClient() {
                       </p>
                     </div>
                   ) : (
-                    <div className="bg-white/[0.05] border border-white/10 p-5 rounded-sm max-w-[720px]">
-                      <div className="text-[14px] text-white/70 leading-relaxed whitespace-pre-wrap">
-                        {message.content}
+                    <>
+                      <div className="bg-white/[0.05] border border-white/10 p-5 rounded-sm max-w-[720px]">
+                        <div className="text-[14px] text-white/70 leading-relaxed whitespace-pre-wrap">
+                          {message.content}
+                        </div>
                       </div>
-                    </div>
+                      {message.role === 'assistant' && message.evidence && (
+                        <InsightEvidence evidence={message.evidence} confidence={message.confidence} />
+                      )}
+                    </>
                   )}
                 </div>
               ))}

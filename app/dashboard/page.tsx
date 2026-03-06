@@ -15,6 +15,47 @@ import { planLabel, isTeam } from "@/lib/plan-label";
 import DailyInsight from "@/components/dashboard/daily-insight";
 import { computeDailyInsight, type DailyInsight as DailyInsightType } from "@/lib/daily-insight";
 
+function getMockLeverage(state: string | null, name: string) {
+  if (state === 'strained') {
+    return {
+      pattern: 'pursue_withdraw',
+      leverage: {
+        type: 'pursuit_withdrawal',
+        point: 'Pause during withdrawal phase',
+        opening: 'After decompression',
+        move: 'Stop pursuing',
+        line: 'I\'ll give us some space. Let\'s talk later.'
+      }
+    };
+  }
+  if (state === 'cooling') {
+    return {
+      pattern: 'boundary_setting',
+      leverage: {
+        type: 'boundary_signaling',
+        point: 'Signal connection before limit',
+        opening: 'When calm, before a break',
+        move: 'Affirm bond, then set boundary',
+        line: 'I care about you. I just need a little space right now.'
+      }
+    };
+  }
+  if (name.toLowerCase().includes('mom') || name.toLowerCase().includes('dad')) {
+    return {
+      pattern: 'generational_repetition',
+      leverage: {
+        type: 'generational',
+        point: 'Break the inherited repetition',
+        opening: 'When the cycle starts again',
+        move: 'Recognize the pattern and pause',
+        line: 'We\'re doing that thing again. Let\'s stop.'
+      }
+    };
+  }
+  return { pattern: undefined, leverage: undefined };
+}
+
+
 type UserStatus = {
   plan: 'solo' | 'team';
   has_relationships: boolean;
@@ -270,13 +311,18 @@ export default function DashboardPage() {
                   </div>
                 )}
 
-                <RelationshipMap
-                  people={people.map(p => ({
-                    id: p.id,
-                    name: p.name,
-                    relationship_label: p.relationship_label ?? undefined,
-                    relationship_state: (p.relationship_state as any) ?? undefined,
-                  }))}
+                                <RelationshipMap
+                  people={people.map(p => {
+                    const mock = getMockLeverage(p.relationship_state, p.name);
+                    return {
+                      id: p.id,
+                      name: p.name,
+                      relationship_label: p.relationship_label ?? undefined,
+                      relationship_state: (p.relationship_state as any) ?? undefined,
+                      pattern: mock.pattern,
+                      leverage: mock.leverage,
+                    };
+                  })}
                 />
               </Panel>
             ) : (
