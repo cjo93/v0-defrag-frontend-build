@@ -86,3 +86,65 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* ── Leverage Animations ── */
+
+@keyframes jitter {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-1px, 1px); }
+  50% { transform: translate(1px, -1px); }
+  75% { transform: translate(-1px, -1px); }
+  100% { transform: translate(0, 0); }
+}
+
+.animate-jitter {
+  animation: jitter 0.2s linear infinite;
+}
+
+@keyframes flow {
+  0% { stroke-dashoffset: 24; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.animate-flow {
+  stroke-dasharray: 6 6;
+  animation: flow 1s linear infinite;
+}
+
+@keyframes linePulse {
+  0%, 100% { opacity: 0.2; stroke-width: 1px; }
+  50% { opacity: 0.8; stroke-width: 2px; }
+}
+
+.animate-line-pulse {
+  animation: linePulse 2s ease-in-out infinite;
+}
+
+@keyframes flare {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 0; }
+}
+
+.animate-flare {
+  animation: flare 2s ease-out infinite;
+}
+
+@keyframes halo {
+  0%, 100% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); }
+  50% { box-shadow: 0 0 25px rgba(255, 255, 255, 0.4); }
+}
+
+.animate-halo {
+  animation: halo 3s ease-in-out infinite;
+}
+
+@keyframes mirroredDash {
+  0% { stroke-dashoffset: 40; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.animate-mirrored {
+  stroke-dasharray: 10 10;
+  animation: mirroredDash 2s linear infinite;
+}
