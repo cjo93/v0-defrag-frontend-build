@@ -2,7 +2,7 @@
 
   /* background */
   --bg-primary: #0a0a0c;
-  --bg-premium-gradient: linear-gradient(135deg, #0a0a0c 0%, #18181b 60%, #f8f6f2 100%);
+  --bg-premium-gradient: radial-gradient(circle at 50% 35%, rgba(255,255,255,0.08), transparent 55%), radial-gradient(circle at 70% 10%, rgba(255,255,255,0.04), transparent 60%), linear-gradient(180deg, #0b0b0c 0%, #0a0a0a 100%);
 
   /* accent — premium whites/creams */
   --accent: #f8f6f2;

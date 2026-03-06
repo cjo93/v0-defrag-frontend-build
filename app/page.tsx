@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion, useInView, useScroll, useTransform, useMotionValue } from 'framer-motion';
 import { useAuth } from '@/lib/auth-context';
+import SystemMapHero from './components/landing/SystemMapHero';
+
 
 /* ─── Data ────────────────────────────────────────────────────── */
 
@@ -274,55 +276,43 @@ export default function LandingPage() {
     <main className="min-h-screen font-sans antialiased overflow-x-hidden" style={{ background: 'var(--bg-premium-gradient)', color: 'var(--text-primary)' }}>
       {/* Subtle noise overlay */}
       <div
-        className="fixed inset-0 pointer-events-none z-[60] opacity-[0.04]"
+        className="fixed inset-0 pointer-events-none z-[60] opacity-[0.03]"
         style={{
-          background: 'radial-gradient(ellipse 80% 60% at 50% 20%, #f8f6f2 0%, transparent 70%)',
+          backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.85\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")',
           backgroundRepeat: 'repeat',
-          backgroundSize: '128px 128px',
+          mixBlendMode: 'overlay',
         }}
       />
 
       {/* ── NAV ── */}
       <motion.nav
-        className="fixed top-0 left-0 right-0 z-50"
+        className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
         style={{
-          backdropFilter: 'blur(20px) saturate(1.4)',
-          borderBottom: '1px solid var(--panel-border)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          borderBottom: '1px solid rgba(255,255,255,0.06)'
         }}
         animate={{
-          backgroundColor: scrolled ? 'rgba(10,10,12,0.97)' : 'rgba(10,10,12,0.7)',
+          backgroundColor: scrolled ? 'rgba(15,15,16,0.85)' : 'rgba(15,15,16,0.5)',
         }}
-        transition={{ duration: 0.3 }}
       >
-        <div className="mx-auto max-w-[1200px] px-6 md:px-10 h-16 flex items-center justify-between">
-          <Link href="/" className="text-[14px] font-bold tracking-[0.2em]" style={{ color: 'var(--accent-cream)' }}>
+        <div className="mx-auto max-w-[1200px] px-6 md:px-10 h-[64px] flex items-center justify-between">
+          <Link href="/" className="text-[14px] font-[700] tracking-[0.2em]" style={{ color: 'var(--accent-cream)' }}>
             DEFRAG
           </Link>
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
-              className="hidden md:inline-flex items-center h-10 px-4 text-[13px] text-white/35 hover:text-white/60 transition-colors duration-200 tracking-wide"
-            >
-              Pricing
-            </button>
-            <button
-              onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
-              className="hidden md:inline-flex items-center h-10 px-4 text-[13px] text-white/35 hover:text-white/60 transition-colors duration-200 tracking-wide"
-            >
-              How it works
-            </button>
+          <div className="flex items-center gap-[12px]">
             <Link
               href="/auth/login"
-              className="inline-flex items-center h-10 px-4 text-[13px] text-white/35 hover:text-white/60 transition-colors duration-200 tracking-wide"
+              className="inline-flex items-center h-[40px] px-4 text-[13px] text-white/50 hover:text-white/90 transition-colors duration-200 tracking-[0.02em] font-[500]"
             >
               Log in
             </Link>
             <Link
               href="/auth/signup"
-              className="group relative inline-flex items-center justify-center h-10 px-5 bg-[var(--accent-cream)] text-[#18181b] text-[12px] font-bold uppercase tracking-[0.06em] rounded-lg shadow-[0_0_24px_rgba(248,246,242,0.12)] motion-safe:active:scale-[0.97] transition-all duration-150 hover:bg-[var(--accent-cream-dim)] overflow-hidden border border-[var(--panel-border)]"
+              className="group relative inline-flex items-center justify-center h-[40px] px-6 bg-[var(--accent-cream)] text-[#18181b] text-[12px] font-[600] uppercase tracking-[0.03em] rounded-[8px] shadow-[0_0_24px_rgba(248,246,242,0.12)] motion-safe:active:scale-[0.97] transition-all duration-150 hover:bg-[var(--accent-cream-dim)] overflow-hidden border border-[var(--panel-border)]"
             >
               <span className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--accent-cream)] to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
-              <span className="relative">Get started</span>
+              <span className="relative">GET STARTED</span>
             </Link>
           </div>
         </div>
@@ -330,20 +320,7 @@ export default function LandingPage() {
 
       {/* ── HERO ── */}
       <section ref={heroRef} className="relative pt-32 md:pt-44 pb-20 md:pb-32 overflow-hidden">
-        {/* Dramatic radial glow */}
-        <motion.div
-          className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[1200px] h-[800px] pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 20%, #f5eee6 0%, transparent 70%)' }}
-          animate={{ opacity: [0.7, 1, 0.7] }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        {/* Floating accent glow */}
-        <motion.div
-          className="absolute top-[15%] left-[35%] w-[600px] h-[500px] pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at center, #eae4db 0%, transparent 65%)' }}
-          animate={{ x: [0, 40, 0], y: [0, -20, 0], opacity: [0.3, 0.6, 0.3] }}
-          transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
-        />
+
 
         <motion.div style={{ opacity: heroOpacity, scale: heroScale }} className="relative mx-auto max-w-[1200px] px-6 md:px-10 text-center">
           <motion.div
@@ -356,50 +333,46 @@ export default function LandingPage() {
             <span className="text-[12px] uppercase tracking-[0.2em] text-white/35">Relational intelligence platform</span>
           </motion.div>
 
-          <motion.h1
+                    <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={mounted ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 1, delay: 0.2, ease: EASE }}
-            className="text-[46px] md:text-[68px] lg:text-[82px] font-bold tracking-[-0.04em] leading-[0.95] mb-7"
-            style={{ color: 'var(--accent-cream)' }}
+            className="text-[44px] sm:text-[52px] md:text-[72px] lg:text-[84px] font-semibold md:font-bold tracking-[-0.02em] leading-[1.05] md:leading-tight mb-7"
+            style={{ color: 'var(--text-primary)' }}
           >
-            <span className="bg-clip-text text-transparent bg-gradient-to-b from-[var(--accent-cream)] via-white/95 to-white/30">
-              Finally understand
-            </span>
-            <br />
-            <span className="bg-clip-text text-transparent bg-gradient-to-b from-[var(--accent-cream)] via-white/90 to-white/25">
-              why it keeps happening.
-            </span>
+            <span className="block">UNDERSTAND</span>
+            <span className="block">WHY IT</span>
+            <span className="block">KEEPS HAPPENING.</span>
           </motion.h1>
 
-          <motion.p
+                    <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={mounted ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.4, ease: EASE }}
-            className="text-[18px] md:text-[21px] leading-[1.65] mb-11 max-w-[560px] mx-auto"
-            style={{ color: 'var(--text-secondary)' }}
+            className="text-[18px] md:text-[20px] leading-[1.65] mb-11 max-w-[520px] mx-auto text-neutral-300"
           >
-            DEFRAG helps you see what\u2019s happening between people \u2014 then gives you clear next steps.
+            See the system behind your relationships.<br />
+            DEFRAG shows you what’s actually happening — and where change becomes possible.
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={mounted ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.6, ease: EASE }}
-            className="flex flex-col sm:flex-row gap-4 justify-center mb-9"
+            className="flex flex-col sm:flex-row gap-[12px] justify-center mt-[40px] mb-9"
           >
             <Link
               href="/auth/signup"
-              className="group relative inline-flex items-center justify-center h-14 px-9 bg-[var(--accent-cream)] text-[#18181b] text-[13px] font-bold uppercase tracking-[0.08em] rounded-xl shadow-[0_0_50px_rgba(248,246,242,0.12),0_4px_24px_rgba(0,0,0,0.4)] motion-safe:active:scale-[0.97] transition-all duration-150 hover:bg-[var(--accent-cream-dim)] overflow-hidden border border-[var(--panel-border)]"
+              className="group relative inline-flex items-center justify-center h-[56px] px-9 bg-[var(--accent-cream)] text-[#18181b] text-[13px] font-[600] uppercase tracking-[0.03em] rounded-[14px] shadow-[0_0_50px_rgba(248,246,242,0.12),0_4px_24px_rgba(0,0,0,0.4)] motion-safe:active:scale-[0.97] transition-all duration-150 hover:bg-[var(--accent-cream-dim)] overflow-hidden border border-[var(--panel-border)]"
             >
               <span className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--accent-cream)] to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
-              <span className="relative">Start free &mdash; no card required</span>
+              <span className="relative">START FREE — NO CARD REQUIRED</span>
             </Link>
             <button
               onClick={() => document.getElementById('see-output')?.scrollIntoView({ behavior: 'smooth' })}
-              className="inline-flex items-center justify-center h-14 px-9 border border-[var(--panel-border)] text-[var(--text-muted)] text-[13px] font-bold uppercase tracking-[0.08em] rounded-xl hover:text-[var(--accent-cream)] hover:border-[var(--panel-border-hover)] hover:bg-[var(--panel-bg-cream)] motion-safe:active:scale-[0.97] transition-all duration-200"
+              className="inline-flex items-center justify-center h-[56px] px-9 border border-white/[0.1] text-white/50 text-[13px] font-[600] uppercase tracking-[0.03em] rounded-[14px] hover:text-white/90 hover:border-white/[0.2] hover:bg-white/[0.02] hover:shadow-[0_0_20px_rgba(255,255,255,0.05)] motion-safe:active:scale-[0.97] transition-all duration-200"
             >
-              See what DEFRAG outputs
+              SEE WHAT DEFRAG OUTPUTS
             </button>
           </motion.div>
 
@@ -416,6 +389,15 @@ export default function LandingPage() {
             <span>No social feed</span>
             <span className="text-white/8">&middot;</span>
             <span>Free tier available</span>
+          </motion.div>
+
+          {/* System Map Hero Placeholder */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={mounted ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 1.0, ease: EASE }}
+          >
+            <SystemMapHero />
           </motion.div>
         </motion.div>
 
