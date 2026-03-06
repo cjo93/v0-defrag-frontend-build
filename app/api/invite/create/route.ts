@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/auth-server';
-import { supabaseAdmin } from '@/lib/auth-server';
+import { getSupabaseAdmin } from '@/lib/auth-server';
 import crypto from 'crypto';
 
 export async function POST(req: NextRequest) {
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
     // Insert invite using admin client (bypasses RLS for server-side write)
-    const admin = supabaseAdmin;
+    const admin = getSupabaseAdmin();
     if (!admin) {
       return NextResponse.json({ ok: false, error: 'misconfigured' }, { status: 503 });
     }

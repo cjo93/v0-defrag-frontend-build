@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/auth-server';
+import { getSupabaseAdmin } from '@/lib/auth-server';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ valid: false, error: 'Missing token' }, { status: 400 });
   }
 
-  const admin = supabaseAdmin;
+  const admin = getSupabaseAdmin();
   if (!admin) {
     return NextResponse.json({ valid: false, error: 'misconfigured' }, { status: 503 });
   }

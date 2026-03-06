@@ -9,14 +9,14 @@
  * Cost: 1 DB read + 1 DB write per chat with a person. Zero LLM cost.
  */
 
-import { SupabaseClient } from '@supabase/supabase-js';
+import type { SupabaseAdminProxy } from './auth-server';
 
 /**
  * Increment or create an anchor for a detected pattern.
  * Uses select-then-upsert to prevent race conditions.
  */
 export async function updateRelationshipAnchor(
-  admin: SupabaseClient,
+  admin: SupabaseAdminProxy,
   userId: string,
   personId: string,
   pattern: string,
@@ -68,7 +68,7 @@ export async function updateRelationshipAnchor(
  * Returns null if no anchors exist yet.
  */
 export async function getRelationshipAnchor(
-  admin: SupabaseClient,
+  admin: SupabaseAdminProxy,
   userId: string,
   personId: string,
 ): Promise<{ anchor_pattern: string; occurrence_count: number } | null> {
