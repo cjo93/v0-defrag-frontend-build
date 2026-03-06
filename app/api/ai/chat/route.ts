@@ -79,14 +79,14 @@ export async function POST(req: NextRequest) {
         .from('conversations')
         .insert({ user_id: userId, person_id: person_id || null, title: sanitised.slice(0, 50) })
         .select('id')
-        .single();
+        .maybeSingle();
 
       if (convError) {
         console.error('[DEFRAG_API] Failed to create conversation:', convError);
         return NextResponse.json({ message: 'Failed to create conversation' }, { status: 500 });
       }
 
-      conversationId = newConv.id;
+      if (newConv) conversationId = newConv.id;
     }
 
     // ── 5. Store user message ─────────────────────────────────
@@ -94,7 +94,7 @@ export async function POST(req: NextRequest) {
       .from('messages')
       .insert({ conversation_id: conversationId, role: 'user', content: sanitised })
       .select('id')
-      .single();
+      .maybeSingle();
 
     // ── 6. Fetch person context ───────────────────────────────
     let personContext: {
@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
         .select('name, relationship_label, birth_date, birth_time, birth_place, privacy_level')
         .eq('id', person_id)
         .eq('owner_user_id', userId)
-        .single();
+        .maybeSingle();
 
       if (!person) {
         return NextResponse.json({ ok: false, error: 'invalid_person' }, { status: 400 });
@@ -144,7 +144,7 @@ export async function POST(req: NextRequest) {
         .from('birthlines')
         .select('dob, birth_time, birth_city')
         .eq('user_id', userId)
-        .single()
+        .maybeSingle()
         .then((r: { data: any }) => r.data))
         .catch(() => null),
 

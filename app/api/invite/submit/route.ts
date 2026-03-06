@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
       .from('invites')
       .select('*')
       .eq('token', token)
-      .single();
+      .maybeSingle();
 
     if (lookupError || !invite) {
       console.log('[DEFRAG_API] Invite not found for token');
@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
         privacy_level: effectivePrivacy,
       })
       .select('id')
-      .single();
+      .maybeSingle();
 
     if (personError) {
       console.error('[DEFRAG_API] Person insert error:', personError);
@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
       // Person was saved, so don't fail the request
     }
 
-    console.log('[DEFRAG_API] Invite submitted:', invite.id, '→ person:', person.id);
+    console.log('[DEFRAG_API] Invite submitted:', invite.id, '→ person:', person?.id);
 
     return NextResponse.json({
       ok: true,

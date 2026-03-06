@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     .from('invites')
     .select('id, invitee_name, status, expires_at')
     .eq('token', token)
-    .single();
+    .maybeSingle();
 
   if (error || !invite) {
     return NextResponse.json({ valid: false, error: 'Invite not found' }, { status: 404 });

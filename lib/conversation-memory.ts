@@ -75,7 +75,7 @@ export async function buildConversationMemory(
     .from("conversations")
     .select("conversation_summary")
     .eq("id", conversationId)
-    .single();
+    .maybeSingle();
 
   let summary = conv?.conversation_summary || "";
 

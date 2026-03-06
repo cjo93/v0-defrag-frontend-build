@@ -119,7 +119,7 @@ export default function DashboardPage() {
           .from('profiles')
           .select('plan')
           .eq('user_id', session.user.id)
-          .single();
+          .maybeSingle();
 
         // Fetch people
         const { data: peopleData } = await supabase
@@ -585,7 +585,7 @@ function AddPersonModal({
           privacy_level: 'full',
         })
         .select('*')
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       onPersonAdded(data);

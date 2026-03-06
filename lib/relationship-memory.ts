@@ -52,7 +52,7 @@ export async function getExistingMemory(
     .select('summary')
     .eq('person_id', personId)
     .eq('owner_user_id', ownerUserId)
-    .single();
+    .maybeSingle();
 
   return data?.summary || '';
 }
