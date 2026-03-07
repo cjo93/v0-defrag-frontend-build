@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import Hero from './components/landing/Hero'
+import SeeHowItWorks from './components/landing/SeeHowItWorks'
 import QuietTruth from './components/landing/QuietTruth'
 import WhatWeBelieve from './components/landing/WhatWeBelieve'
 import WhatDefragDoes from './components/landing/WhatDefragDoes'
@@ -33,6 +34,7 @@ export default function LandingPage() {
       }}
     >
       <Hero />
+      <SeeHowItWorks />
       <QuietTruth />
       <WhatWeBelieve />
       <WhatDefragDoes />

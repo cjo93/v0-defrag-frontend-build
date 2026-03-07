@@ -73,7 +73,39 @@ export default function DashboardClient() {
             )}
           </section>
 
-          {/* PANEL 2 - Relationships */}
+          {/* PANEL 2 - Saved Insight Deck */}
+          <section className="border border-[#333] p-6 bg-[#0a0a0a]">
+            <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-4">Saved Insight Deck</h2>
+            <div className="flex flex-col gap-6">
+              <div className="border border-[#222] p-4 text-left">
+                <div className="text-sm font-bold uppercase tracking-widest mb-4">Emerging Strengths</div>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-300">Discernment</span>
+                    <span className="text-gray-500 text-xs tracking-[0.2em]">●●●</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-300">Boundaries</span>
+                    <span className="text-gray-500 text-xs tracking-[0.2em]">●●</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-300">Voice</span>
+                    <span className="text-gray-500 text-xs tracking-[0.2em]">●</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-300">Pattern Clarity</span>
+                    <span className="text-gray-500 text-xs tracking-[0.2em]">●●</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-xs text-gray-500 italic text-center">
+                Review your saved insights from the Intelligence Console to deepen your awareness.
+              </div>
+            </div>
+          </section>
+
+          {/* PANEL 3 - Relationships */}
           <section className="border border-[#333] p-6 bg-[#0a0a0a]">
             <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-4">Relationships</h2>
             {!data?.relationships?.length ? (
@@ -95,7 +127,7 @@ export default function DashboardClient() {
             )}
           </section>
 
-          {/* PANEL 3 - Daily Audio */}
+          {/* PANEL 4 - Daily Audio */}
           <section className="border border-[#333] p-6 bg-[#0a0a0a]">
             <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-4">Daily Audio</h2>
             {!data?.daily_audio ? (
@@ -115,7 +147,7 @@ export default function DashboardClient() {
             )}
           </section>
 
-          {/* PANEL 4 - Ask About a Relationship */}
+          {/* PANEL 5 - Ask About a Relationship */}
           <section className="border border-[#333] p-6 bg-[#0a0a0a]">
             <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-4">Ask About a Relationship</h2>
             <div className="flex flex-col items-center justify-center p-8 border border-dashed border-[#333]">
