@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
+import SystemMapHero from './components/landing/SystemMapHero';
 import Hero from './components/landing/Hero'
 import QuietTruth from './components/landing/QuietTruth'
 import WhatWeBelieve from './components/landing/WhatWeBelieve'
@@ -33,6 +34,7 @@ export default function LandingPage() {
       }}
     >
       <Hero />
+      <SystemMapHero />
       <QuietTruth />
       <WhatWeBelieve />
       <WhatDefragDoes />
