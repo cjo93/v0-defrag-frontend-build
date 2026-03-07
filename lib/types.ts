@@ -76,6 +76,20 @@ export interface Readout {
   insights?: ReadoutInsight[];
 }
 
+export interface DefragInsightCard {
+  title: string;
+  insight: string;
+  pattern: string;
+  tone: string[];
+  shadow: string;
+  gift: string;
+  reframe: string;
+  next_step: string;
+  why_now?: string;
+  confidence: number;
+  tags?: string[];
+}
+
 export interface ChatResponse {
   headline: string;
   signal: 'low' | 'medium' | 'high';
@@ -89,6 +103,7 @@ export interface ChatResponse {
   one_line_to_say: string;
   repeat_pattern?: string | null;
   safety?: string | null;
+  insight_card?: DefragInsightCard | null;
 }
 
 export interface NetworkBundle {

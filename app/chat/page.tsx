@@ -14,6 +14,7 @@ import {
   LockedScreen
 } from '@/components/editorial';
 import { BuildStamp } from '@/components/build-stamp';
+import { InsightCard } from '@/components/ui/insight-card';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -31,6 +32,7 @@ function ChatClient() {
   const [isOSActive, setIsOSActive] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [error, setError] = useState('');
+  const [savedCards, setSavedCards] = useState<Record<number, boolean>>({});
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -47,7 +49,7 @@ function ChatClient() {
     if (promptParam) {
       setInput(promptParam);
     }
-  }, [user, searchParams]);
+  }, [user, searchParams, router]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -102,6 +104,26 @@ function ChatClient() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleGroundMe = () => {
+    const groundingMessage: Message = {
+      role: 'assistant',
+      content: {
+        headline: "System Notification",
+        signal: "low",
+        confidence: { overall: 100, data_confidence: 100, pattern_confidence: 100 },
+        whats_happening: [],
+        do_this_now: "It may help to slow down for a moment and focus on one small step.",
+        one_line_to_say: "",
+        safety: "Grounding protocol initiated."
+      }
+    };
+    setMessages(prev => [...prev, groundingMessage]);
+  };
+
+  const toggleSaveCard = (index: number) => {
+    setSavedCards(prev => ({ ...prev, [index]: !prev[index] }));
   };
 
   // Helper function to render Pressure color in grayscale
@@ -183,77 +205,103 @@ function ChatClient() {
                       </div>
                     </div>
                   ) : (
-                    <div className="border border-white/20 p-6 rounded-none bg-black">
-                      {typeof message.content === 'object' && (
-                        <>
-                          {/* Header / Signal */}
-                          <div className="flex justify-between items-start border-b border-white/10 pb-4 mb-4">
-                              <h2 className="font-sans text-[24px] leading-[1.3] tracking-[-0.01em] font-medium text-white">
-                                {message.content.headline}
-                              </h2>
-                              <div className="flex items-center gap-4">
-                                  <div className="flex flex-col items-end">
-                                      <MicroLabel>Sensitivity</MicroLabel>
-                                      <span className={`font-mono text-[12px] uppercase ${getSensitivityColor(message.content.signal)}`}>
-                                          {getSensitivityLabel(message.content.signal)}
-                                      </span>
-                                  </div>
-                                  <div className="flex flex-col items-end">
-                                      <MicroLabel>Confidence</MicroLabel>
-                                      <span className="font-mono text-[12px] text-white/70">
-                                          {message.content.confidence.overall}%
-                                      </span>
-                                  </div>
-                              </div>
-                          </div>
-
-                          {/* What's happening */}
-                          <div className="mb-6">
-                            <MicroLabel>What's happening</MicroLabel>
-                            <Spacer size="s" />
-                            <ul className="list-disc pl-4 space-y-1">
-                                {message.content.whats_happening.map((point, i) => (
-                                    <li key={i}><Body>{point}</Body></li>
-                                ))}
-                            </ul>
-                          </div>
-
-                          {/* Do this now */}
-                          <div className="mb-6">
-                            <MicroLabel>Do this now</MicroLabel>
-                            <Spacer size="s" />
-                            <Body>{message.content.do_this_now}</Body>
-                          </div>
-
-                          {/* Say this */}
-                          <div className="mb-6">
-                            <MicroLabel>One line to say</MicroLabel>
-                            <Spacer size="s" />
-                            <div className="border-l-2 border-white/40 pl-4 py-1 my-2">
-                                <Body>&quot;{message.content.one_line_to_say}&quot;</Body>
+                    <div className="flex flex-col gap-6">
+                      <div className="border border-white/20 p-6 rounded-none bg-black">
+                        {typeof message.content === 'object' && (
+                          <>
+                            {/* Header / Signal */}
+                            <div className="flex justify-between items-start border-b border-white/10 pb-4 mb-4">
+                                <h2 className="font-sans text-[24px] leading-[1.3] tracking-[-0.01em] font-medium text-white">
+                                  {message.content.headline}
+                                </h2>
+                                <div className="flex items-center gap-4">
+                                    <div className="flex flex-col items-end">
+                                        <MicroLabel>Sensitivity</MicroLabel>
+                                        <span className={`font-mono text-[12px] uppercase ${getSensitivityColor(message.content.signal)}`}>
+                                            {getSensitivityLabel(message.content.signal)}
+                                        </span>
+                                    </div>
+                                    <div className="flex flex-col items-end">
+                                        <MicroLabel>Confidence</MicroLabel>
+                                        <span className="font-mono text-[12px] text-white/70">
+                                            {message.content.confidence.overall}%
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
-                          </div>
 
-                          {/* Optional sections */}
-                          {(message.content.repeat_pattern || message.content.safety) && (
-                              <div className="border-t border-white/10 pt-4 mt-4 grid grid-cols-1 gap-4">
-                                  {message.content.repeat_pattern && (
-                                      <div>
-                                          <MicroLabel>Pattern Recognition</MicroLabel>
-                                          <Spacer size="s" />
-                                          <Body>{message.content.repeat_pattern}</Body>
-                                      </div>
-                                  )}
-                                  {message.content.safety && (
-                                      <div>
-                                          <MicroLabel>System Note</MicroLabel>
-                                          <Spacer size="s" />
-                                          <Body>{message.content.safety}</Body>
-                                      </div>
-                                  )}
+                            {/* What's happening */}
+                            {((message.content as any).whats_happening) && ((message.content as any).whats_happening).length > 0 && (
+                              <div className="mb-6">
+                                <MicroLabel>What's happening</MicroLabel>
+                                <Spacer size="s" />
+                                <ul className="list-disc pl-4 space-y-1">
+                                    {((message.content as any).whats_happening).map((point: string, i: number) => (
+                                        <li key={i}><Body>{point}</Body></li>
+                                    ))}
+                                </ul>
                               </div>
-                          )}
-                        </>
+                            )}
+
+                            {/* Do this now */}
+                            {message.content.do_this_now && (
+                              <div className="mb-6">
+                                <MicroLabel>Do this now</MicroLabel>
+                                <Spacer size="s" />
+                                <Body>{message.content.do_this_now}</Body>
+                              </div>
+                            )}
+
+                            {/* Say this */}
+                            {message.content.one_line_to_say && (
+                              <div className="mb-6">
+                                <MicroLabel>One line to say</MicroLabel>
+                                <Spacer size="s" />
+                                <div className="border-l-2 border-white/40 pl-4 py-1 my-2">
+                                    <Body>&quot;{message.content.one_line_to_say}&quot;</Body>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Optional sections */}
+                            {(message.content.repeat_pattern || message.content.safety) && (
+                                <div className="border-t border-white/10 pt-4 mt-4 grid grid-cols-1 gap-4">
+                                    {message.content.repeat_pattern && (
+                                        <div>
+                                            <MicroLabel>Pattern Recognition</MicroLabel>
+                                            <Spacer size="s" />
+                                            <Body>{message.content.repeat_pattern}</Body>
+                                        </div>
+                                    )}
+                                    {message.content.safety && (
+                                        <div>
+                                            <MicroLabel>System Note</MicroLabel>
+                                            <Spacer size="s" />
+                                            <Body>{message.content.safety}</Body>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                          </>
+                        )}
+                      </div>
+
+                      {/* Insight Card rendering */}
+                      {typeof message.content === 'object' &&
+                       message.content.insight_card &&
+                       message.content.confidence.overall >= 65 && (
+                        <div className="mt-4">
+                          <InsightCard
+                            card={message.content.insight_card}
+                            onGroundMe={handleGroundMe}
+                            onSave={() => toggleSaveCard(index)}
+                            isSaved={savedCards[index]}
+                            onExplore={() => {
+                              // TBD: Explore pattern logic, currently just a placeholder action
+                              alert(`Signal: ${((message.content as any).whats_happening)?.[0] || 'Unknown'}\nPattern: ${(message.content as any).insight_card?.pattern}\nGift: ${(message.content as any).insight_card?.gift}`);
+                            }}
+                          />
+                        </div>
                       )}
                     </div>
                   )}
