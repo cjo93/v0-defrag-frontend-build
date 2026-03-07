@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/auth-server';
+import { getSupabaseAdmin } from '@/lib/auth-server';
 
 export async function POST(req: NextRequest) {
   console.log('[DEFRAG_API] POST /api/invite/submit');
 
   try {
-    const admin = supabaseAdmin;
+    const admin = getSupabaseAdmin();
     if (!admin) {
       return NextResponse.json({ ok: false, error: 'misconfigured' }, { status: 503 });
     }
