@@ -8,8 +8,7 @@ export default async function DashboardPage() {
   const { data: { session } } = await supabase.auth.getSession();
 
   if (!session) {
-    redirect('/login');
-  }
+    redirect('/auth/login');  }
 
   const status = await getUserStatus();
 
@@ -18,8 +17,7 @@ export default async function DashboardPage() {
   }
 
   if (status.profile_ready && !status.has_relationships) {
-    redirect('/relationships/new');
-  }
+    redirect('/relationships');  }
 
   return <DashboardClient />;
 }
