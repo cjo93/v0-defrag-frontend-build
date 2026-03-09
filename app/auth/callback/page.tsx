@@ -56,7 +56,7 @@ export default function AuthCallbackPage() {
           <span className="w-1.5 h-1.5 rounded-full bg-white/50 animate-typing-dot delay-150" />
           <span className="w-1.5 h-1.5 rounded-full bg-white/50 animate-typing-dot delay-320" />
         </div>
-        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Signing you in…</p>
+        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Signing you in</p>
       </div>
     </div>
   );

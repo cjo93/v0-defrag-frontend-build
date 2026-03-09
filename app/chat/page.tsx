@@ -55,8 +55,8 @@ function ChatClient() {
 
   const checkOSStatus = async () => {
     try {
-      const response = await fetch('/api/me', { cache: 'no-store' });
-      if (!response.ok) {
+            const response = await fetch('/api/me', { cache: 'no-store' });
+            if (!response.ok) {
         setIsOSActive(false);
         return;
       }
