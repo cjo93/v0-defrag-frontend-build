@@ -148,7 +148,7 @@ export default function LoginPage() {
 
           {isTurnstileRequired && (
             <Turnstile
-              onSuccess={setTurnstileToken}
+              onVerify={setTurnstileToken}
               onExpire={() => setTurnstileToken(null)}
               className="flex justify-center"
             />
