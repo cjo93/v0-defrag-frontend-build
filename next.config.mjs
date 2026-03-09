@@ -55,6 +55,18 @@ const nextConfig = {
       },
     ];
   },
+
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.defrag.app' }],
+        destination: 'https://defrag.app/:path*',
+        permanent: true,
+      },
+    ];
+  },
+
   async rewrites() {
     return [
       {
