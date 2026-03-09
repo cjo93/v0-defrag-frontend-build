@@ -16,39 +16,58 @@ export default function Hero() {
       }}
       className="hero-content"
     >
-      <div style={{ maxWidth: '800px' }}>
+      <div style={{ maxWidth: '860px' }}>
         <h1
           style={{
             fontFamily: 'var(--font-sans)',
-            fontSize: 'clamp(48px, 6vw, 100px)',
+            fontSize: 'clamp(48px, 6vw, 96px)',
             lineHeight: 1.02,
             letterSpacing: '-0.03em',
             margin: '0 0 24px',
             color: 'var(--text-primary)',
             fontWeight: 500,
+            textTransform: 'uppercase',
           }}
         >
-          Conflict is predictable.<br />
-          <span style={{ color: 'var(--text-secondary)' }}>Damage doesn’t have to be.</span>
+          Understand why it keeps happening.
         </h1>
         <p
           style={{
             fontFamily: 'var(--font-sans)',
-            fontSize: 'clamp(20px, 2.5vw, 28px)',
+            fontSize: 'clamp(20px, 2.4vw, 28px)',
             lineHeight: 1.4,
             color: 'var(--text-secondary)',
             margin: '0 0 48px',
-            maxWidth: '640px',
+            maxWidth: '700px',
           }}
         >
-          DEFRAG helps you understand what’s happening in tense moments — before they escalate.
+          See the system behind your relationships.
           <br /><br />
-          Timing. Reaction. Pattern.
-          <br /><br />
-          <span style={{ color: 'var(--text-primary)' }}>Clear enough to change the outcome.</span>
+          DEFRAG reveals recurring patterns, timing pressure, and escalation signals so you can respond with clarity.
         </p>
 
-        <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+          <Link
+            href="/auth/signup"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: 56,
+              padding: '0 28px',
+              background: '#ffffff',
+              color: '#000000',
+              fontFamily: 'var(--font-mono)',
+              fontSize: 13,
+              letterSpacing: '0.05em',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              fontWeight: 700,
+            }}
+          >
+            Start Free — No Card Required
+          </Link>
+
           <Link
             href="/auth/login"
             style={{
@@ -56,9 +75,10 @@ export default function Hero() {
               alignItems: 'center',
               justifyContent: 'center',
               height: 56,
-              padding: '0 32px',
-              background: '#ffffff',
-              color: '#000000',
+              padding: '0 28px',
+              background: 'transparent',
+              color: 'var(--text-secondary)',
+              border: '1px solid var(--line-mid)',
               fontFamily: 'var(--font-mono)',
               fontSize: 13,
               letterSpacing: '0.05em',
@@ -69,50 +89,13 @@ export default function Hero() {
           >
             Open DEFRAG
           </Link>
-
-          <a
-            href="#quiet-truth"
-            onClick={(e) => {
-              e.preventDefault()
-              document.getElementById('quiet-truth')?.scrollIntoView({ behavior: 'smooth' })
-            }}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: 56,
-              padding: '0 32px',
-              background: 'transparent',
-              color: 'var(--text-secondary)',
-              border: '1px solid var(--line-mid)',
-              fontFamily: 'var(--font-mono)',
-              fontSize: 13,
-              letterSpacing: '0.05em',
-              textTransform: 'uppercase',
-              textDecoration: 'none',
-              fontWeight: 600,
-              transition: 'all 0.2s',
-            }}
-            onMouseEnter={(e) => {
-              const el = e.currentTarget as HTMLAnchorElement
-              el.style.color = '#ffffff'
-              el.style.borderColor = '#ffffff'
-            }}
-            onMouseLeave={(e) => {
-              const el = e.currentTarget as HTMLAnchorElement
-              el.style.color = 'var(--text-secondary)'
-              el.style.borderColor = 'var(--line-mid)'
-            }}
-          >
-            See How It Works
-          </a>
         </div>
       </div>
 
       <style>{`
         @media (max-width: 860px) {
           .hero-content {
-            padding: 120px 24px 80px !important;
+            padding: 120px 24px 72px !important;
           }
         }
       `}</style>
