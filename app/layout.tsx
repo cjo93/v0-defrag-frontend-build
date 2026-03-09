@@ -1,10 +1,6 @@
 import type { Metadata, Viewport } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
-
-const geist = Geist({ subsets: ["latin"], variable: '--font-sans' });
-const geistMono = Geist_Mono({ subsets: ["latin"], variable: '--font-mono' });
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -51,7 +47,7 @@ export default function RootLayout({
   const buildSha = process.env.VERCEL_GIT_COMMIT_SHA || 'LOCAL';
 
   return (
-    <html lang="en" className={`${geist.variable} ${geistMono.variable} bg-black text-white`}>
+    <html lang="en" className="bg-black text-white">
       <body className="min-h-[100dvh] bg-black text-white font-sans antialiased">
         <AuthProvider>
           {children}
