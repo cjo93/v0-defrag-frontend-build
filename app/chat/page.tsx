@@ -55,7 +55,14 @@ function ChatClient() {
 
   const checkOSStatus = async () => {
     try {
-      const hasOS = false; // TODO: Replace with actual subscription check
+            const response = await fetch('/api/me', { cache: 'no-store' });
+            if (!response.ok) {
+        setIsOSActive(false);
+        return;
+      }
+
+      const me = await response.json();
+      const hasOS = Boolean(me?.is_solo_unlocked || me?.is_team_unlocked || me?.plan === 'os' || me?.plan === 'plus');
       setIsOSActive(hasOS);
     } catch (err: any) {
       setError(err.message || 'Failed to check subscription status');
