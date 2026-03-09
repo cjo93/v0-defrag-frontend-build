@@ -1,36 +1,51 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
+  const [nextPath, setNextPath] = useState('/onboarding');
 
   useEffect(() => {
-    // Supabase client detects the hash fragment and exchanges it for a session
-    // Once session is ready, redirect to dashboard
+    if (typeof window === "undefined") return;
+    const next = new URLSearchParams(window.location.search).get("next");
+    if (next && next.startsWith("/")) setNextPath(next);
+  }, []);
+
+  useEffect(() => {
     if (!supabase) {
-      router.replace("/auth/login");
+      router.replace(`/auth/login?next=${encodeURIComponent(nextPath)}`);
       return;
     }
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'SIGNED_IN') {
-        router.replace("/onboarding");
+    const sb = supabase;
+
+    const settle = async () => {
+      const { data: { session } } = await sb.auth.getSession();
+      if (session) {
+        router.replace(nextPath);
+      }
+    };
+
+    settle();
+
+    const { data: { subscription } } = sb.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        router.replace(nextPath);
       }
     });
 
-    // Fallback: if session already exists after a short delay, redirect anyway
     const timeout = setTimeout(() => {
-      router.replace("/onboarding");
+      router.replace(nextPath);
     }, 3000);
 
     return () => {
       subscription.unsubscribe();
       clearTimeout(timeout);
     };
-  }, [router]);
+  }, [router, nextPath]);
 
   return (
     <div className="min-h-screen bg-transparent text-white font-sans antialiased flex items-center justify-center p-6">
@@ -41,7 +56,7 @@ export default function AuthCallbackPage() {
           <span className="w-1.5 h-1.5 rounded-full bg-white/50 animate-typing-dot delay-150" />
           <span className="w-1.5 h-1.5 rounded-full bg-white/50 animate-typing-dot delay-320" />
         </div>
-        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Signing you in…</p>
+        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">Signing you in</p>
       </div>
     </div>
   );
