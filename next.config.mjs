@@ -1,4 +1,26 @@
 /** @type {import('next').NextConfig} */
+
+function getSafeApiBaseUrl() {
+  const raw = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  if (!raw) return 'https://api.defrag.app';
+
+  const trimmed = raw.trim();
+  if (!trimmed || trimmed === 'undefined' || trimmed === 'null') {
+    return 'https://api.defrag.app';
+  }
+
+  const withProtocol = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+
+  try {
+    return new URL(withProtocol).origin;
+  } catch {
+    return 'https://api.defrag.app';
+  }
+}
+
+const API_BASE = getSafeApiBaseUrl();
+
 const nextConfig = {
   images: {
     unoptimized: true,
@@ -33,11 +55,23 @@ const nextConfig = {
       },
     ];
   },
+
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.defrag.app' }],
+        destination: 'https://defrag.app/:path*',
+        permanent: true,
+      },
+    ];
+  },
+
   async rewrites() {
     return [
       {
         source: '/api/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.defrag.app'}/api/:path*`,
+        destination: `${API_BASE}/api/:path*`,
       },
     ]
   },
