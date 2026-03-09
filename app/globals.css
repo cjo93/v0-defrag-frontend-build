@@ -16,6 +16,9 @@
     --spacing-48: 48px;
     --spacing-64: 64px;
 
+    --font-sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
     /* Typography sizes */
     --text-display: 3rem;
     --text-h1: 2.5rem;

@@ -11,7 +11,7 @@ export default function PrinciplesPage() {
           Principles
         </h1>
         <p className="text-[17px] md:text-[20px] text-white/70 leading-[1.6] mb-12 max-w-[640px]">
-          The deeper logic of DEFRAG. Coming soon.
+          DEFRAG is built on pattern clarity, privacy, and practical action. We surface relationship dynamics so people can respond with less friction and more signal.
         </p>
         <Link
           href="/"

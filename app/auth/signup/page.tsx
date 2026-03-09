@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
@@ -19,11 +19,21 @@ export default function SignupPage() {
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [authMode, setAuthMode] = useState<"password" | "magic_link">("password");
 
-  if (!supabase) return <ServiceUnavailable />;
-  const sb = supabase;
-
   const siteUrl = getSiteUrl();
   const isTurnstileRequired = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
+  const [nextPath, setNextPath] = useState("/onboarding");
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const next = new URLSearchParams(window.location.search).get("next");
+    if (next && next.startsWith("/")) setNextPath(next);
+  }, []);
+
+  const callbackUrl = `${siteUrl}/auth/callback?next=${encodeURIComponent(nextPath)}`;
+
+  if (!supabase) return <ServiceUnavailable />;
+  const sb = supabase;
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +51,7 @@ export default function SignupPage() {
           email,
           password,
           options: {
-            emailRedirectTo: `${siteUrl}/auth/callback`,
+            emailRedirectTo: callbackUrl,
           },
         });
 
@@ -54,13 +64,13 @@ export default function SignupPage() {
           setPassword("");
         } else {
           toast({ title: "Account created", description: "Welcome to DEFRAG." });
-          router.push("/onboarding");
+          router.push(nextPath);
         }
       } else {
         const { error } = await sb.auth.signInWithOtp({
           email,
           options: {
-            emailRedirectTo: `${siteUrl}/auth/callback`,
+            emailRedirectTo: callbackUrl,
           },
         });
 

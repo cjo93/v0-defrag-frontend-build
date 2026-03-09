@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
@@ -19,11 +19,21 @@ export default function LoginPage() {
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [authMode, setAuthMode] = useState<"password" | "magic_link">("password");
 
-  if (!supabase) return <ServiceUnavailable />;
-  const sb = supabase;
-
   const siteUrl = getSiteUrl();
   const isTurnstileRequired = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
+  const [nextPath, setNextPath] = useState("/dashboard");
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const next = new URLSearchParams(window.location.search).get("next");
+    if (next && next.startsWith("/")) setNextPath(next);
+  }, []);
+
+  const callbackUrl = `${siteUrl}/auth/callback?next=${encodeURIComponent(nextPath)}`;
+
+  if (!supabase) return <ServiceUnavailable />;
+  const sb = supabase;
   const appleEnabled = process.env.NEXT_PUBLIC_ENABLE_APPLE_OAUTH === 'true';
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -46,12 +56,12 @@ export default function LoginPage() {
           }
           throw error;
         }
-        router.push("/dashboard");
+        router.push(nextPath);
       } else {
         const { error } = await sb.auth.signInWithOtp({
           email,
           options: {
-            emailRedirectTo: `${siteUrl}/auth/callback`,
+            emailRedirectTo: callbackUrl,
           },
         });
 
@@ -76,7 +86,7 @@ export default function LoginPage() {
     try {
       const { error } = await sb.auth.signInWithOAuth({
         provider: 'apple',
-        options: { redirectTo: `${siteUrl}/auth/callback` }
+        options: { redirectTo: callbackUrl }
       });
       if (error) {
         if (error.message?.includes('provider is not enabled') || (error as any).error_code === 'validation_failed') {
