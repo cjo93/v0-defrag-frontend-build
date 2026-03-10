@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient, supabaseAdmin } from '@/lib/auth-server';
+import { createServerClient, getSupabaseAdmin } from '@/lib/auth-server';
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/rate-limit';
 import { generateDailyBriefing } from '@/lib/generate-daily-briefing';
 
@@ -18,14 +18,16 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ ok: false, error: 'misconfigured' }, { status: 503 });
     }
 
-    const { data: { session }, error: authError } = await supabase.auth.getSession();
+    const {
+      data: { session },
+      error: authError,
+    } = await supabase.auth.getSession();
     if (authError || !session?.user) {
       return NextResponse.json({ ok: false }, { status: 401 });
     }
 
     const userId = session.user.id;
 
-    // Rate limit: 5/min
     const rateLimitResult = checkRateLimit(userId, '/api/daily-briefing', {
       limit: 5,
       windowMs: 60000,
@@ -37,7 +39,8 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const summary = await generateDailyBriefing(supabaseAdmin, userId);
+    const admin = getSupabaseAdmin();
+    const summary = await generateDailyBriefing(admin, userId);
 
     return NextResponse.json({
       ok: true,
@@ -45,6 +48,10 @@ export async function GET(req: NextRequest) {
       date: new Date().toISOString().slice(0, 10),
     });
   } catch (error: any) {
+    if (error?.message === 'SUPABASE_MISCONFIGURED') {
+      return NextResponse.json({ ok: false, error: 'misconfigured' }, { status: 503 });
+    }
+
     console.error('[DEFRAG_API] Daily briefing error:', error);
     return NextResponse.json(
       { ok: false, message: error.message || 'Internal server error' },

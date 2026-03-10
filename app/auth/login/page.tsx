@@ -17,7 +17,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-  const [authMode, setAuthMode] = useState<"password" | "magic_link">("password");
 
   const siteUrl = getSiteUrl();
   const isTurnstileRequired = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
@@ -34,40 +33,36 @@ export default function LoginPage() {
 
   if (!supabase) return <ServiceUnavailable />;
   const sb = supabase;
-  const appleEnabled = process.env.NEXT_PUBLIC_ENABLE_APPLE_OAUTH === 'true';
+  const appleEnabled = process.env.NEXT_PUBLIC_ENABLE_APPLE_OAUTH === "true";
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (isTurnstileRequired && !turnstileToken) {
-      toast({ title: "Verification required", description: "Please complete the security check.", variant: "destructive" });
+      toast({
+        title: "Verification required",
+        description: "Please complete the security check.",
+        variant: "destructive",
+      });
       return;
     }
 
     setLoading(true);
 
     try {
-      if (authMode === "password") {
-        const { error } = await sb.auth.signInWithPassword({ email, password });
-        if (error) {
-          if (error.message.includes('Invalid login credentials')) {
-            toast({ title: "Invalid credentials", description: "Check your email and password.", variant: "destructive" });
-            return;
-          }
-          throw error;
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) {
+        if (error.message.includes("Invalid login credentials")) {
+          toast({
+            title: "Invalid credentials",
+            description: "Check your email and password.",
+            variant: "destructive",
+          });
+          return;
         }
-        router.push(nextPath);
-      } else {
-        const { error } = await sb.auth.signInWithOtp({
-          email,
-          options: {
-            emailRedirectTo: callbackUrl,
-          },
-        });
-        if (error) throw error;
-        toast({ title: "Email sent", description: "Check your inbox for the magic link." });
-        setEmail("");
+        throw error;
       }
+      router.push(nextPath);
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
     } finally {
@@ -77,17 +72,28 @@ export default function LoginPage() {
 
   const handleAppleOAuth = async () => {
     if (isTurnstileRequired && !turnstileToken) {
-      toast({ title: "Verification required", description: "Please complete the security check.", variant: "destructive" });
+      toast({
+        title: "Verification required",
+        description: "Please complete the security check.",
+        variant: "destructive",
+      });
       return;
     }
     try {
       const { error } = await sb.auth.signInWithOAuth({
-        provider: 'apple',
-        options: { redirectTo: callbackUrl }
+        provider: "apple",
+        options: { redirectTo: callbackUrl },
       });
       if (error) {
-        if (error.message?.includes('provider is not enabled') || (error as any).error_code === 'validation_failed') {
-          toast({ title: "Not available yet", description: "Apple sign-in isn't available yet. Use email + password.", variant: "destructive" });
+        if (
+          error.message?.includes("provider is not enabled") ||
+          (error as any).error_code === "validation_failed"
+        ) {
+          toast({
+            title: "Not available yet",
+            description: "Apple sign-in isn't available yet. Use email + password.",
+            variant: "destructive",
+          });
           return;
         }
         throw error;
@@ -99,7 +105,6 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-black text-white font-sans antialiased flex items-center justify-center p-6">
-      {/* Ambient glow */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-white/[0.02] blur-3xl" />
       </div>
@@ -135,16 +140,14 @@ export default function LoginPage() {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-          {authMode === "password" && (
-            <input
-              type="password"
-              placeholder="Password"
-              className="w-full bg-transparent border border-white/[0.08] h-12 px-5 text-[14px] text-white placeholder:text-white/25 focus:border-white/25 transition-colors duration-200 focus:outline-none rounded-xl"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          )}
+          <input
+            type="password"
+            placeholder="Password"
+            className="w-full bg-transparent border border-white/[0.08] h-12 px-5 text-[14px] text-white placeholder:text-white/25 focus:border-white/25 transition-colors duration-200 focus:outline-none rounded-xl"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
 
           {isTurnstileRequired && (
             <Turnstile
@@ -165,25 +168,23 @@ export default function LoginPage() {
             className="w-full h-12 bg-white text-black font-mono text-[13px] uppercase tracking-[0.08em] hover:bg-white/90 transition-colors duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-            {loading ? "Signing in..." : (authMode === "password" ? "Sign in" : "Send magic link")}
+            {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
 
-        <div className="flex items-center justify-between">
-          <button
-            onClick={() => setAuthMode(authMode === "password" ? "magic_link" : "password")}
-            className="text-[12px] uppercase tracking-[0.12em] text-white/35 hover:text-white/60 transition-colors duration-200 py-2"
+        <div className="flex items-center justify-end gap-4">
+          <Link
+            href="/auth/signup"
+            className="text-[12px] uppercase tracking-[0.12em] text-white/35 hover:text-white/60 transition-colors duration-200"
           >
-            {authMode === "password" ? "Use magic link" : "Use password"}
-          </button>
-          <div className="flex items-center gap-4">
-            <Link href="/auth/signup" className="text-[12px] uppercase tracking-[0.12em] text-white/35 hover:text-white/60 transition-colors duration-200">
-              Create account
-            </Link>
-            <Link href="/auth/reset-password" className="text-[12px] uppercase tracking-[0.12em] text-white/35 hover:text-white/60 transition-colors duration-200">
-              Reset password
-            </Link>
-          </div>
+            Create account
+          </Link>
+          <Link
+            href="/auth/reset-password"
+            className="text-[12px] uppercase tracking-[0.12em] text-white/35 hover:text-white/60 transition-colors duration-200"
+          >
+            Reset password
+          </Link>
         </div>
       </div>
     </div>

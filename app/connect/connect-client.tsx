@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { BuildStamp } from '@/components/build-stamp';
 import { saveUserContext, saveBaseline } from '@/lib/api';
-import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 import {
   AppShell,
@@ -18,61 +18,33 @@ import {
   Hint,
 } from '@/components/editorial';
 
-type Step = 'email' | 'verify' | 'context' | 'baseline';
+type Step = 'email' | 'context' | 'baseline';
 
 export default function ConnectClient() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { user } = useAuth();
-  
-  const [step, setStep] = useState<Step>('email');
-  const [email, setEmail] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
 
-  // Context form state
+  const [step, setStep] = useState<Step>('email');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
   const [city, setCity] = useState('');
   const [timezone, setTimezone] = useState('');
 
-  // Baseline form state
   const [dob, setDob] = useState('');
   const [birthTime, setBirthTime] = useState('');
   const [birthCity, setBirthCity] = useState('');
 
-  // Handle URL step parameter and auth state
   useEffect(() => {
     const urlStep = searchParams.get('step');
     if (urlStep && (urlStep === 'context' || urlStep === 'baseline')) {
       setStep(urlStep);
     }
-    
-    // If user is authenticated and no step specified, go to context
+
     if (user && !urlStep) {
       setStep('context');
     }
   }, [searchParams, user]);
-
-  const handleSendMagicLink = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError('');
-
-    try {
-      if (!supabase) throw new Error('Authentication is not configured');
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://defrag.app'}/connect?step=context`,
-        },
-      });
-      if (error) throw error;
-      setStep('verify');
-    } catch (err: any) {
-      setError(err.message || 'Failed to send magic link. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleSaveContext = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,7 +54,7 @@ export default function ConnectClient() {
     try {
       await saveUserContext(city, timezone);
       setStep('baseline');
-    } catch (err) {
+    } catch (_err) {
       setError('Failed to save your location. Please try again.');
     } finally {
       setIsLoading(false);
@@ -97,7 +69,7 @@ export default function ConnectClient() {
     try {
       await saveBaseline(dob, birthTime || null, birthCity);
       window.location.href = '/readout/self';
-    } catch (err) {
+    } catch (_err) {
       setError('Failed to save your baseline. Please try again.');
     } finally {
       setIsLoading(false);
@@ -107,62 +79,25 @@ export default function ConnectClient() {
   return (
     <AppShell>
       <EditorialRail variant="intake">
-        {/* Email Step */}
         {step === 'email' && (
           <>
             <H1>Sign in</H1>
             <Spacer size="m" />
-            <Body>We&apos;ll send a secure link. No password.</Body>
+            <Body>Password authentication is required.</Body>
             <Spacer size="l" />
-
-            <form onSubmit={handleSendMagicLink}>
-              <MicroLabel>EMAIL</MicroLabel>
-              <div className="mt-3">
-                <LineInput
-                  id="email"
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
+            <div className="space-y-4">
+              <Link href="/auth/login" className="inline-block">
+                <TextActionButton>Go to login</TextActionButton>
+              </Link>
+              <div>
+                <Link href="/auth/signup" className="text-white/70 text-sm underline underline-offset-4">
+                  Need an account? Create one
+                </Link>
               </div>
-
-              {error && (
-                <>
-                  <Spacer size="s" />
-                  <Hint>{error}</Hint>
-                </>
-              )}
-
-              <Spacer size="l" />
-              <TextActionButton type="submit" disabled={isLoading}>
-                {isLoading ? 'Sending...' : 'Begin'}
-              </TextActionButton>
-            </form>
-          </>
-        )}
-
-        {/* Verify Step */}
-        {step === 'verify' && (
-          <>
-            <H1>Check your email</H1>
-            <Spacer size="m" />
-            <Body>
-              We sent a magic link to <span className="text-white">{email}</span>
-            </Body>
-            <div className="mt-4">
-              <Body>Click the link to continue.</Body>
             </div>
-
-            <Spacer size="l" />
-            <TextActionButton onClick={() => setStep('email')}>
-              Try a different email
-            </TextActionButton>
           </>
         )}
 
-        {/* Context Step (Step 1 of onboarding) */}
         {step === 'context' && (
           <>
             <H1>Step 1 of 2</H1>
@@ -212,7 +147,6 @@ export default function ConnectClient() {
           </>
         )}
 
-        {/* Baseline Step (Step 2 of onboarding) */}
         {step === 'baseline' && (
           <>
             <H1>Step 2 of 2</H1>
@@ -223,25 +157,14 @@ export default function ConnectClient() {
             <form onSubmit={handleSaveBaseline}>
               <MicroLabel>DATE OF BIRTH</MicroLabel>
               <div className="mt-3">
-                <LineInput
-                  id="dob"
-                  type="date"
-                  value={dob}
-                  onChange={(e) => setDob(e.target.value)}
-                  required
-                />
+                <LineInput id="dob" type="date" value={dob} onChange={(e) => setDob(e.target.value)} required />
               </div>
 
               <Spacer size="m" />
 
               <MicroLabel>BIRTH TIME (OPTIONAL)</MicroLabel>
               <div className="mt-3">
-                <LineInput
-                  id="birthTime"
-                  type="time"
-                  value={birthTime}
-                  onChange={(e) => setBirthTime(e.target.value)}
-                />
+                <LineInput id="birthTime" type="time" value={birthTime} onChange={(e) => setBirthTime(e.target.value)} />
               </div>
 
               <Spacer size="m" />

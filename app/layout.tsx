@@ -33,6 +33,9 @@ export const metadata: Metadata = {
     ],
     apple: '/apple-icon.png',
   },
+  other: {
+    'defrag-build': process.env.VERCEL_GIT_COMMIT_SHA || 'LOCAL',
+  },
 };
 
 import { AuthProvider } from '@/lib/auth-context';
@@ -41,7 +44,7 @@ import { AddToHomePrompt } from '@/components/add-to-home';
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   const isProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
   const buildSha = process.env.VERCEL_GIT_COMMIT_SHA || 'LOCAL';
@@ -54,7 +57,7 @@ export default function RootLayout({
           <AddToHomePrompt />
         </AuthProvider>
         <Analytics />
-        
+
         {!isProduction && (
           <div
             style={{
@@ -66,7 +69,7 @@ export default function RootLayout({
               fontFamily: 'var(--font-mono)',
               color: '#fff',
               pointerEvents: 'none',
-              zIndex: 9999
+              zIndex: 9999,
             }}
           >
             BUILD: {buildSha.slice(0, 7)}
@@ -74,5 +77,5 @@ export default function RootLayout({
         )}
       </body>
     </html>
-  )
+  );
 }

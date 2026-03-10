@@ -22,7 +22,7 @@ export default function SettingsPage() {
       const session = await getSession();
       if (!session) throw new Error("Unauthorized");
 
-      const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.defrag.app';
+      const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
       const res = await fetch(`${API_URL}/api/profile/generate-chart`, {
         method: "POST",
         headers: {

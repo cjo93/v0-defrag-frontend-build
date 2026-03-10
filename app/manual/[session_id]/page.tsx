@@ -1,9 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
 
-export default function ManualPlaceholderPage({ params }: { params: { session_id: string } }) {
+export default function ManualPlaceholderPage() {
   const [progress, setProgress] = useState(0)
+  const params = useParams<{ session_id?: string }>()
+  const sessionId = params?.session_id || 'unknown-session'
 
   useEffect(() => {
     const blocks = [10, 25, 45, 80, 100]
@@ -23,7 +26,7 @@ export default function ManualPlaceholderPage({ params }: { params: { session_id
     <div className="min-h-screen bg-transparent text-white font-sans antialiased flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-[400px]">
         <p className="font-mono text-[11px] md:text-[12px] uppercase tracking-[0.2em] text-white/50 mb-6">
-          Session: {params.session_id.split('-')[0]}***
+          Session: {sessionId.split('-')[0]}***
         </p>
 
         <h1 className="text-[26px] md:text-[32px] font-normal tracking-[-0.02em] mb-10">
