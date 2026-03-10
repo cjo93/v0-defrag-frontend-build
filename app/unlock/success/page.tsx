@@ -31,7 +31,7 @@ function SuccessContent() {
           const res = await fetch('/api/me');
           if (res.ok) {
             const data = await res.json();
-            if (data.is_solo_unlocked) {
+            if (data.has_paid_access || data.is_solo_unlocked || data.is_team_unlocked) {
               setVerified(true);
               return;
             }
@@ -77,11 +77,11 @@ function SuccessContent() {
           <h1 className="text-[26px] md:text-[36px] font-normal tracking-[-0.015em]">You&apos;re in</h1>
           {timedOut ? (
             <p className="text-[14px] md:text-[16px] text-white/65">
-              Payment received. It may take a moment to activate — if your dashboard is still locked, refresh the page.
+              Payment received. Activation can take a moment. If your dashboard still appears locked, refresh once and try again.
             </p>
           ) : (
             <p className="text-[14px] md:text-[16px] text-white/65">
-              Your subscription is active. Welcome to DEFRAG.
+              Your plan is active. Intelligence features are now unlocked.
             </p>
           )}
         </div>
