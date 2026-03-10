@@ -180,7 +180,7 @@ export default function LoginPage() {
             Create account
           </Link>
           <Link
-            href="/auth/reset-password"
+            href="/auth/reset"
             className="text-[12px] uppercase tracking-[0.12em] text-white/35 hover:text-white/60 transition-colors duration-200"
           >
             Reset password
