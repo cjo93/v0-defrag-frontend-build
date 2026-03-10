@@ -1,35 +1,76 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 
-const getSupabaseUrl = () => process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
-const getSupabaseServiceKey = () => process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-key';
-const getSupabaseAnonKey = () => process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key';
+const readEnv = (key: string): string | undefined => {
+  const value = process.env[key];
+  if (!value || value === 'placeholder' || value === 'placeholder-key' || value === 'placeholder-anon-key') {
+    return undefined;
+  }
+  return value;
+};
 
-// Admin client for server-side operations (bypasses RLS)
-export const supabaseAdmin = createClient(getSupabaseUrl(), getSupabaseServiceKey(), {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
+const getSupabaseUrl = () => readEnv('NEXT_PUBLIC_SUPABASE_URL');
+const getSupabaseAnonKey = () => readEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY');
+const getSupabaseServiceKey = () => readEnv('SUPABASE_SERVICE_ROLE_KEY');
+
+export const isSupabaseConfigured = (): boolean => {
+  return !!getSupabaseUrl() && !!getSupabaseAnonKey() && !!getSupabaseServiceKey();
+};
+
+let _supabaseAdmin: SupabaseClient | null = null;
+
+export function getSupabaseAdmin(): SupabaseClient {
+  const url = getSupabaseUrl();
+  const serviceKey = getSupabaseServiceKey();
+
+  if (!url || !serviceKey) {
+    throw new Error('SUPABASE_MISCONFIGURED');
+  }
+
+  if (!_supabaseAdmin) {
+    _supabaseAdmin = createClient(url, serviceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    });
+  }
+
+  return _supabaseAdmin;
+}
+
+export const supabaseAdmin = new Proxy({} as SupabaseClient, {
+  get(_target, prop) {
+    const admin = getSupabaseAdmin() as any;
+    return admin[prop];
   },
-});
+}) as SupabaseClient;
 
-// Server-side client that respects RLS using user's session
-export async function createServerClient() {
+export async function createServerClient(): Promise<SupabaseClient | null> {
+  const url = getSupabaseUrl();
+  const anonKey = getSupabaseAnonKey();
+
+  if (!url || !anonKey) {
+    return null;
+  }
+
   const cookieStore = await cookies();
 
-  return createClient(getSupabaseUrl(), getSupabaseAnonKey(), {
+  return createClient(url, anonKey, {
     global: {
       headers: {
-        Cookie: cookieStore.toString()
-      }
-    }
+        Cookie: cookieStore.toString(),
+      },
+    },
   });
 }
 
-// Helper to assert user is authenticated
-export async function requireUserId(req: Request): Promise<string> {
+export async function requireUserId(_req: Request): Promise<string> {
   const supabase = await createServerClient();
-  
+  if (!supabase) {
+    throw new Error('SUPABASE_MISCONFIGURED');
+  }
+
   const {
     data: { session },
     error,
