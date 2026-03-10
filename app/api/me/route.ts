@@ -8,6 +8,8 @@ export async function GET() {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
     return NextResponse.json({
+      has_profile: status.profile_ready,
+      chart_generated: status.has_birthline,
       is_solo_unlocked: status.is_solo_unlocked,
       is_team_unlocked: status.is_team_unlocked,
       plan: status.plan,

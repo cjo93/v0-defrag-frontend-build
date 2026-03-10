@@ -5,10 +5,17 @@ import { createServerClient } from '@/lib/auth-server';
 
 export default async function DashboardPage() {
   const supabase = await createServerClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  if (!supabase) {
+    redirect('/auth/login');
+  }
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   if (!session) {
-    redirect('/auth/login');  }
+    redirect('/auth/login');
+  }
 
   const status = await getUserStatus();
 
@@ -17,7 +24,8 @@ export default async function DashboardPage() {
   }
 
   if (status.profile_ready && !status.has_relationships) {
-    redirect('/relationships');  }
+    redirect('/relationships');
+  }
 
   return <DashboardClient />;
 }

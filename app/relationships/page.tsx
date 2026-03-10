@@ -19,7 +19,7 @@ export default function RelationshipsPage() {
       const session = await getSession();
       if (!session) throw new Error("Unauthorized");
 
-      const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.defrag.app';
+      const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
       const res = await fetch(`${API_URL}/api/relationships`, {
         method: "POST",
         headers: {
@@ -55,7 +55,7 @@ export default function RelationshipsPage() {
       const session = await getSession();
       if (!session) throw new Error("Unauthorized");
 
-      const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.defrag.app';
+      const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
       const res = await fetch(`${API_URL}/api/relationships/invite`, {
         method: "POST",
         headers: {
@@ -69,7 +69,7 @@ export default function RelationshipsPage() {
 
       toast({
         title: "Invite Sent",
-        description: "A magic link has been sent to their phone.",
+        description: "A secure invite has been sent to their phone.",
       });
       setInvitePhone("");
     } catch (err: any) {

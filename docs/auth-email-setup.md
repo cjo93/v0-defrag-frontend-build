@@ -38,12 +38,12 @@ To send emails from a branded DEFRAG address (e.g., `hello@defrag.app` or `suppo
 
 1. **Enable Custom SMTP**: Toggle the switch to ON.
 2. **Configure Provider Details**: Enter your SMTP server details provided by your email provider (e.g., Resend).
-    - Host: `smtp.resend.com`
-    - Port: `465` (or `587`)
-    - Username: `resend`
-    - Password: `<Your Resend API Key>` (Do NOT commit this secret!)
-    - Sender Email: `hello@defrag.app` (or `support@defrag.app`)
-    - Sender Name: `DEFRAG`
+   - Host: `smtp.resend.com`
+   - Port: `465` (or `587`)
+   - Username: `resend`
+   - Password: `<Your Resend API Key>` (Do NOT commit this secret!)
+   - Sender Email: `hello@defrag.app` (or `support@defrag.app`)
+   - Sender Name: `DEFRAG`
 
 ---
 
@@ -61,15 +61,6 @@ Ensure the templates for the following are updated using plain, trustworthy word
 <p>Welcome to DEFRAG.</p>
 <p>Please confirm your email address to access your account.</p>
 <p><a href="{{ .ConfirmationURL }}">Confirm your email</a></p>
-```
-
-### Magic Link
-**Subject:** Sign in to DEFRAG
-**Message Body:**
-```html
-<p>Use the secure link below to sign in to your DEFRAG account.</p>
-<p>This link expires automatically and can only be used once.</p>
-<p><a href="{{ .ConfirmationURL }}">Sign in to DEFRAG</a></p>
 ```
 
 ### Reset Password
