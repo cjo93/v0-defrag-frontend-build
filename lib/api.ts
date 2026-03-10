@@ -1,17 +1,28 @@
-// API utility functions for DEFRAG frontend
-// All API calls to api.defrag.app with Bearer token authentication
-
-import type { 
-  Connection, 
-  Readout, 
+// lib/api.ts
+import { getClientApiBase, getServerApiBase } from './config';
+import type {
+  Connection,
+  Readout,
   ChatResponse,
   NetworkBundle,
-  SubscriptionStatus 
 } from './types';
-
-const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.defrag.app';
-
 import { getSession } from './supabase';
+
+/** Server-side fetch helper. If no base, call local route by absolute path. */
+export async function serverApiFetch(path: string, opts: RequestInit = {}) {
+  const base = getServerApiBase();
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  const url = base ? `${base}${normalizedPath}` : normalizedPath;
+  return fetch(url, opts);
+}
+
+/** Client-side API fetcher. Always hits /api/* by default. */
+export async function clientApiFetch(path: string, opts: RequestInit = {}) {
+  const localUrl = path.startsWith('/api') ? path : `/api${path.startsWith('/') ? path : `/${path}`}`;
+  const externalBase = getClientApiBase();
+  const url = externalBase ? `${externalBase}${localUrl}` : localUrl;
+  return fetch(url, { credentials: 'include', ...opts });
+}
 
 // Helper to get auth token (from Supabase session)
 async function getAuthToken(): Promise<string | null> {
@@ -25,26 +36,29 @@ async function apiCall<T>(
   options: RequestInit = {}
 ): Promise<T> {
   const token = await getAuthToken();
-  
+
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(options.headers as Record<string, string>),
   };
-  
+
   if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+    headers.Authorization = `Bearer ${token}`;
   }
-  
-  const response = await fetch(`${API_URL}${endpoint}`, {
+
+  const response = await clientApiFetch(endpoint, {
     ...options,
     headers,
   });
-  
+
+  const json = await response.json().catch(() => ({}));
+
   if (!response.ok) {
-    throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    const errMsg = (json as any)?.message || (json as any)?.error || `API Error: ${response.status} ${response.statusText}`;
+    throw new Error(errMsg);
   }
-  
-  return response.json();
+
+  return json as T;
 }
 
 // Context endpoints
@@ -110,14 +124,40 @@ export async function sendChatMessage(
   });
 }
 
-// Stripe checkout
-export async function createCheckoutSession(
-  mode: 'blueprint' | 'os'
-): Promise<{ url: string }> {
-  return apiCall<{ url: string }>('/api/checkout', {
+/** Map legacy checkout aliases to canonical plans. */
+type CheckoutMode = 'blueprint' | 'os' | 'free' | 'solo' | 'team';
+
+function legacyToCanonical(planOrAlias: CheckoutMode): 'free' | 'solo' | 'team' {
+  if (planOrAlias === 'blueprint') return 'solo';
+  if (planOrAlias === 'os') return 'team';
+  if (planOrAlias === 'solo' || planOrAlias === 'team') return planOrAlias;
+  return 'free';
+}
+
+/** Preserve exported createCheckoutSession name/signature; return parsed JSON. */
+export type CheckoutSessionResult = { url: string };
+
+export async function createCheckoutSession(mode: CheckoutMode): Promise<CheckoutSessionResult> {
+  const plan = legacyToCanonical(mode);
+  const res = await clientApiFetch('/api/checkout', {
     method: 'POST',
-    body: JSON.stringify({ mode }),
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ plan }),
   });
+
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const errMsg = (json as any)?.message || (json as any)?.error || `checkout_failed (${res.status})`;
+    const err = new Error(errMsg);
+    (err as any).status = res.status;
+    (err as any).body = json;
+    throw err;
+  }
+  if (!json || typeof (json as any).url !== 'string') {
+    throw new Error('checkout_url_missing');
+  }
+
+  return { url: (json as any).url };
 }
 
 // Mock data for development (until API is ready)
