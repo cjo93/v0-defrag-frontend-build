@@ -1,5 +1,5 @@
 // lib/api.ts
-import { getClientApiBase, getServerApiBase } from './config';
+import { getServerApiBase } from './config';
 import type {
   Connection,
   Readout,
@@ -19,9 +19,7 @@ export async function serverApiFetch(path: string, opts: RequestInit = {}) {
 /** Client-side API fetcher. Always hits /api/* by default. */
 export async function clientApiFetch(path: string, opts: RequestInit = {}) {
   const localUrl = path.startsWith('/api') ? path : `/api${path.startsWith('/') ? path : `/${path}`}`;
-  const externalBase = getClientApiBase();
-  const url = externalBase ? `${externalBase}${localUrl}` : localUrl;
-  return fetch(url, { credentials: 'include', ...opts });
+  return fetch(localUrl, { credentials: 'include', ...opts });
 }
 
 // Helper to get auth token (from Supabase session)

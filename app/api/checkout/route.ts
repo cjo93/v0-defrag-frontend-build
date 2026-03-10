@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createServerClient } from '@/lib/auth-server';
+import { assertRequiredServerEnv } from '@/lib/config';
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/rate-limit';
 
 // Lazy initialization to avoid build-time errors
@@ -23,9 +24,18 @@ function getPriceIds(): Record<string, string> {
   };
 }
 
+function canonicalizePlan(rawPlan: unknown): 'free' | 'solo' | 'team' {
+  if (rawPlan === 'blueprint') return 'solo';
+  if (rawPlan === 'os') return 'team';
+  if (rawPlan === 'solo' || rawPlan === 'team' || rawPlan === 'free') return rawPlan;
+  return 'free';
+}
+
 export async function POST(req: NextRequest) {
   try {
     console.log('[DEFRAG_API] POST /api/checkout');
+
+    assertRequiredServerEnv();
 
     if (!process.env.STRIPE_SECRET_KEY) {
       console.error('[DEFRAG_API] Checkout: missing STRIPE env group');
@@ -63,18 +73,18 @@ export async function POST(req: NextRequest) {
 
     // Parse request body
     const body = await req.json();
-    const { plan } = body;
+    const plan = canonicalizePlan(body?.plan);
 
-    if (!plan || !PRICE_IDS[plan]) {
-      return NextResponse.json({ message: 'Invalid plan' }, { status: 400 });
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://defrag.app';
+
+    if (plan === 'free') {
+      return NextResponse.json({ url: `${siteUrl}/dashboard?plan=free`, plan: 'free' });
     }
 
     const priceId = PRICE_IDS[plan];
     if (!priceId) {
-      return NextResponse.json({ message: 'Price not configured for plan' }, { status: 500 });
+      return NextResponse.json({ ok: false, error: 'misconfigured' }, { status: 503 });
     }
-
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://defrag.app';
 
     // Create Stripe Checkout Session (Stripe-hosted)
     // Omitting payment_method_types allows Stripe to auto-show
@@ -106,6 +116,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ url: checkoutSession.url });
   } catch (error: any) {
+    if (typeof error?.message === 'string' && error.message.startsWith('MISSING_ENV:')) {
+      return NextResponse.json({ ok: false, error: 'misconfigured' }, { status: 503 });
+    }
     console.error('[DEFRAG_API] Checkout error:', error);
     return NextResponse.json(
       { message: error.message || 'Internal server error' },
