@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createServerClient } from '@/lib/auth-server';
 import { assertRequiredServerEnv } from '@/lib/config';
+import { logBillingEvent } from '@/lib/billing-observability';
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/rate-limit';
 
 // Lazy initialization to avoid build-time errors
@@ -112,7 +113,13 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    console.log('[DEFRAG_API] Checkout session created:', checkoutSession.id);
+    logBillingEvent({
+      event_type: 'checkout_session_created',
+      user_id: userId,
+      plan,
+      subscription_status: 'pending',
+      stripe_customer_id: typeof checkoutSession.customer === 'string' ? checkoutSession.customer : null,
+    });
 
     return NextResponse.json({ url: checkoutSession.url });
   } catch (error: any) {

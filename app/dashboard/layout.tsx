@@ -24,7 +24,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         }
 
         const userMeta = await res.json();
-        if (!userMeta.has_profile || !userMeta.chart_generated) {
+        const hasProfileField = typeof userMeta.has_profile === 'boolean';
+        const hasChartField = typeof userMeta.chart_generated === 'boolean';
+        if (hasProfileField && hasChartField && (!userMeta.has_profile || !userMeta.chart_generated)) {
           router.push('/onboarding');
           return;
         }

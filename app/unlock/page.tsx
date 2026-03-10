@@ -26,28 +26,28 @@ const plans = [
     name: 'Solo',
     price: '$19',
     period: '/month',
-    description: 'Full personal clarity',
+    description: 'Personal intelligence unlocked',
     features: [
       'Unlimited relationship chat',
       'Full daily briefings',
       'Saved conversation history',
       'Timing recommendations',
     ],
-    cta: 'Start Solo',
+    cta: 'Start Solo - $19/mo',
   },
   {
     id: 'team',
     name: 'Team',
     price: '$33',
     period: '/month',
-    description: 'For family + close groups',
+    description: 'For families and close groups',
     features: [
       'Everything in Solo',
       'Add people + invite links',
       'Full relationship map',
       'Group dynamics + deeper context',
     ],
-    cta: 'Start Team',
+    cta: 'Start Team - $33/mo',
     highlighted: true,
   },
 ];
@@ -133,9 +133,9 @@ function UnlockContent() {
 
       <div className="relative mx-auto w-full max-w-[1100px] px-6 md:px-8 space-y-10">
         <div className="text-center space-y-3">
-          <p className="text-[11px] uppercase tracking-[0.2em] text-white/35 font-medium">Select a plan</p>
+          <p className="text-[11px] uppercase tracking-[0.2em] text-white/35 font-medium">Choose your plan</p>
           <h1 className="text-[28px] md:text-[36px] font-bold tracking-[-0.025em]">Choose how you want to use DEFRAG</h1>
-          <p className="text-[15px] text-white/35 max-w-md mx-auto">Start free. Upgrade when you feel the value.</p>
+          <p className="text-[15px] text-white/35 max-w-xl mx-auto">Start free. Upgrade to Solo for full personal insight, or Team for shared relationship intelligence.</p>
           {canceled && (
             <p className="text-[14px] text-white/50 mt-2">Checkout was canceled. Pick a plan when you&apos;re ready.</p>
           )}
@@ -195,7 +195,7 @@ function UnlockContent() {
         </div>
 
         <p className="text-center text-[12px] text-white/20 tracking-[0.1em]">
-          No credit card required for free tier. Cancel paid plans anytime.
+          Free tier requires no card. Paid plans activate after successful checkout and can be canceled anytime.
         </p>
       </div>
     </div>

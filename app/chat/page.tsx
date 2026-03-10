@@ -62,7 +62,13 @@ function ChatClient() {
       }
 
       const me = await response.json();
-      const hasOS = Boolean(me?.is_solo_unlocked || me?.is_team_unlocked || me?.plan === 'os' || me?.plan === 'plus');
+      const hasOS = Boolean(
+        me?.has_paid_access ||
+        me?.is_solo_unlocked ||
+        me?.is_team_unlocked ||
+        me?.plan === 'os' ||
+        me?.plan === 'plus'
+      );
       setIsOSActive(hasOS);
     } catch (err: any) {
       setError(err.message || 'Failed to check subscription status');

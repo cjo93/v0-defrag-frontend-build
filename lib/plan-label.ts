@@ -12,6 +12,14 @@ export function planLabel(plan: string | null): 'Free' | 'Solo' | 'Team' {
   return 'Free';
 }
 
+export function canonicalPlan(plan: string | null): 'free' | 'solo' | 'team' {
+  if (!plan) return 'free';
+  const normalized = plan.toLowerCase();
+  if (['team', 'circle', 'plus', 'os'].includes(normalized)) return 'team';
+  if (['solo', 'basic', 'blueprint'].includes(normalized)) return 'solo';
+  return 'free';
+}
+
 export function isTeam(plan: string | null): boolean {
   return planLabel(plan) === 'Team';
 }
@@ -22,4 +30,8 @@ export function isFree(plan: string | null): boolean {
 
 export function isPaid(plan: string | null): boolean {
   return !isFree(plan);
+}
+
+export function hasPaidAccess(plan: string | null, subscriptionStatus: string | null): boolean {
+  return canonicalPlan(plan) !== 'free' && (subscriptionStatus || '').toLowerCase() === 'active';
 }

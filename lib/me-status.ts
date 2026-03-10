@@ -1,5 +1,6 @@
 import { createServerClient, supabaseAdmin } from './auth-server';
 import type { UserStatus, Plan, SubscriptionStatus } from './supabase/types';
+import { canonicalPlan, hasPaidAccess } from './plan-label';
 
 // Email allowlist for forced team unlock
 const ALLOWLIST_EMAILS = [
@@ -48,14 +49,14 @@ export async function getUserStatus(): Promise<UserStatus | null> {
       .select('id', { count: 'exact', head: true })
       .eq('user_id', userId);
 
-    const plan: Plan = profile?.plan || 'free';
+    const plan: Plan = canonicalPlan(profile?.plan || 'free');
     const subscriptionStatus: SubscriptionStatus = profile?.subscription_status || 'pending';
 
     // Determine unlock states
-    const isActiveSubscription = ['active', 'trialing', 'unlocked'].includes(subscriptionStatus);
-    const isFreeOrAbove = plan === 'free' || isActiveSubscription;
-    const isSoloUnlocked = isAllowlisted || isActiveSubscription;
-    const isTeamUnlocked = isAllowlisted || (plan === 'team' && isActiveSubscription);
+    const paidAccess = hasPaidAccess(plan, subscriptionStatus);
+    const isFreeOrAbove = plan === 'free' || paidAccess;
+    const isSoloUnlocked = isAllowlisted || paidAccess;
+    const isTeamUnlocked = isAllowlisted || (plan === 'team' && paidAccess);
 
     return {
       profile_ready: !!profile,

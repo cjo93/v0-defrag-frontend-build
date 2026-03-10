@@ -59,7 +59,19 @@ export default function GridClient() {
     setIsLoading(true);
     
     try {
-      const hasOS = false; // TODO: Replace with actual subscription check
+      const response = await fetch('/api/me', { cache: 'no-store' });
+      if (!response.ok) {
+        setIsOSActive(false);
+        return;
+      }
+      const me = await response.json();
+      const hasOS = Boolean(
+        me?.has_paid_access ||
+        me?.is_solo_unlocked ||
+        me?.is_team_unlocked ||
+        me?.plan === 'os' ||
+        me?.plan === 'plus'
+      );
       
       setIsOSActive(hasOS);
       
@@ -127,8 +139,8 @@ export default function GridClient() {
       <>
         <LockedScreen
           title="Grid locked"
-          body="Requires DEFRAG OS to add and view your people."
-          ctaLabel={isCheckingOut ? "Initializing..." : "Upgrade to DEFRAG OS"}
+          body="Free includes basic view. Upgrade to Solo or Team to add people and unlock full system analysis."
+          ctaLabel={isCheckingOut ? "Initializing..." : "Upgrade to Solo or Team"}
           onCta={handleUpgrade}
         />
         {error && <div className="text-red-500 text-sm mt-4 text-center">{error}</div>}

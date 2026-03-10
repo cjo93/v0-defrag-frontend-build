@@ -10,6 +10,8 @@ import { getUserRelationalProfile, updateUserRelationalProfile, inferRelationalS
 import { getRelationshipAnchor, updateRelationshipAnchor } from '@/lib/relationship-anchor';
 import { updateRelationshipTiming, getTimingInsight } from '@/lib/relationship-timing';
 import { callModel } from '@/lib/model-api';
+import { hasPaidAccess } from '@/lib/plan-label';
+import { logBillingEvent } from '@/lib/billing-observability';
 
 // ── Helpers ───────────────────────────────────────────────────
 
@@ -17,6 +19,22 @@ function safeAsync(task: Promise<any>): void {
   task.catch((err) => {
     console.error('[DEFRAG_NONCRITICAL]', err);
   });
+}
+
+async function getPaidAccessState(userId: string): Promise<{ allowed: boolean; plan: string; subscriptionStatus: string }> {
+  const { data: profile } = await supabaseAdmin
+    .from('profiles')
+    .select('plan, subscription_status')
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  const plan = String(profile?.plan || 'free');
+  const subscriptionStatus = String(profile?.subscription_status || 'pending');
+  return {
+    allowed: hasPaidAccess(plan, subscriptionStatus),
+    plan,
+    subscriptionStatus,
+  };
 }
 
 // ── POST handler — intelligence pipeline ──────────────────────
@@ -38,6 +56,23 @@ export async function POST(req: NextRequest) {
     }
 
     const userId = session.user.id;
+
+    const paidState = await getPaidAccessState(userId);
+    if (!paidState.allowed) {
+      logBillingEvent({
+        event_type: 'paid_access_denied',
+        user_id: userId,
+        plan: paidState.plan,
+        subscription_status: paidState.subscriptionStatus,
+      });
+      return NextResponse.json({ message: 'Upgrade required' }, { status: 402 });
+    }
+    logBillingEvent({
+      event_type: 'paid_access_granted',
+      user_id: userId,
+      plan: paidState.plan,
+      subscription_status: paidState.subscriptionStatus,
+    });
 
     // ── 2. Rate limit ─────────────────────────────────────────
     const rateLimitResult = checkRateLimit(userId, '/api/ai/chat');
@@ -464,5 +499,3 @@ function ensureStructure(text: string): string {
   }
   return result;
 }
-
-
