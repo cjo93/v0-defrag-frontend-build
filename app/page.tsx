@@ -12,6 +12,7 @@ import TimingMatters from './components/landing/TimingMatters'
 import WhatChanges from './components/landing/WhatChanges'
 import PrivateByDesign from './components/landing/PrivateByDesign'
 import FinalCTA from './components/landing/FinalCTA'
+import SystemMapHero from './components/landing/SystemMapHero'
 
 export default function LandingPage() {
   const router = useRouter();
@@ -33,6 +34,7 @@ export default function LandingPage() {
       }}
     >
       <Hero />
+      <SystemMapHero />
       <QuietTruth />
       <WhatWeBelieve />
       <WhatDefragDoes />

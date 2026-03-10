@@ -105,35 +105,36 @@ export default function DashboardClient() {
   }, [systemMap]);
 
   return (
-    <div className="min-h-screen bg-black text-white font-mono p-8 flex flex-col items-center">
-      <header className="w-full max-w-4xl flex justify-between items-center border-b border-[#333] pb-4 mb-8">
+    <div className="min-h-screen bg-black text-white font-mono p-6 md:p-8 flex flex-col items-center">
+      <header className="w-full max-w-5xl flex justify-between items-center border-b border-white/10 pb-4 mb-8">
         <h1 className="text-xl font-bold tracking-widest">DEFRAG</h1>
-        <div className="text-xs text-gray-500">Connected to internal APIs</div>
+        <div className="text-[11px] uppercase tracking-[0.12em] text-white/40">System Intelligence</div>
       </header>
 
       {loading ? (
-        <div className="animate-pulse flex flex-col space-y-4 w-full max-w-4xl" aria-label="Loading dashboard">
-          <div className="h-32 bg-[#111] border border-[#333]" />
-          <div className="h-64 bg-[#111] border border-[#333]" />
+        <div className="animate-pulse flex flex-col space-y-4 w-full max-w-5xl" aria-label="Loading dashboard">
+          <div className="h-40 bg-white/[0.03] border border-white/10 rounded-xl" />
+          <div className="h-72 bg-white/[0.03] border border-white/10 rounded-xl" />
+          <div className="h-52 bg-white/[0.03] border border-white/10 rounded-xl" />
         </div>
       ) : (
-        <div className="w-full max-w-4xl space-y-8">
-          <section className="border border-[#333] p-6 bg-[#0a0a0a]">
-            <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-4">Today</h2>
+        <div className="w-full max-w-5xl space-y-8">
+          <section className="border border-white/10 rounded-xl p-6 bg-gradient-to-b from-white/[0.03] to-white/[0.01]">
+            <h2 className="text-sm uppercase tracking-widest text-white/45 mb-4">Daily Listen</h2>
             {!briefing ? (
-              <div className="flex flex-col items-center justify-center p-8 border border-dashed border-[#333]">
-                <p className="text-sm text-gray-500 mb-4">No daily brief generated yet.</p>
+              <div className="flex flex-col items-center justify-center p-8 border border-dashed border-white/15 rounded-lg">
+                <p className="text-sm text-white/45 mb-4">No daily brief generated yet.</p>
                 <button
                   onClick={handleGenerateBrief}
                   disabled={generating}
-                  className="bg-white text-black px-6 py-2 text-sm font-bold tracking-widest hover:bg-gray-200 transition-colors disabled:opacity-50"
+                  className="bg-white text-black px-6 py-2 text-sm font-bold tracking-widest rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
                 >
                   {generating ? 'Generating...' : "Generate today's brief"}
                 </button>
               </div>
             ) : (
               <div className="space-y-3">
-                <p className="text-xs text-gray-500">{briefingDate}</p>
+                <p className="text-xs text-white/45">{briefingDate}</p>
                 <p className="text-sm text-white/90 leading-relaxed">{briefing}</p>
                 <button
                   onClick={handleGenerateBrief}
@@ -146,17 +147,17 @@ export default function DashboardClient() {
             )}
           </section>
 
-          <section className="border border-[#333] p-6 bg-[#0a0a0a]">
-            <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-4">Live Family Map</h2>
+          <section className="border border-white/10 rounded-xl p-6 bg-gradient-to-b from-white/[0.03] to-white/[0.01]">
+            <h2 className="text-sm uppercase tracking-widest text-white/45 mb-4">Live Family Map</h2>
             {!systemMap?.ok || (systemMap.nodes?.length ?? 0) <= 1 ? (
-              <div className="flex flex-col items-center justify-center p-8 border border-dashed border-[#333]">
-                <p className="text-sm text-gray-500 mb-4">No connections analyzed yet.</p>
-                <Link href="/relationships" className="bg-white text-black px-6 py-2 text-sm font-bold tracking-widest hover:bg-gray-200 transition-colors">
+              <div className="flex flex-col items-center justify-center p-8 border border-dashed border-white/15 rounded-lg">
+                <p className="text-sm text-white/45 mb-4">No connections analyzed yet.</p>
+                <Link href="/relationships" className="bg-white text-black px-6 py-2 text-sm font-bold tracking-widest rounded-lg hover:bg-gray-200 transition-colors">
                   Add someone
                 </Link>
               </div>
             ) : (
-              <div className="border border-[#222] p-3">
+              <div className="border border-white/10 rounded-lg p-3">
                 <svg viewBox="0 0 100 100" className="w-full h-[300px]" role="img" aria-label="Relationship system map">
                   {systemMap.edges.map((edge) => {
                     const source = positionedNodes.find((n) => n.id === edge.source);
@@ -193,19 +194,19 @@ export default function DashboardClient() {
             )}
           </section>
 
-          <section className="border border-[#333] p-6 bg-[#0a0a0a]">
-            <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-4">Live State</h2>
+          <section className="border border-white/10 rounded-xl p-6 bg-gradient-to-b from-white/[0.03] to-white/[0.01]">
+            <h2 className="text-sm uppercase tracking-widest text-white/45 mb-4">System State</h2>
             {!liveState?.ok ? (
-              <p className="text-sm text-gray-500">No live relationship state available.</p>
+              <p className="text-sm text-white/45">No live relationship state available.</p>
             ) : (
               <ul className="space-y-2 text-sm">
-                <li className="flex justify-between border-b border-[#222] pb-2">
-                  <span className="text-gray-300">Total People</span>
+                <li className="flex justify-between border-b border-white/10 pb-2">
+                  <span className="text-white/70">Total People</span>
                   <span className="text-white">{liveState.total_people}</span>
                 </li>
                 {Object.entries(liveState.states).map(([key, value]) => (
-                  <li key={key} className="flex justify-between border-b border-[#222] pb-2">
-                    <span className="text-gray-300 capitalize">{key}</span>
+                  <li key={key} className="flex justify-between border-b border-white/10 pb-2">
+                    <span className="text-white/70 capitalize">{key}</span>
                     <span className="text-white">{value}</span>
                   </li>
                 ))}
@@ -213,11 +214,11 @@ export default function DashboardClient() {
             )}
           </section>
 
-          <section className="border border-[#333] p-6 bg-[#0a0a0a]">
-            <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-4">Ask About a Relationship</h2>
-            <div className="flex flex-col items-center justify-center p-8 border border-dashed border-[#333]">
-              <p className="text-sm text-gray-500 mb-4">Analyze dynamics with the Intelligence Console.</p>
-              <Link href="/chat" className="bg-white text-black px-6 py-2 text-sm font-bold tracking-widest hover:bg-gray-200 transition-colors">
+          <section className="border border-white/10 rounded-xl p-6 bg-gradient-to-b from-white/[0.03] to-white/[0.01]">
+            <h2 className="text-sm uppercase tracking-widest text-white/45 mb-4">AI Guidance</h2>
+            <div className="flex flex-col items-center justify-center p-8 border border-dashed border-white/15 rounded-lg">
+              <p className="text-sm text-white/45 mb-4">Analyze dynamics with the intelligence console.</p>
+              <Link href="/chat" className="bg-white text-black px-6 py-2 text-sm font-bold tracking-widest rounded-lg hover:bg-gray-200 transition-colors">
                 Ask about a relationship
               </Link>
             </div>

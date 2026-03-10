@@ -135,7 +135,7 @@ function UnlockContent() {
         <div className="text-center space-y-3">
           <p className="text-[11px] uppercase tracking-[0.2em] text-white/35 font-medium">Select a plan</p>
           <h1 className="text-[28px] md:text-[36px] font-bold tracking-[-0.025em]">Choose how you want to use DEFRAG</h1>
-          <p className="text-[15px] text-white/35 max-w-md mx-auto">Start free. Upgrade when you feel the value.</p>
+          <p className="text-[15px] text-white/35 max-w-md mx-auto">Free gives basic visibility. Solo unlocks personal intelligence. Team unlocks full system analysis.</p>
           {canceled && (
             <p className="text-[14px] text-white/50 mt-2">Checkout was canceled. Pick a plan when you&apos;re ready.</p>
           )}

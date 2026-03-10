@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
-import { sendChatMessage, createCheckoutSession } from '@/lib/api';
+import { createCheckoutSession } from '@/lib/api';
 import type { ChatResponse } from '@/lib/types';
 import {
   AppShell,
@@ -23,7 +23,7 @@ interface Message {
 function ChatClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -62,7 +62,13 @@ function ChatClient() {
       }
 
       const me = await response.json();
-      const hasOS = Boolean(me?.is_solo_unlocked || me?.is_team_unlocked || me?.plan === 'os' || me?.plan === 'plus');
+      const hasOS = Boolean(
+        me?.has_paid_access ||
+        me?.is_solo_unlocked ||
+        me?.is_team_unlocked ||
+        me?.plan === 'solo' ||
+        me?.plan === 'team'
+      );
       setIsOSActive(hasOS);
     } catch (err: any) {
       setError(err.message || 'Failed to check subscription status');
@@ -74,7 +80,7 @@ function ChatClient() {
     setError('');
 
     try {
-      const { url } = await createCheckoutSession('os');
+      const { url } = await createCheckoutSession('solo');
       window.location.href = url;
     } catch (err: any) {
       setError(err.message || 'Failed to create checkout session');
@@ -136,8 +142,8 @@ function ChatClient() {
       <>
         <LockedScreen
           title="Console locked"
-          body="Requires DEFRAG OS for active intelligence support."
-          ctaLabel={isCheckingOut ? "Initializing..." : "Upgrade to DEFRAG OS"}
+          body="Free includes limited access. Upgrade to Solo or Team to unlock full intelligence support."
+          ctaLabel={isCheckingOut ? "Initializing..." : "Upgrade to Solo or Team"}
           onCta={handleUpgrade}
         />
         {error && <div className="text-red-500 text-sm mt-4 text-center">{error}</div>}
@@ -267,8 +273,11 @@ function ChatClient() {
                 </div>
               ))}
               {isLoading && (
-                <div className="border border-white/10 p-6 flex justify-center">
-                  <span className="font-mono text-[12px] text-white/50 uppercase tracking-widest">Processing...</span>
+                <div className="border border-white/10 p-6 flex items-center justify-center gap-2 rounded-lg bg-white/[0.02]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-white/50 animate-bounce [animation-delay:0ms]" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-white/50 animate-bounce [animation-delay:150ms]" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-white/50 animate-bounce [animation-delay:300ms]" />
+                  <span className="font-mono text-[11px] text-white/50 uppercase tracking-widest ml-2">Analyzing...</span>
                 </div>
               )}
               <div ref={messagesEndRef} />
