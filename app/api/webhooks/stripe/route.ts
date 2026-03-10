@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { supabaseAdmin } from '@/lib/auth-server';
+import { assertRequiredServerEnv } from '@/lib/config';
 
 // Lazy initialization to avoid build-time errors
 let _stripe: Stripe | null = null;
@@ -22,6 +23,12 @@ function getWebhookSecret(): string {
 
 export async function POST(req: NextRequest) {
   console.log('[DEFRAG_API] POST /api/webhooks/stripe');
+
+  try {
+    assertRequiredServerEnv();
+  } catch {
+    return NextResponse.json({ ok: false, error: 'misconfigured' }, { status: 503 });
+  }
 
   if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
     console.error('[DEFRAG_API] Webhook: missing STRIPE env group');
