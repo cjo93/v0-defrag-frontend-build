@@ -5,7 +5,8 @@ import Link from 'next/link'
 export default function FinalCTA() {
   const commitSha = process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA?.substring(0, 7) || 'local';
   const vercelEnv = process.env.NEXT_PUBLIC_VERCEL_ENV || 'development';
-  const timestamp = process.env.NEXT_PUBLIC_BUILD_TIMESTAMP || new Date().toISOString();
+  const timestamp = process.env.NEXT_PUBLIC_BUILD_TIMESTAMP || 'build-time-unavailable';
+  const buildYear = /^\d{4}/.test(timestamp) ? timestamp.slice(0, 4) : '2026';
 
   return (
     <section
@@ -91,7 +92,7 @@ export default function FinalCTA() {
             textTransform: 'uppercase',
           }}
         >
-          DEFRAG © {new Date().getFullYear()}<br />
+          DEFRAG © {buildYear}<br />
           <span style={{ opacity: 0.5, marginTop: 4, display: 'inline-block' }}>Build: {commitSha} • {vercelEnv} • {timestamp}</span>
         </span>
         <div style={{ display: 'flex', gap: '24px' }}>
