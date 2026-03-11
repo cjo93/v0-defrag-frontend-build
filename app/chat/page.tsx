@@ -28,7 +28,9 @@ function ChatClient() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isOSActive, setIsOSActive] = useState(false);
+  const [isSoloUnlocked, setIsSoloUnlocked] = useState(false);
+  const [plan, setPlan] = useState('free');
+  const [subscriptionStatus, setSubscriptionStatus] = useState('none');
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [error, setError] = useState('');
   
@@ -62,7 +64,7 @@ function ChatClient() {
       }
 
       const me = await response.json();
-      const hasOS = Boolean(me?.is_solo_unlocked || me?.is_team_unlocked || me?.plan === 'os' || me?.plan === 'plus');
+              checkPremiumState();
       setIsOSActive(hasOS);
     } catch (err: any) {
       setError(err.message || 'Failed to check subscription status');
@@ -75,17 +77,23 @@ function ChatClient() {
 
     try {
       const { url } = await createCheckoutSession('os');
-      window.location.href = url;
+            const checkPremiumState = async () => {
     } catch (err: any) {
       setError(err.message || 'Failed to create checkout session');
       setIsCheckingOut(false);
-    }
+                  setIsSoloUnlocked(false);
+                  setPlan('free');
+                  setSubscriptionStatus('none');
   };
 
-  const handleSend = async (e: React.FormEvent) => {
-    e.preventDefault();
+                const data = await response.json();
+                setIsSoloUnlocked(!!data.is_solo_unlocked);
+                setPlan(data.plan || 'free');
+                setSubscriptionStatus(data.subscription_status || 'none');
     if (!input.trim() || isLoading) return;
-
+                setIsSoloUnlocked(false);
+                setPlan('free');
+                setSubscriptionStatus('none');
     const userMessage = input.trim();
     setInput('');
     

@@ -29,13 +29,18 @@ export default function DashboardClient() {
   const [liveState, setLiveState] = useState<LiveStateResponse | null>(null);
   const [systemMap, setSystemMap] = useState<SystemMapResponse | null>(null);
 
+  const [plan, setPlan] = useState('free');
+  const [subscriptionStatus, setSubscriptionStatus] = useState('none');
+  const [isSoloUnlocked, setIsSoloUnlocked] = useState(false);
+
   const fetchDashboardData = async () => {
     setLoading(true);
     try {
-      const [briefRes, stateRes, mapRes] = await Promise.all([
+      const [briefRes, stateRes, mapRes, meRes] = await Promise.all([
         fetch('/api/daily-briefing', { credentials: 'include' }),
         fetch('/api/live-state', { credentials: 'include' }),
         fetch('/api/system-map', { credentials: 'include' }),
+        fetch('/api/me', { cache: 'no-store' }),
       ]);
 
       if (briefRes.ok) {
@@ -56,6 +61,17 @@ export default function DashboardClient() {
         setSystemMap(await mapRes.json());
       } else {
         setSystemMap(null);
+      }
+
+      if (meRes.ok) {
+        const meJson = await meRes.json();
+        setPlan(meJson.plan || 'free');
+        setSubscriptionStatus(meJson.subscription_status || 'none');
+        setIsSoloUnlocked(!!meJson.is_solo_unlocked);
+      } else {
+        setPlan('free');
+        setSubscriptionStatus('none');
+        setIsSoloUnlocked(false);
       }
     } catch (error) {
       console.error('Error fetching dashboard', error);
@@ -118,6 +134,14 @@ export default function DashboardClient() {
         </div>
       ) : (
         <div className="w-full max-w-4xl space-y-8">
+          {/* Premium state banner */}
+          {!isSoloUnlocked && (
+            <div className="border border-yellow-500 bg-yellow-100 text-yellow-900 p-4 rounded mb-8">
+              <div className="font-bold">Premium features locked</div>
+              <div className="text-sm mt-2">Upgrade to DEFRAG OS to unlock daily briefings and intelligence console.</div>
+              <Link href="/unlock" className="inline-block mt-2 bg-yellow-500 text-black px-4 py-2 rounded font-bold hover:bg-yellow-600 transition">Upgrade Now</Link>
+            </div>
+          )}
           <section className="border border-[#333] p-6 bg-[#0a0a0a]">
             <h2 className="text-sm uppercase tracking-widest text-gray-400 mb-4">Today</h2>
             {!briefing ? (

@@ -48,7 +48,6 @@ export async function POST(req: NextRequest) {
     }
 
     let event: Stripe.Event;
-
     try {
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
     } catch (err: unknown) {
@@ -56,6 +55,23 @@ export async function POST(req: NextRequest) {
       console.error('[DEFRAG_API] Webhook signature verification failed:', errorMessage);
       return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
     }
+
+    // Idempotency check: skip if event already processed
+    const { data: existingEvent } = await supabaseAdmin
+      .from('stripe_events')
+      .select('id')
+      .eq('id', event.id)
+      .maybeSingle();
+    if (existingEvent) {
+      console.log('[DEFRAG_API] Webhook event already processed:', event.id);
+      return NextResponse.json({ received: true });
+    }
+
+    // Log event as processed, ignore insert conflicts
+    await supabaseAdmin
+      .from('stripe_events')
+      .insert({ id: event.id, type: event.type })
+      .select();
 
     console.log('[DEFRAG_API] Webhook event:', event.type);
 
@@ -65,29 +81,24 @@ export async function POST(req: NextRequest) {
         await handleCheckoutComplete(session);
         break;
       }
-
       case 'invoice.payment_succeeded': {
         const invoice = event.data.object as Stripe.Invoice;
         await handlePaymentSucceeded(invoice);
         break;
       }
-
       case 'customer.subscription.updated': {
         const subscription = event.data.object as Stripe.Subscription;
         await handleSubscriptionUpdated(subscription);
         break;
       }
-
       case 'customer.subscription.deleted': {
         const subscription = event.data.object as Stripe.Subscription;
         await handleSubscriptionDeleted(subscription);
         break;
       }
-
       default:
         console.log('[DEFRAG_API] Unhandled event type:', event.type);
     }
-
     return NextResponse.json({ received: true });
   } catch (error: any) {
     console.error('[DEFRAG_API] Webhook error:', error);

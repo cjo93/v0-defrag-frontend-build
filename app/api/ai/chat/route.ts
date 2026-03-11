@@ -39,6 +39,17 @@ export async function POST(req: NextRequest) {
 
     const userId = session.user.id;
 
+    // Entitlement check
+    const { getUserState } = await import('@/lib/user-state');
+    const userState = await getUserState(userId);
+    if (userState.locked) {
+      return NextResponse.json({
+        locked: true,
+        upgrade_path: '/unlock',
+        reason: 'subscription_required'
+      }, { status: 403 });
+    }
+
     // ── 2. Rate limit ─────────────────────────────────────────
     const rateLimitResult = checkRateLimit(userId, '/api/ai/chat');
     if (!rateLimitResult.allowed) {

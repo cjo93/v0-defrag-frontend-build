@@ -12,6 +12,8 @@ function SuccessContent() {
   const [verified, setVerified] = useState(false);
   const [timedOut, setTimedOut] = useState(false);
   const [countdown, setCountdown] = useState(5);
+  const [plan, setPlan] = useState('free');
+  const [subscriptionStatus, setSubscriptionStatus] = useState('none');
 
   // Poll for payment verification before allowing redirect
   useEffect(() => {
@@ -31,6 +33,8 @@ function SuccessContent() {
           const res = await fetch('/api/me');
           if (res.ok) {
             const data = await res.json();
+            setPlan(data.plan || 'free');
+            setSubscriptionStatus(data.subscription_status || 'none');
             if (data.is_solo_unlocked) {
               setVerified(true);
               return;

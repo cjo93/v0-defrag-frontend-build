@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient, getSupabaseAdmin } from '@/lib/auth-server';
+import { getUserState } from '@/lib/user-state';
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/rate-limit';
 import { generateDailyBriefing } from '@/lib/generate-daily-briefing';
 
@@ -27,6 +28,15 @@ export async function GET(req: NextRequest) {
     }
 
     const userId = session.user.id;
+
+    // Enforce entitlement
+    const userState = await getUserState(userId);
+    if (userState.entitlement !== 'unlocked') {
+      return NextResponse.json(
+        { ok: false, message: 'Premium feature locked. Upgrade required.' },
+        { status: 402 }
+      );
+    }
 
     const rateLimitResult = checkRateLimit(userId, '/api/daily-briefing', {
       limit: 5,
